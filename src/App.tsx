@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Copy,
   Check,
@@ -8,12 +8,12 @@ import {
 import realUserBody from './assets/real_user_body.png';
 import arduinoBoard from './assets/arduino_board.png';
 import minimalWhiteBg from './assets/minimal_white_bg.jpg';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
 import { WelcomeScreen } from './components/ui/welcome-screen';
 import { SplineScene } from './components/ui/splite';
 import { Spotlight } from './components/ui/spotlight';
-import { MagicText } from './components/ui/magic-text';
+import { Typewriter } from './components/ui/typewriter-text';
 import { MascotInteractive } from './components/MascotInteractive';
 import { calculateDetailedAge, DetailedAge } from './lib/age';
 import { SmartSongthaewShowcase } from './components/SmartSongthaewShowcase';
@@ -135,16 +135,6 @@ export default function App() {
   // Exact real-time age state (initial calculation prevents layout shift)
   const [age, setAge] = useState<DetailedAge>(() => calculateDetailedAge(BIRTH_DATE));
 
-  // Philosophy runway smooth scroll progress
-  const philosophyRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: philosophyProgress } = useScroll({
-    target: philosophyRef,
-    offset: ["start start", "end end"],
-  });
-  const philosophyEyebrowOpacity = useTransform(philosophyProgress, [0.02, 0.22], [0.2, 1]);
-  const philosophyEyebrowY = useTransform(philosophyProgress, [0.02, 0.22], [18, 0]);
-  const philosophySubtitleOpacity = useTransform(philosophyProgress, [0.55, 0.82], [0.1, 1]);
-  const philosophySubtitleY = useTransform(philosophyProgress, [0.55, 0.82], [32, 0]);
 
   // Lock body overflow when welcome modal is open
   useEffect(() => {
@@ -343,13 +333,13 @@ export default function App() {
         </div>
 
         {/* =========================================================================
-            MOBILE HERO (lg:hidden) — 2-Stage Story:
-            Stage 1: Portrait first (full head, zero cutoff, glowing Arduino & laptop)
-            Stage 2: Scroll down to reveal Kantapon Wongprot headline, tagline & bio
+            MOBILE HERO (lg:hidden) — Compact, Balanced 2-Stage Story
+            Stage 1: Portrait first (full head, no cutoff, centered)
+            Stage 2: Kantapon Wongprot headline, tagline & bio immediately below
             ========================================================================= */}
         <div className="lg:hidden flex flex-col w-full relative z-20">
-          {/* Mobile Stage 1 (100svh): Kantapon Portrait with Full Head & Scroll Prompt */}
-          <div className="min-h-[100svh] flex flex-col justify-between items-center px-6 pt-20 pb-8 relative">
+          {/* Mobile Stage 1: Kantapon Portrait with Full Head & Scroll Prompt */}
+          <div className="min-h-[78svh] flex flex-col justify-between items-center px-6 pt-14 pb-4 relative">
             {/* Eyebrow badge */}
             <div className="pt-2 flex justify-center w-full anim-fade-up">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 backdrop-blur-md shadow-lg">
@@ -361,11 +351,11 @@ export default function App() {
             </div>
 
             {/* Centered User Portrait (Zero Cutoff: viewBox="590 60 740 1020" gives 60px breathing headroom) */}
-            <div className="flex-1 flex items-center justify-center relative w-full my-auto py-2">
+            <div className="flex-1 flex items-center justify-center relative w-full my-auto py-1">
               {/* Soft Ambient Studio Lighting Glow */}
-              <div className="absolute inset-0 max-w-[320px] max-h-[320px] m-auto bg-gradient-to-b from-sky-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute inset-0 max-w-[280px] max-h-[280px] m-auto bg-gradient-to-b from-sky-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[58svh] flex items-center justify-center">
+              <div className="relative w-full max-w-[280px] sm:max-w-[320px] h-[48svh] max-h-[400px] flex items-center justify-center">
                 <HeroPortraitSvg
                   className="anim-rise-in w-full h-full pointer-events-auto drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)]"
                   viewBox="590 60 740 1020"
@@ -375,7 +365,7 @@ export default function App() {
             </div>
 
             {/* Scroll Indicator Prompt */}
-            <div className="pb-4 flex justify-center w-full anim-fade-up">
+            <div className="pt-1 pb-2 flex justify-center w-full anim-fade-up">
               <a
                 href="#mobile-hero-details"
                 className="inline-flex flex-col items-center gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer group py-2 px-4 rounded-full bg-white/[0.04] border border-white/5 backdrop-blur-sm"
@@ -389,17 +379,17 @@ export default function App() {
             </div>
           </div>
 
-          {/* Mobile Stage 2: Revealed on scroll — Kantapon Wongprot headline, tagline, bio, and CTAs */}
+          {/* Mobile Stage 2: Revealed comfortably on scroll — Kantapon Wongprot headline, tagline, bio, and CTAs */}
           <div
             id="mobile-hero-details"
-            className="min-h-[100svh] flex flex-col justify-between px-6 pt-20 pb-8 relative"
+            className="flex flex-col justify-start px-6 pt-4 pb-12 relative scroll-mt-6"
           >
             <motion.div
-              initial={{ opacity: 0, y: 36 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="flex-1 flex flex-col justify-center max-w-[480px] mx-auto w-full text-left"
+              viewport={{ once: true, margin: "-5% 0px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-[480px] mx-auto w-full text-left"
             >
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2 mb-3">
@@ -410,26 +400,26 @@ export default function App() {
               </div>
 
               {/* Main Headline */}
-              <h1 className="font-inter font-semibold text-4xl sm:text-5xl text-neutral-100 tracking-tight leading-[1.06]">
+              <h1 className="font-inter font-semibold text-3xl sm:text-5xl text-neutral-100 tracking-tight leading-[1.08]">
                 Kantapon<br />
                 Wongprot
               </h1>
 
               {/* Secondary Tagline */}
-              <p className="font-inter font-medium text-lg sm:text-xl text-neutral-300 mt-3 leading-snug">
+              <p className="font-inter font-medium text-lg sm:text-xl text-neutral-300 mt-2.5 leading-snug">
                 Building ideas with<br />
                 <span className="text-white">AI &amp; Embedded Systems.</span>
               </p>
 
               {/* Thai Introduction */}
-              <p className="mt-4 text-[15px] sm:text-base text-neutral-300/90 font-normal leading-[1.75] font-thai">
+              <p className="mt-3.5 text-[15px] sm:text-base text-neutral-300/90 font-normal leading-[1.7] font-thai">
                 ผมชื่อกันตภณ นักเรียนชั้น ม.6 ที่สนใจ AI, Robotics<br />
                 และ Embedded Systems ชอบเปลี่ยนไอเดียให้กลายเป็น<br />
                 โปรเจกต์ที่ทดลองและใช้งานได้จริง
               </p>
 
               {/* CTAs */}
-              <div className="mt-6 flex flex-wrap items-center gap-3.5 text-xs sm:text-sm">
+              <div className="mt-5 flex flex-wrap items-center gap-3.5 text-xs sm:text-sm">
                 <a
                   href="#projects"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-700 bg-neutral-900/80 backdrop-blur-sm text-neutral-100 hover:text-white hover:border-neutral-400 hover:bg-neutral-800 transition-all font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
@@ -598,52 +588,39 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          SECTION 3.5: MOTTO PHILOSOPHY (EXTENDED SCROLL RUNWAY & GRADUAL REVEAL)
+          SECTION 3.5: MOTTO PHILOSOPHY (TYPEWRITER ANIMATION & BALANCED SPACING)
           ========================================================================= */}
       <section
         id="philosophy"
-        ref={philosophyRef}
-        className="relative min-h-[180vh] w-full bg-[#050507] text-white select-none border-b border-neutral-900 scroll-mt-0"
+        className="relative w-full py-20 sm:py-28 bg-[#050507] text-white select-none border-b border-neutral-900 scroll-mt-6"
       >
-        {/* Sticky Viewport Stage for Smooth, Generous Scroll Reveal */}
-        <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center overflow-hidden px-6">
-          {/* Subtle Ambient Atmosphere */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/5 rounded-full blur-[180px] pointer-events-none" />
+        {/* Subtle Ambient Atmosphere */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center relative z-10">
-            <motion.span
-              style={{
-                opacity: philosophyEyebrowOpacity,
-                y: philosophyEyebrowY,
-              }}
-              className="text-[11px] font-mono tracking-[0.3em] uppercase text-neutral-500 block mb-6 will-change-transform"
-            >
-              Our Core Philosophy
-            </motion.span>
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center relative z-10 px-6">
+          <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-neutral-500 block mb-6">
+            Our Core Philosophy
+          </span>
 
-            <MagicText
-              lines={[
+          <div className="min-h-[80px] sm:min-h-[110px] flex items-center justify-center font-prompt text-2xl sm:text-4xl md:text-5xl font-normal sm:font-light tracking-normal text-center leading-[1.4] text-white">
+            <Typewriter
+              text={[
                 "เราไม่ได้ทำไม่ได้",
-                "เราแค่ยังไม่เคยถูกสอนให้ทำ"
+                "เราแค่ยังไม่เคยถูกสอนให้ทำ",
+                "We are not incapable; we simply haven't been taught how to do it yet."
               ]}
-              progress={philosophyProgress}
-              className="font-prompt text-3xl sm:text-5xl md:text-6xl font-normal sm:font-light tracking-normal text-center leading-[1.6]"
-              wordClassName="my-2 sm:my-3 font-prompt"
+              speed={80}
+              deleteSpeed={40}
+              delay={2200}
+              loop={true}
+              cursor="|"
+              className="text-white font-prompt"
             />
-
-            <motion.p
-              style={{
-                opacity: philosophySubtitleOpacity,
-                y: philosophySubtitleY,
-              }}
-              className="mt-8 sm:mt-10 text-xs sm:text-sm md:text-base font-light font-mono text-neutral-400 tracking-wider will-change-transform"
-            >
-              “We are not incapable; we simply haven't been taught how to do it yet.”
-            </motion.p>
           </div>
 
-          {/* Bottom edge fade */}
-          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#050507] to-transparent pointer-events-none" />
+          <p className="mt-6 text-xs sm:text-sm font-light font-mono text-neutral-400 tracking-wider">
+            “We are not incapable; we simply haven't been taught how to do it yet.”
+          </p>
         </div>
       </section>
 
