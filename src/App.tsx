@@ -44,70 +44,70 @@ interface Project {
 
 const PROJECTS: Project[] = [
   {
-    id: 'thaimind',
+    id: 'smart-songthaew',
     number: '01',
-    title: 'ThaiMind — ผู้ช่วยสรุปโน้ตเรียน AI',
-    category: 'ai',
-    categoryLabel: 'AI & NLP',
-    desc: 'โมเดล NLP สรุปเนื้อหาบทเรียนภาษาไทยให้สั้นลง 70% พร้อมสร้างควิซอัตโนมัติ ใช้จริงในห้องเรียน 3 ห้อง',
-    fullDesc: 'พัฒนาระบบประมวลผลภาษาธรรมชาติ (NLP) สำหรับภาษาไทยโดยเฉพาะ โดย Fine-tune โมเดล Transformer เพื่อทำการ Abstractive Summarization และสกัดคำสำคัญเพื่อสร้าง Flashcard / Quiz ทบทวนบทเรียน ช่วยเพิ่มประสิทธิภาพการทบทวนของเพื่อนๆ ในโรงเรียน',
-    metrics: 'ประหยัดเวลาอ่าน 70% • ความพึงพอใจ 94% จากนักเรียน 120 คน',
-    tech: ['Python', 'PyTorch', 'Transformers', 'FastAPI', 'React']
-  },
-  {
-    id: 'rescuebot',
-    number: '02',
-    title: 'RESCUE-BOT หุ่นยนต์ค้นหาและกู้ภัย',
+    title: 'Smart Songthaew แพลตฟอร์มสมาร์ตสองแถว',
     category: 'hw',
-    categoryLabel: 'Robotics & Embedded',
-    desc: 'หุ่นยนต์ตรวจจับเส้นทางและหยิบวัตถุอัตโนมัติ คว้ารองชนะเลิศการแข่งขันหุ่นยนต์ระดับภาค 2567',
-    fullDesc: 'ออกแบบระบบกลไก อัลกอริทึม PID Control สำหรับการนำทาง และติดตั้งกล้อง OpenCV ร่วมกับเซนเซอร์อินฟราเรดเพื่อจำแนกและคัดแยกสิ่งกีดขวางในสถานการณ์จำลองภัยพิบัติ ทำงานผ่านไมโครคอนโทรลเลอร์ ESP32 และ Arduino ร่วมกันแบบ Real-time',
-    metrics: 'รองชนะเลิศอันดับ 1 ระดับภาค • เวลาเฉลี่ยต่อภารกิจ 1.45 นาที',
-    tech: ['ESP32', 'C/C++', 'Arduino', 'OpenCV', 'PID Control']
+    categoryLabel: 'IoT & Web App',
+    desc: 'ระบบ IoT + Web App ติดตามสองแถวแบบ Real-time ผ่าน LoRa (VIBE Architecture) ตัดค่าใช้จ่ายเครือข่าย คว้าทุนสนับสนุน NSC 2026 ระดับชาติ',
+    fullDesc: 'พัฒนาแพลตฟอร์มแก้ปัญหาประชาชนในส่วนภูมิภาคที่ต้องเสียเวลารอรถสองแถวอย่างคาดเดาไม่ได้ หรือรอในพื้นที่เปลี่ยวและเสี่ยงอันตราย โดยออกแบบสถาปัตยกรรมการส่งข้อมูลระยะไกลผ่านคลื่นสัญญาณ LoRa (VIBE Architecture) เชื่อมกับ Web Application แบบ Real-time ไม่มีค่าบริการเครือข่ายรายเดือน ขึ้นรูปโครงอุปกรณ์ด้วย 3D Printer และออกแบบระบบ Cloud ครบวงจร',
+    metrics: 'ผ่านการคัดเลือกรับทุนสนับสนุน NSC 2026 ระดับชาติ (สวทช. + วช.)',
+    tech: ['IoT', 'LoRa', 'Web App', '3D Printing', 'Cloud', 'React']
   },
   {
-    id: 'leafscan',
+    id: 'eduguard-ai',
+    number: '02',
+    title: 'EduGuard AI — พลิกเกมกลโกง AI',
+    category: 'ai',
+    categoryLabel: 'AI Detection',
+    desc: 'ระบบ Full-Stack ช่วยครูตรวจจับงานเขียนของนักเรียนว่าใช้ AI หรือไม่ ความแม่นยำสูงกว่า AI Detector อื่นในตลาด ผ่านรอบ Top 10 ระดับประเทศ',
+    fullDesc: 'พัฒนา Full-Stack Web Application ในฐานะหัวหน้าทีม โดยนำกระบวนการ Design Thinking มาทำความเข้าใจ Pain Point ของครู แล้วเปลี่ยนปัญหาให้กลายเป็นนวัตกรรมที่ใช้งานได้จริง ระบบมีความแม่นยำสูงกว่า AI Detector อื่นๆ ในตลาดจากผลการทดสอบ ผ่านการคัดเลือกเป็น 10 ทีมสุดท้ายระดับประเทศ',
+    metrics: 'Top 10 Finalist ระดับประเทศ • แม่นยำกว่า AI Detector อื่นในตลาด',
+    tech: ['Python', 'FastAPI', 'React', 'TypeScript', 'NLP', 'Design Thinking']
+  },
+  {
+    id: 'smart-school-card',
     number: '03',
-    title: 'LeafScan — ตรวจและวินิจฉัยโรคพืช',
+    title: 'Smart School Card ระบบบัตรนักเรียนอัจฉริยะ',
+    category: 'hw',
+    categoryLabel: 'Embedded & IoT',
+    desc: 'ระบบเช็กชื่อ-ชำระเงินกาแฟออนไลน์ด้วยบัตร RFID + ESP32 เชื่อมเว็บแอป Real-time สำหรับนักเรียน ครู และผู้ปกครอง',
+    fullDesc: 'ออกแบบและพัฒนาระบบบัตรนักเรียนอัจฉริยะที่รวมการเช็กชื่อเข้าเรียนและการชำระเงินในบัตรใบเดียว โดยใช้เทคโนโลยี RFID ร่วมกับ ESP32 ส่งข้อมูลแบบ Real-time ขึ้น Web Dashboard ที่ผู้ปกครองสามารถตรวจสอบสถานะบุตรหลานและประวัติการใช้จ่ายได้ทันที',
+    metrics: 'ทดสอบจริงในโรงเรียน • ผู้ปกครองติดตามสถานะได้ Real-time',
+    tech: ['ESP32', 'RFID', 'C/C++', 'React', 'Firebase', 'LINE API']
+  },
+  {
+    id: 'kru-suan-ai',
+    number: '04',
+    title: 'ครูสวนAI — ผู้ช่วยเกษตรกรด้วย AI',
     category: 'ai',
     categoryLabel: 'Computer Vision',
-    desc: 'CNN แยกโรคใบพืช 12 ชนิด ความแม่นยำ 94% ทำงานบนมือถือแบบออฟไลน์ ช่วยเกษตรกรในชุมชน',
-    fullDesc: 'เทรนโมเดล Convolutional Neural Network (MobileNetV3) ด้วยภาพถ่ายใบพืชกว่า 15,000 ภาพ จากนั้นทำ Quantization เป็น TFLite เพื่อให้สามารถรันบนสมาร์ตโฟนทั่วไปได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต',
-    metrics: 'ความแม่นยำ 94.2% • ขนาดโมเดลเพียง 8.4MB บนอุปกรณ์พกพา',
-    tech: ['PyTorch', 'TensorFlow Lite', 'Flutter', 'Computer Vision']
+    desc: 'AI วิเคราะห์ภาพจากสมาร์ตโฟนเพื่อระบุโรคพืชและแนะนำการดูแล ทำงานแบบ Offline รองรับภาษาไทย เพื่อยกระดับภาคเกษตรไทย',
+    fullDesc: 'พัฒนาระบบ Computer Vision บนสมาร์ตโฟนที่ทำงานออฟไลน์ได้ เพื่อช่วยเกษตรกรระบุโรคและภาวะของพืช พร้อมแนะนำวิธีดูแลและปริมาณปุ๋ยที่เหมาะสม ลดการใช้ทรัพยากรเกินจำเป็น รองรับภาษาไทยและใช้งานง่ายแม้สัญญาณไม่ดี เพื่อให้เกษตรกรเป็นเจ้าของข้อมูลและการตัดสินใจ',
+    metrics: 'ใช้งานได้ Offline • รองรับภาษาไทย • แม่นยำในการระบุโรคพืช',
+    tech: ['TensorFlow Lite', 'Python', 'Flutter', 'Computer Vision', 'MobileNet']
   },
   {
-    id: 'schoolhub',
-    number: '04',
-    title: 'SchoolHub ระบบจองห้องและอุปกรณ์',
-    category: 'web',
-    categoryLabel: 'Full-Stack Web',
-    desc: 'เว็บแอปจองห้องแล็บและอุปกรณ์ของโรงเรียน ลดเวลาทำเรื่องจาก 2 วันเหลือ 5 นาที ผู้ใช้ 400+ คน',
-    fullDesc: 'ระบบเว็บแอปพลิเคชันเพื่อแก้ปัญหาการยืม-คืนอุปกรณ์และการจองห้องเรียนที่เคยใช้เอกสารกระดาษ มีระบบแจ้งเตือนผ่าน LINE Notify, การจัดการสิทธิ์แบบ Role-based (นักเรียน/ครู) และ Dashboard แสดงสถานะแบบเรียลไทม์',
-    metrics: 'ผู้ใช้งานจริง 400+ คน/สัปดาห์ • ลดขั้นตอนเอกสารลง 90%',
-    tech: ['React', 'TypeScript', 'Tailwind CSS', 'Firebase', 'LINE API']
-  },
-  {
-    id: 'airsense',
+    id: 'nextcode-ide',
     number: '05',
-    title: 'AirSense เครื่องตรวจวัด PM2.5 ชุมชน',
-    category: 'hw',
-    categoryLabel: 'IoT & Sensors',
-    desc: 'เซนเซอร์ IoT 5 จุดในโรงเรียน ส่งข้อมูลขึ้น Dashboard แบบ Real-time พร้อมแจ้งเตือนฝุ่นเกินมาตรฐาน',
-    fullDesc: 'สร้างสถานีตรวจวัดคุณภาพอากาศด้วยเซนเซอร์ Laser Particle SDS011 และ DHT22 ส่งข้อมูลผ่านโปรโตคอล MQTT เข้าสู่เซิร์ฟเวอร์ และเรนเดอร์กราฟสถิติบน Grafana Dashboard เพื่อให้โรงเรียนพิจารณางดกิจกรรมกลางแจ้งได้อย่างแม่นยำ',
-    metrics: 'ตรวจวัดต่อเนื่อง 24/7 ตลอด 1 ปี • แจ้งเตือนนักเรียนกว่า 1,800 คน',
-    tech: ['Arduino', 'ESP8266', 'MQTT', 'Grafana', 'InfluxDB']
+    title: 'NextCode IDE — โปรแกรม IDE สำหรับผู้เริ่มต้น',
+    category: 'web',
+    categoryLabel: 'Developer Tools',
+    desc: 'Web-based IDE พร้อม AI Code Completion และ Visual Debugger ออกแบบเพื่อนักเรียน ม.ต้น ให้เรียนรู้การเขียนโปรแกรมได้ง่ายขึ้น',
+    fullDesc: 'พัฒนา Web-based Integrated Development Environment (IDE) ที่รองรับ Python และ JavaScript พร้อมฟีเจอร์ AI Code Completion, Visual Debugger แบบ Step-by-step และ Error Explanation เป็นภาษาไทย ออกแบบ UX/UI เน้นความง่ายสำหรับผู้เริ่มต้น ใช้สอนจริงในค่าย Code for Junior',
+    metrics: 'ใช้สอนในค่าย Code for Junior • ผู้เรียนกว่า 60 คน',
+    tech: ['React', 'TypeScript', 'Monaco Editor', 'Python', 'WebSocket']
   },
   {
-    id: 'codequest',
+    id: 'ai-uniguide',
     number: '06',
-    title: 'CodeQuest เกมสอนเขียนโค้ด ม.ต้น',
-    category: 'web',
-    categoryLabel: 'Interactive Web',
-    desc: 'เกมเว็บบน Canvas API สอนแนวคิด Logic & Algorithm ให้รุ่นน้อง ม.ต้น เล่นไปแล้วกว่า 1,200 ครั้ง',
-    fullDesc: 'พัฒนาเกมเว็บ Interactive เพื่อใช้สอนในค่าย Code for Junior โดยจำลองภารกิจไขปริศนาด้วยการเขียนบล็อกคำสั่งและเงื่อนไข (If-Else, Loops) มีระบบให้ดาวและบันทึกคะแนนเพื่อกระตุ้นความสนใจด้านวิทยาการคำนวณ',
-    metrics: 'มีด่านมากกว่า 20 ด่าน • จำนวนการเล่นผ่านมากกว่า 1,200 ครั้ง',
-    tech: ['JavaScript', 'Canvas API', 'HTML5 Audio', 'CSS Grid']
+    title: 'AI UniGuide Pro — ที่ปรึกษาเลือกมหาวิทยาลัย',
+    category: 'ai',
+    categoryLabel: 'AI & RAG',
+    desc: 'แชทบอท AI แนะนำสาขาและมหาวิทยาลัยด้วยระบบ RAG ที่ดึงข้อมูลล่าสุดจาก TCAS อัตโนมัติ ช่วยนักเรียน ม.ปลายวางแผนการเรียน',
+    fullDesc: 'สร้างระบบแชทบอทแนะนำเส้นทางการศึกษาด้วยเทคโนโลยี Retrieval-Augmented Generation (RAG) ที่ดึงข้อมูล TCAS, คะแนนรับสมัคร และรายละเอียดสาขาล่าสุดอัตโนมัติ ผู้ใช้สามารถถามข้อมูลได้ด้วยภาษาไทยแบบ Natural Language และรับคำแนะนำเฉพาะบุคคลตามผลการเรียนและความสนใจ',
+    metrics: 'ข้อมูล TCAS อัปเดตอัตโนมัติ • รองรับภาษาไทยแบบ Natural Language',
+    tech: ['Python', 'LangChain', 'RAG', 'OpenAI API', 'Vector DB', 'FastAPI']
   }
 ];
 
@@ -179,7 +179,7 @@ export default function App() {
   }, []);
 
   const copyEmail = () => {
-    navigator.clipboard.writeText('kantapon.dev@gmail.com');
+    navigator.clipboard.writeText('tawna20081@gmail.com');
     setToastMessage('คัดลอกอีเมลเรียบร้อยแล้ว');
     setTimeout(() => setToastMessage(null), 3000);
   };
@@ -376,31 +376,31 @@ export default function App() {
             <div className="lg:col-span-7 flex flex-col justify-center">
               <div className="mb-6">
                 <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 font-semibold block mb-2">
-                  Computer Engineering Candidate
+                  AI Engineering &amp; Embedded Systems
                 </span>
                 <h2 className="font-hn text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-neutral-900 leading-[1.15]">
                   กันตภณ วงศ์พรต
                 </h2>
                 <p className="text-sm font-mono text-neutral-500 mt-1">
-                  Kantapon Wongprot &bull; นักเรียนชั้น ม.6 (Sci-Math-Computer)
+                  Kantapon Wongprot (ธันวา) &bull; นักเรียนชั้น ม.6 &bull; ร.ร.เตรียมอุดมศึกษาภาคใต้
                 </p>
               </div>
 
               <div className="space-y-4 text-neutral-700 font-light leading-relaxed text-base sm:text-lg">
                 <p>
-                  ผมมีความตั้งใจและเป้าหมายชัดเจนในการเข้าศึกษาต่อระดับปริญญาตรีในสาขา <strong className="font-semibold text-neutral-900">วิศวกรรมคอมพิวเตอร์ (Computer Engineering)</strong> เพื่อต่อยอดความหลงใหลด้านการสร้างสรรค์เทคโนโลยีที่ตอบโจทย์ชีวิตจริง
+                  นักเรียน ม.6 อายุ 17 ปี จากโรงเรียนเตรียมอุดมศึกษาภาคใต้ จ.นครศรีธรรมราช มุ่งมั่นพัฒนาในด้าน <strong className="font-semibold text-neutral-900">วิศวกรรมปัญญาประดิษฐ์</strong> และ <strong className="font-semibold text-neutral-900">ระบบสมองกลฝังตัว (Embedded Systems)</strong>
                 </p>
                 <p>
-                  เส้นทางด้านเทคโนโลยีของผมเริ่มต้นตั้งแต่ ม.2 จากการทดลองเขียนโปรแกรมแรก จนปัจจุบันมุ่งเน้นการค้นคว้าและพัฒนาในด้าน <strong className="font-semibold text-neutral-900">Deep Learning, Computer Vision</strong> และ <strong className="font-semibold text-neutral-900">ระบบสมองกลฝังตัว (Robotics & Embedded IoT)</strong>
+                  ผ่านค่ายวิศวกรรมระดับชาติ <strong className="font-semibold text-neutral-900">CE NEXT GEN ครั้งที่ 3 (KMITL)</strong>, <strong className="font-semibold text-neutral-900">Engineering Up Skill (ม.เกษตรศาสตร์)</strong> และ <strong className="font-semibold text-neutral-900">Pre-Engineering KMITL</strong>
                 </p>
                 <p>
-                  สำหรับผม โค้ดไม่ใช่แค่ชุดคำสั่ง แต่คือเครื่องมือที่แปลงจินตนาการและตรรกะ ให้กลายเป็นนวัตกรรมที่ใช้งานได้จริงในสังคม
+                  เชื่อว่า "ทุกสิ่งในโลกนี้ เราสามารถสร้างมันขึ้นมาได้" — โค้ดคือเครื่องมือที่แปลงตรรกะและจินตนาการให้กลายเป็นนวัตกรรมที่ใช้งานได้จริง
                 </p>
               </div>
 
               {/* Capability Focus Tags */}
               <div className="mt-7 flex flex-wrap gap-2">
-                {['Machine Learning', 'Computer Vision', 'Robotics & PID', 'Embedded IoT', 'Python / C++', 'President of Computer Club'].map((tag) => (
+                {['AI & Machine Learning', 'Computer Vision', 'IoT & Embedded', 'Full-Stack Web', 'Python / C++', 'ประธานชุมนุม Computer & AI'].map((tag) => (
                   <span
                     key={tag}
                     className="px-3 py-1 rounded-full border border-neutral-300 text-xs font-mono text-neutral-800 bg-neutral-100 hover:bg-neutral-900 hover:text-white transition-colors"
@@ -413,9 +413,9 @@ export default function App() {
               {/* Stats Counter Grid */}
               <div ref={statsRef} className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { num: '17+', label: 'โปรเจกต์ที่พัฒนาจริง' },
-                  { num: '5', label: 'รางวัลแข่งขันระดับชาติ/ภาค' },
-                  { num: '3+', label: 'ปีประสบการณ์ Dev' },
+                  { num: '6+', label: 'โปรเจกต์ที่พัฒนาจริง' },
+                  { num: '5+', label: 'รางวัล/ทุนระดับชาติ' },
+                  { num: '4', label: 'ค่ายวิศวกรรมระดับชาติ' },
                   { num: '42', label: 'สมาชิกชุมนุมคอมพิวเตอร์' }
                 ].map((stat) => (
                   <div
@@ -858,46 +858,46 @@ export default function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
             {
-              category: 'Robotics Contest',
-              title: 'รองชนะเลิศ อันดับ 1',
-              subtitle: 'การแข่งขันหุ่นยนต์กู้ภัย ระดับภาค 2567',
-              org: 'สพม. / สพฐ.',
-              year: '2567'
+              category: 'NSC 2026 — National',
+              title: 'ได้รับทุนสนับสนุน Smart Songthaew',
+              subtitle: 'การแข่งขันพัฒนาโปรแกรมคอมพิวเตอร์แห่งประเทศไทย ครั้งที่ 28',
+              org: 'สวทช. (NSTDA) ร่วมกับ วช.',
+              year: '2569'
             },
             {
-              category: 'National Exhibition',
-              title: 'เหรียญทอง โครงงานคอมพิวเตอร์',
-              subtitle: 'งานศิลปหัตถกรรมนักเรียน ระดับชาติ',
-              org: 'สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน',
-              year: '2566'
+              category: 'ICS You Camp 2026',
+              title: 'รองชนะเลิศ อันดับ 2 — Pitching Project',
+              subtitle: 'กิจกรรม ICS YOU CAMP การแข่งขัน Pitching Project',
+              org: 'ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ ม.เกษตรศาสตร์',
+              year: '2569'
             },
             {
-              category: 'AI Challenge',
-              title: 'Top 20 Finalist',
-              subtitle: 'Thailand AI Youth Challenge 2024',
-              org: 'สวทช. (NSTDA) & พันธมิตร',
-              year: '2567'
+              category: 'AI For Thai Hackathon',
+              title: 'Finalist รอบชิงชนะเลิศ',
+              subtitle: 'AI For Thai Hackathon 2026 แบบ 24 ชั่วโมง',
+              org: 'สาขาวิทยาศาสตร์การคำนวณ คณะวิทยาศาสตร์ ม.อ.',
+              year: '2569'
             },
             {
-              category: 'Professional Cert',
-              title: 'Google IT Automation with Python',
-              subtitle: 'Professional Certificate (Coursera)',
-              org: 'Google Career Certificates',
-              year: '2566'
+              category: 'THE BEST Award',
+              title: 'รางวัล THE BEST ด้านการจัดกิจกรรมที่เป็นเลิศ',
+              subtitle: 'โครงการสารวัตรนักเรียนไซเบอร์ งาน "โตไปไม่สูบ Festival" ระดับเครือข่ายภาคใต้',
+              org: 'สสส. ร่วมกับ ร.ร.เตรียมอุดมศึกษาภาคใต้',
+              year: '2568'
             },
             {
-              category: 'Academic Honor',
-              title: 'นักเรียนดีเด่นด้านเทคโนโลยี',
-              subtitle: 'ประจำปีการศึกษา 2567',
-              org: 'โรงเรียน',
-              year: '2567'
+              category: 'National Training Camp',
+              title: 'ผ่านค่าย CE NEXT GEN ครั้งที่ 3',
+              subtitle: 'ค่ายฝึกอบรมเชิงปฏิบัติการด้านวิศวกรรมคอมพิวเตอร์',
+              org: 'ภาควิชาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ สจล.',
+              year: '2568'
             },
             {
-              category: 'Olympiad Camp',
-              title: 'ผ่านค่าย สอวน. คอมพิวเตอร์ ค่าย 1',
-              subtitle: 'สาขาวิทยาการคอมพิวเตอร์ ศูนย์ภูมิภาค',
-              org: 'มูลนิธิ สอวน.',
-              year: '2566'
+              category: 'Pre-Engineering KMITL',
+              title: 'ผ่านหลักสูตร Computer Programming',
+              subtitle: 'โครงการเตรียมวิศวกรรม KMITL Pre-Engineering School Program 2025',
+              org: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง',
+              year: '2568'
             }
           ].map((a) => (
             <div
@@ -948,10 +948,10 @@ export default function App() {
           {/* Email Contact with 1-Click Copy */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-14">
             <a
-              href="mailto:kantapon.dev@gmail.com"
+              href="mailto:tawna20081@gmail.com"
               className="text-xl sm:text-3xl font-light text-white hover:text-emerald-400 underline underline-offset-8 transition-colors font-mono"
             >
-              kantapon.dev@gmail.com
+              tawna20081@gmail.com
             </a>
             <button
               onClick={copyEmail}
@@ -965,9 +965,9 @@ export default function App() {
           {/* Social / External Links */}
           <div className="flex items-center justify-center gap-3 flex-wrap mb-16">
             {[
-              { label: 'GitHub', href: 'https://github.com' },
-              { label: 'LinkedIn', href: 'https://linkedin.com' },
-              { label: 'YouTube', href: 'https://youtube.com' }
+              { label: 'GitHub', href: 'https://github.com/Kantapon2030' },
+              { label: 'Instagram', href: 'https://instagram.com/kantapon_020' },
+              { label: 'Facebook', href: 'https://facebook.com/kantapon.wongprot' }
             ].map((s) => (
               <a
                 key={s.label}
