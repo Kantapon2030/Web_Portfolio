@@ -5,15 +5,19 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   body {
-    font-family: 'Helvetica Neue ME', Helvetica, Arial, sans-serif;
+    font-family: 'Prompt', 'Inter', 'IBM Plex Sans Thai', 'Noto Sans Thai', 'Helvetica Neue ME', Helvetica, Arial, sans-serif;
     background-color: #faf9f6;
     color: #181818;
     user-select: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Custom sleek minimalist scrollbar */
@@ -29,6 +33,15 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #999;
+  }
+}
+
+@keyframes showcaseProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
   }
 }
 

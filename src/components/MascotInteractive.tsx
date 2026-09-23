@@ -60,51 +60,76 @@ export const MascotInteractive: React.FC = () => {
     });
   }, []);
 
-  // Track cursor direction relative to mascot head
+  // Track cursor direction relative to mascot head (Throttled with rAF & IntersectionObserver)
   useEffect(() => {
+    let animationFrameId: number | null = null;
+    let isVisible = true;
+
+    // Disconnect tracking when mascot is scrolled out of viewport
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height * 0.32; // Mascot eyes / head center
+      if (!isVisible || !containerRef.current) return;
+      if (animationFrameId !== null) return; // Only run once per screen refresh frame
 
-      const dx = e.clientX - centerX;
-      const dy = e.clientY - centerY;
-      const dist = Math.hypot(dx, dy);
+      animationFrameId = requestAnimationFrame(() => {
+        animationFrameId = null;
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height * 0.32; // Mascot eyes / head center
 
-      // Normalized coordinates for subtle spring tilt
-      const maxDistX = Math.max(window.innerWidth / 2, 400);
-      const maxDistY = Math.max(window.innerHeight / 2, 400);
-      mouseX.set(Math.max(-1, Math.min(1, dx / maxDistX)));
-      mouseY.set(Math.max(-1, Math.min(1, dy / maxDistY)));
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+        const dist = Math.hypot(dx, dy);
 
-      // 9-Directional sprite selection based on angle & deadzone
-      if (dist < 75) {
-        setDirection('center');
-      } else {
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI); // -180 to 180
-        if (angle >= -22.5 && angle < 22.5) {
-          setDirection('right');
-        } else if (angle >= 22.5 && angle < 67.5) {
-          setDirection('down_right');
-        } else if (angle >= 67.5 && angle < 112.5) {
-          setDirection('down');
-        } else if (angle >= 112.5 && angle < 157.5) {
-          setDirection('down_left');
-        } else if (angle >= -67.5 && angle < -22.5) {
-          setDirection('up_right');
-        } else if (angle >= -112.5 && angle < -67.5) {
-          setDirection('up');
-        } else if (angle >= -157.5 && angle < -112.5) {
-          setDirection('up_left');
+        // Normalized coordinates for subtle spring tilt
+        const maxDistX = Math.max(window.innerWidth / 2, 400);
+        const maxDistY = Math.max(window.innerHeight / 2, 400);
+        mouseX.set(Math.max(-1, Math.min(1, dx / maxDistX)));
+        mouseY.set(Math.max(-1, Math.min(1, dy / maxDistY)));
+
+        // 9-Directional sprite selection based on angle & deadzone
+        if (dist < 75) {
+          setDirection('center');
         } else {
-          setDirection('left');
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI); // -180 to 180
+          if (angle >= -22.5 && angle < 22.5) {
+            setDirection('right');
+          } else if (angle >= 22.5 && angle < 67.5) {
+            setDirection('down_right');
+          } else if (angle >= 67.5 && angle < 112.5) {
+            setDirection('down');
+          } else if (angle >= 112.5 && angle < 157.5) {
+            setDirection('down_left');
+          } else if (angle >= -67.5 && angle < -22.5) {
+            setDirection('up_right');
+          } else if (angle >= -112.5 && angle < -67.5) {
+            setDirection('up');
+          } else if (angle >= -157.5 && angle < -112.5) {
+            setDirection('up_left');
+          } else {
+            setDirection('left');
+          }
         }
-      }
+      });
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+    };
   }, [mouseX, mouseY]);
 
   const greetings = [
@@ -144,11 +169,11 @@ export const MascotInteractive: React.FC = () => {
         <span>{clickMessage || 'มาสคอตมองตามเมาส์ได้ 8 ทิศ! (คลิกคุยได้ครับ)'}</span>
       </motion.div>
 
-      {/* Mascot Organic Container */}
-      <div className="relative w-[240px] sm:w-[280px] h-[460px] sm:h-[500px] flex items-center justify-center">
+      {/* Mascot Organic Container — Scaled down by ~12-15% for cleaner minimal proportion */}
+      <div className="relative w-[210px] sm:w-[245px] h-[400px] sm:h-[435px] flex items-center justify-center">
         {/* Soft Ambient Backdrop Aura & Ground Shadow */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-sky-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-4 w-3/4 h-6 bg-black/10 dark:bg-black/40 rounded-full blur-md pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-sky-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-3 w-3/4 h-5 bg-black/10 dark:bg-black/40 rounded-full blur-md pointer-events-none" />
 
         {/* Dynamic Sprite Container with Micro-Tilt */}
         <motion.div
@@ -162,6 +187,7 @@ export const MascotInteractive: React.FC = () => {
           <img
             src={SPRITES[direction]}
             alt={`Kantapon Mascot looking ${direction}`}
+            decoding="async"
             className="w-full h-full object-contain pointer-events-none drop-shadow-[0_16px_32px_rgba(0,0,0,0.15)] transition-all duration-75"
           />
         </motion.div>

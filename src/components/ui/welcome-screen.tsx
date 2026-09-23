@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Diamond } from './diamond';
+import UniqueLoading from './morph-loading';
 
 interface WelcomeScreenProps {
   onComplete: () => void;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
-  // Step 1: โลโก้หมุน พื้นหลังสีดำทั้งหน้า
-  // Step 2: ตัวอักษร welcome แบบมินิมอล ให้เต็มหน้า (พื้นหลังสีดำ)
-  // Step 3: เปลี่ยนพื้นหลังเป็นสีขาว เขียนว่า Kantapon Web Portfolio
-  const [step, setStep] = useState<1 | 2 | 3 | 'done'>(1);
+  // Step 1: UniqueLoading morphing animation on dark background (replaces hello loading)
+  // Step 2: Transition to clean white background: "ยินดีต้อนรับสู่" (Thai) + "Kantapon Web Portfolio"
+  const [step, setStep] = useState<1 | 2 | 'done'>(1);
+  const timer1Ref = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timer2Ref = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const finishTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleFinish = React.useCallback(() => {
+    if (timer1Ref.current) clearTimeout(timer1Ref.current);
+    if (timer2Ref.current) clearTimeout(timer2Ref.current);
+    setStep('done');
+    finishTimerRef.current = setTimeout(() => {
+      onComplete();
+    }, 500);
+  }, [onComplete]);
 
   useEffect(() => {
-    // Step 1 -> Step 2 after 1.4s
-    const timer1 = setTimeout(() => {
+    // Step 1 -> Step 2 after morph animation (~2.6s)
+    timer1Ref.current = setTimeout(() => {
       setStep(2);
-    }, 1400);
+    }, 2600);
 
-    // Step 2 -> Step 3 after another 1.6s (total 3.0s)
-    const timer2 = setTimeout(() => {
-      setStep(3);
-    }, 3100);
-
-    // Step 3 -> Finish after another 1.8s (total 4.9s)
-    const timer3 = setTimeout(() => {
+    // Step 2 -> Finish after another 2.0s (total ~4.6s)
+    timer2Ref.current = setTimeout(() => {
       handleFinish();
-    }, 5000);
+    }, 4600);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
@@ -36,19 +42,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
+      if (timer1Ref.current) clearTimeout(timer1Ref.current);
+      if (timer2Ref.current) clearTimeout(timer2Ref.current);
+      if (finishTimerRef.current) clearTimeout(finishTimerRef.current);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
-
-  const handleFinish = () => {
-    setStep('done');
-    setTimeout(() => {
-      onComplete();
-    }, 500);
-  };
+  }, [handleFinish]);
 
   return (
     <AnimatePresence>
@@ -59,14 +58,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
           className={`fixed inset-0 z-[100] flex items-center justify-center select-none overflow-hidden transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            step === 3 ? 'bg-white text-black' : 'bg-black text-white'
+            step === 2 ? 'bg-white text-black' : 'bg-black text-white'
           }`}
         >
           {/* Subtle Minimal Skip Indicator */}
           <button
             onClick={handleFinish}
             className={`absolute top-6 right-8 z-20 text-[11px] font-mono tracking-widest uppercase transition-opacity duration-300 hover:opacity-100 ${
-              step === 3
+              step === 2
                 ? 'text-neutral-500 hover:text-black'
                 : 'text-neutral-500 hover:text-white'
             }`}
@@ -75,64 +74,54 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
           </button>
 
           {/* ==============================================================
-              STEP 1: โลโก้หมุน พื้นหลังสีดำทั้งหน้า
+              STEP 1: UniqueLoading Morph Animation on Deep Black
               ============================================================== */}
           {step === 1 && (
             <motion.div
               key="step-1"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col items-center justify-center gap-6"
+              exit={{ opacity: 0, scale: 1.06 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="flex w-full h-screen flex-col justify-center items-center gap-10 px-6"
             >
-              {/* Spinning Logo Container */}
+              <UniqueLoading variant="morph" size="lg" className="w-32 h-32" />
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'linear'
-                }}
-                className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center text-white"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25, duration: 0.5 }}
+                className="flex items-center gap-2 text-neutral-400 font-mono text-[11px] tracking-[0.25em] uppercase"
               >
-                <Diamond className="w-full h-full text-white" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>LOADING EXPERIENCE</span>
               </motion.div>
             </motion.div>
           )}
 
           {/* ==============================================================
-              STEP 2: ขึ้นตัวอักษร welcome แบบมินิมอล ให้เต็มหน้า (พื้นหลังสีดำ)
+              STEP 2: Minimal White Canvas with "ยินดีต้อนรับสู่" + "Kantapon Web Portfolio"
               ============================================================== */}
           {step === 2 && (
             <motion.div
               key="step-2"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full px-6 flex items-center justify-center overflow-hidden"
-            >
-              <h1 className="font-hn font-light text-[18vw] sm:text-[19vw] lg:text-[20vw] leading-none tracking-tighter text-white uppercase text-center select-none">
-                welcome
-              </h1>
-            </motion.div>
-          )}
-
-          {/* ==============================================================
-              STEP 3: เปลี่ยนพื้นหลังเป็นสีขาว เขียนว่า Kantapon Web Portfolio
-              ============================================================== */}
-          {step === 3 && (
-            <motion.div
-              key="step-3"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center justify-center text-center px-6"
             >
+              {/* Thai Welcome Small Intro Text */}
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="text-xs sm:text-sm font-medium tracking-wide text-neutral-500 mb-2 font-hn"
+              >
+                ยินดีต้อนรับสู่
+              </motion.span>
+
               {/* Apple Text Reveal Motion Container */}
-              <div className="overflow-hidden py-2 px-4">
+              <div className="overflow-hidden py-1 px-4">
                 <motion.h1
                   initial={{ y: '110%' }}
                   animate={{ y: '0%' }}
@@ -140,7 +129,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
                     duration: 0.8,
                     ease: [0.16, 1, 0.3, 1]
                   }}
-                  className="font-hn text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-neutral-900"
+                  className="font-hn text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-neutral-900"
                 >
                   Kantapon Web Portfolio
                 </motion.h1>
@@ -150,10 +139,10 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.25, duration: 0.6 }}
-                className="mt-3 text-xs sm:text-sm font-mono tracking-[0.25em] uppercase text-neutral-500"
+                transition={{ delay: 0.35, duration: 0.6 }}
+                className="mt-3 text-xs sm:text-sm font-mono tracking-[0.25em] uppercase text-neutral-400"
               >
-                Computer Engineering &bull; 2025
+                Computer Engineering &bull; 2026
               </motion.p>
             </motion.div>
           )}

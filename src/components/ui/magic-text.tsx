@@ -4,34 +4,43 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 
 export interface MagicTextProps {
-  text: string;
+  text?: string;
+  lines?: string[];
   className?: string;
   wordClassName?: string;
   progress?: MotionValue<number>;
 }
 
-interface WordProps {
+interface RevealItemProps {
   children: React.ReactNode;
   progress: MotionValue<number>;
   range: [number, number];
-  wordClassName?: string;
+  className?: string;
 }
 
-const Word: React.FC<WordProps> = ({ children, progress, range, wordClassName }) => {
-  const opacity = useTransform(progress, range, [0.2, 1]);
+const RevealItem: React.FC<RevealItemProps> = ({ children, progress, range, className }) => {
+  // Smooth scroll-driven rise up and illumination
+  const opacity = useTransform(progress, range, [0.12, 1]);
+  const y = useTransform(progress, range, [48, 0]);
+  const scale = useTransform(progress, range, [0.96, 1]);
 
   return (
-    <motion.span
-      style={{ opacity }}
-      className={`inline-block mx-1.5 sm:mx-2.5 my-1 text-white font-medium transition-opacity ${wordClassName ?? ""}`}
+    <motion.div
+      style={{
+        opacity,
+        y,
+        scale,
+      }}
+      className={`block my-2 sm:my-3.5 text-white font-prompt font-normal will-change-transform ${className ?? ""}`}
     >
       {children}
-    </motion.span>
+    </motion.div>
   );
 };
 
 export const MagicText: React.FC<MagicTextProps> = ({
   text,
+  lines: customLines,
   className = "",
   wordClassName = "",
   progress: customProgress,
@@ -43,31 +52,45 @@ export const MagicText: React.FC<MagicTextProps> = ({
   });
 
   const activeProgress = customProgress || defaultProgress;
-  const words = text.trim().split(/\s+/);
+
+  // Determine lines to display: customLines takes priority, otherwise split text by newline or phrase
+  const lines =
+    customLines ||
+    (text
+      ? text.includes("\n")
+        ? text.split("\n")
+        : text.includes("  ")
+        ? text.split(/\s{2,}/)
+        : text.trim().split(/\s+/)
+      : []);
 
   return (
     <div
       ref={containerRef}
       className={`relative z-10 w-full max-w-4xl mx-auto px-6 select-none ${className}`}
     >
-      <p className="flex flex-wrap justify-center items-center text-center font-hn leading-relaxed tracking-tight">
-        {words.map((word, i) => {
-          const start = i / words.length;
-          const end = Math.min(1, start + 1 / words.length);
+      <div className="flex flex-col items-center justify-center text-center font-prompt leading-[1.5] tracking-normal">
+        {lines.map((line, i) => {
+          // Spread across 0.08 to 0.72 of total scroll progress
+          const totalSpan = 0.64;
+          const step = totalSpan / lines.length;
+          const start = 0.08 + i * step * 0.85;
+          const end = Math.min(0.78, start + step);
           return (
-            <Word
-              key={`${word}-${i}`}
+            <RevealItem
+              key={`${line}-${i}`}
               progress={activeProgress}
               range={[start, end]}
-              wordClassName={wordClassName}
+              className={wordClassName}
             >
-              {word}
-            </Word>
+              {line}
+            </RevealItem>
           );
         })}
-      </p>
+      </div>
     </div>
   );
 };
 
 export default MagicText;
+

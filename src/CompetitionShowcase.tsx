@@ -33,7 +33,7 @@ export const CompetitionShowcase: React.FC<CompetitionShowcaseProps> = ({
         {/* Section Header Indicator */}
         <div className="flex items-center gap-3 mb-8">
           <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
-            04 // Competitions & Verified Honors
+            03 // Competitions & Verified Honors
           </span>
           <div className={`h-px flex-1 ${isDark ? 'bg-neutral-800/80' : 'bg-neutral-200/80'}`} />
         </div>

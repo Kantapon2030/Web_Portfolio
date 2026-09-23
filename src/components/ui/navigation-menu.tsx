@@ -12,7 +12,6 @@ export interface NavItem {
 const DEFAULT_NAV_ITEMS: NavItem[] = [
   { name: 'About Me', href: '#about' },
   { name: 'Motto & 3D', href: '#skills' },
-  { name: 'Projects', href: '#projects' },
   { name: 'Competitions', href: '#competitions' },
   { name: 'Leadership', href: '#leadership' },
   { name: 'Honors', href: '#awards' },

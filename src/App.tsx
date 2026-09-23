@@ -1,138 +1,139 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  X,
   Copy,
   Check,
   ArrowUp,
-  ExternalLink,
-  ChevronDown,
-  Award,
-  ShieldCheck,
   Sparkles
 } from 'lucide-react';
 import realUserBody from './assets/real_user_body.png';
 import arduinoBoard from './assets/arduino_board.png';
 import minimalWhiteBg from './assets/minimal_white_bg.jpg';
-import compHackathonLab from './assets/comp_hackathon_lab.jpg';
-import compRobotRescue from './assets/comp_robot_rescue.jpg';
-import compAiPresentation from './assets/comp_ai_presentation.jpg';
-import compAwardPodium from './assets/comp_award_podium.jpg';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { AnimatedNavFramer } from './components/ui/navigation-menu';
-import { CompetitionShowcase } from './CompetitionShowcase';
-import { CertificateModal } from './CertificateModal';
-import { Competition } from './competitionData';
+import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
 import { WelcomeScreen } from './components/ui/welcome-screen';
 import { SplineScene } from './components/ui/splite';
 import { Spotlight } from './components/ui/spotlight';
 import { MagicText } from './components/ui/magic-text';
-import { Timeline } from './components/ui/timeline';
 import { MascotInteractive } from './components/MascotInteractive';
+import { calculateDetailedAge, DetailedAge } from './lib/age';
+import { SmartSongthaewShowcase } from './components/SmartSongthaewShowcase';
+import ButtonSocialIconDemo from '@/components/ui/social-icon';
 
-// Projects data
-interface Project {
-  id: string;
-  number: string;
-  title: string;
-  category: 'ai' | 'hw' | 'web';
-  categoryLabel: string;
-  desc: string;
-  fullDesc: string;
-  metrics: string;
-  tech: string[];
+// Hero Portrait SVG Component (Reusable for Desktop full-stage and Mobile centered-stage)
+function HeroPortraitSvg({
+  className = '',
+  viewBox = '0 -30 1920 1110',
+  preserveAspectRatio = 'xMidYMax meet',
+}: {
+  className?: string;
+  viewBox?: string;
+  preserveAspectRatio?: string;
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox={viewBox}
+      preserveAspectRatio={preserveAspectRatio}
+      role="img"
+      aria-label="Portrait of Kantapon Wongprot"
+    >
+      <defs>
+        <radialGradient id="blueEnergyGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.9" />
+          <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+        </radialGradient>
+        <filter id="glowFilter" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* 1. Body Base Image */}
+      <image
+        href={realUserBody}
+        x="0"
+        y="0"
+        width="1920"
+        height="1080"
+        preserveAspectRatio="xMidYMax meet"
+      />
+
+      {/* 2. Levitating Floating Arduino Board (Decorative interactive element) */}
+      <g className="anim-arduino-float pointer-events-auto cursor-pointer group" aria-hidden="true">
+        {/* Soft Energy Field on Palm */}
+        <ellipse
+          cx="791"
+          cy="614"
+          rx="65"
+          ry="22"
+          fill="url(#blueEnergyGlow)"
+          className="anim-energy-pulse"
+        />
+
+        {/* Holographic Circuit Orbit Ring 1 */}
+        <ellipse
+          cx="791"
+          cy="606"
+          rx="86"
+          ry="28"
+          fill="none"
+          stroke="#38bdf8"
+          strokeWidth="1.4"
+          strokeDasharray="20 12 8 8"
+          filter="url(#glowFilter)"
+          className="anim-ring-spin opacity-90"
+        />
+
+        {/* Holographic Circuit Orbit Ring 2 (counter-tilted) */}
+        <g transform="rotate(-9 791 606)">
+          <ellipse
+            cx="791"
+            cy="606"
+            rx="78"
+            ry="24"
+            fill="none"
+            stroke="#93c5fd"
+            strokeWidth="1.2"
+            strokeDasharray="14 10"
+            className="anim-ring-spin opacity-75"
+            style={{ animationDirection: 'reverse', animationDuration: '14s' }}
+          />
+        </g>
+
+        {/* The Isolated Floating Arduino Board */}
+        <image
+          href={arduinoBoard}
+          x="721"
+          y="548"
+          width="140"
+          height="115"
+          className="transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_8px_20px_rgba(56,189,248,0.55)]"
+          style={{ transformOrigin: '791px 605px' }}
+        />
+      </g>
+    </svg>
+  );
 }
 
-const PROJECTS: Project[] = [
-  {
-    id: 'smart-songthaew',
-    number: '01',
-    title: 'Smart Songthaew แพลตฟอร์มสมาร์ตสองแถว',
-    category: 'hw',
-    categoryLabel: 'IoT & Web App',
-    desc: 'ระบบ IoT + Web App ติดตามสองแถวแบบ Real-time ผ่าน LoRa (VIBE Architecture) ตัดค่าใช้จ่ายเครือข่าย คว้าทุนสนับสนุน NSC 2026 ระดับชาติ',
-    fullDesc: 'พัฒนาแพลตฟอร์มแก้ปัญหาประชาชนในส่วนภูมิภาคที่ต้องเสียเวลารอรถสองแถวอย่างคาดเดาไม่ได้ หรือรอในพื้นที่เปลี่ยวและเสี่ยงอันตราย โดยออกแบบสถาปัตยกรรมการส่งข้อมูลระยะไกลผ่านคลื่นสัญญาณ LoRa (VIBE Architecture) เชื่อมกับ Web Application แบบ Real-time ไม่มีค่าบริการเครือข่ายรายเดือน ขึ้นรูปโครงอุปกรณ์ด้วย 3D Printer และออกแบบระบบ Cloud ครบวงจร',
-    metrics: 'ผ่านการคัดเลือกรับทุนสนับสนุน NSC 2026 ระดับชาติ (สวทช. + วช.)',
-    tech: ['IoT', 'LoRa', 'Web App', '3D Printing', 'Cloud', 'React']
-  },
-  {
-    id: 'eduguard-ai',
-    number: '02',
-    title: 'EduGuard AI — พลิกเกมกลโกง AI',
-    category: 'ai',
-    categoryLabel: 'AI Detection',
-    desc: 'ระบบ Full-Stack ช่วยครูตรวจจับงานเขียนของนักเรียนว่าใช้ AI หรือไม่ ความแม่นยำสูงกว่า AI Detector อื่นในตลาด ผ่านรอบ Top 10 ระดับประเทศ',
-    fullDesc: 'พัฒนา Full-Stack Web Application ในฐานะหัวหน้าทีม โดยนำกระบวนการ Design Thinking มาทำความเข้าใจ Pain Point ของครู แล้วเปลี่ยนปัญหาให้กลายเป็นนวัตกรรมที่ใช้งานได้จริง ระบบมีความแม่นยำสูงกว่า AI Detector อื่นๆ ในตลาดจากผลการทดสอบ ผ่านการคัดเลือกเป็น 10 ทีมสุดท้ายระดับประเทศ',
-    metrics: 'Top 10 Finalist ระดับประเทศ • แม่นยำกว่า AI Detector อื่นในตลาด',
-    tech: ['Python', 'FastAPI', 'React', 'TypeScript', 'NLP', 'Design Thinking']
-  },
-  {
-    id: 'smart-school-card',
-    number: '03',
-    title: 'Smart School Card ระบบบัตรนักเรียนอัจฉริยะ',
-    category: 'hw',
-    categoryLabel: 'Embedded & IoT',
-    desc: 'ระบบเช็กชื่อ-ชำระเงินกาแฟออนไลน์ด้วยบัตร RFID + ESP32 เชื่อมเว็บแอป Real-time สำหรับนักเรียน ครู และผู้ปกครอง',
-    fullDesc: 'ออกแบบและพัฒนาระบบบัตรนักเรียนอัจฉริยะที่รวมการเช็กชื่อเข้าเรียนและการชำระเงินในบัตรใบเดียว โดยใช้เทคโนโลยี RFID ร่วมกับ ESP32 ส่งข้อมูลแบบ Real-time ขึ้น Web Dashboard ที่ผู้ปกครองสามารถตรวจสอบสถานะบุตรหลานและประวัติการใช้จ่ายได้ทันที',
-    metrics: 'ทดสอบจริงในโรงเรียน • ผู้ปกครองติดตามสถานะได้ Real-time',
-    tech: ['ESP32', 'RFID', 'C/C++', 'React', 'Firebase', 'LINE API']
-  },
-  {
-    id: 'kru-suan-ai',
-    number: '04',
-    title: 'ครูสวนAI — ผู้ช่วยเกษตรกรด้วย AI',
-    category: 'ai',
-    categoryLabel: 'Computer Vision',
-    desc: 'AI วิเคราะห์ภาพจากสมาร์ตโฟนเพื่อระบุโรคพืชและแนะนำการดูแล ทำงานแบบ Offline รองรับภาษาไทย เพื่อยกระดับภาคเกษตรไทย',
-    fullDesc: 'พัฒนาระบบ Computer Vision บนสมาร์ตโฟนที่ทำงานออฟไลน์ได้ เพื่อช่วยเกษตรกรระบุโรคและภาวะของพืช พร้อมแนะนำวิธีดูแลและปริมาณปุ๋ยที่เหมาะสม ลดการใช้ทรัพยากรเกินจำเป็น รองรับภาษาไทยและใช้งานง่ายแม้สัญญาณไม่ดี เพื่อให้เกษตรกรเป็นเจ้าของข้อมูลและการตัดสินใจ',
-    metrics: 'ใช้งานได้ Offline • รองรับภาษาไทย • แม่นยำในการระบุโรคพืช',
-    tech: ['TensorFlow Lite', 'Python', 'Flutter', 'Computer Vision', 'MobileNet']
-  },
-  {
-    id: 'nextcode-ide',
-    number: '05',
-    title: 'NextCode IDE — โปรแกรม IDE สำหรับผู้เริ่มต้น',
-    category: 'web',
-    categoryLabel: 'Developer Tools',
-    desc: 'Web-based IDE พร้อม AI Code Completion และ Visual Debugger ออกแบบเพื่อนักเรียน ม.ต้น ให้เรียนรู้การเขียนโปรแกรมได้ง่ายขึ้น',
-    fullDesc: 'พัฒนา Web-based Integrated Development Environment (IDE) ที่รองรับ Python และ JavaScript พร้อมฟีเจอร์ AI Code Completion, Visual Debugger แบบ Step-by-step และ Error Explanation เป็นภาษาไทย ออกแบบ UX/UI เน้นความง่ายสำหรับผู้เริ่มต้น ใช้สอนจริงในค่าย Code for Junior',
-    metrics: 'ใช้สอนในค่าย Code for Junior • ผู้เรียนกว่า 60 คน',
-    tech: ['React', 'TypeScript', 'Monaco Editor', 'Python', 'WebSocket']
-  },
-  {
-    id: 'ai-uniguide',
-    number: '06',
-    title: 'AI UniGuide Pro — ที่ปรึกษาเลือกมหาวิทยาลัย',
-    category: 'ai',
-    categoryLabel: 'AI & RAG',
-    desc: 'แชทบอท AI แนะนำสาขาและมหาวิทยาลัยด้วยระบบ RAG ที่ดึงข้อมูลล่าสุดจาก TCAS อัตโนมัติ ช่วยนักเรียน ม.ปลายวางแผนการเรียน',
-    fullDesc: 'สร้างระบบแชทบอทแนะนำเส้นทางการศึกษาด้วยเทคโนโลยี Retrieval-Augmented Generation (RAG) ที่ดึงข้อมูล TCAS, คะแนนรับสมัคร และรายละเอียดสาขาล่าสุดอัตโนมัติ ผู้ใช้สามารถถามข้อมูลได้ด้วยภาษาไทยแบบ Natural Language และรับคำแนะนำเฉพาะบุคคลตามผลการเรียนและความสนใจ',
-    metrics: 'ข้อมูล TCAS อัปเดตอัตโนมัติ • รองรับภาษาไทยแบบ Natural Language',
-    tech: ['Python', 'LangChain', 'RAG', 'OpenAI API', 'Vector DB', 'FastAPI']
-  }
-];
+// Real birthdate: 2008-12-01 (17 years old)
+const BIRTH_DATE = '2008-12-01';
 
 export default function App() {
   // Welcome screen state
   const [showWelcome, setShowWelcome] = useState<boolean>(true);
 
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Projects filter and modal
-  const [projectFilter, setProjectFilter] = useState<'all' | 'ai' | 'hw' | 'web'>('all');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
-  // Competitions certificate modal
-  const [selectedCompetitionForCert, setSelectedCompetitionForCert] = useState<Competition | null>(null);
-
-  // Awards modal
-  const [selectedAward, setSelectedAward] = useState<{ title: string; subtitle: string; org: string; year: string } | null>(null);
+  // Global scroll progress (Framer Motion value — updates DOM directly with zero component re-renders)
+  const { scrollYProgress: globalScrollProgress } = useScroll();
 
   // Toast notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Stats number counters
-  const [countersVisible, setCountersVisible] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
+  // Exact real-time age state (initial calculation prevents layout shift)
+  const [age, setAge] = useState<DetailedAge>(() => calculateDetailedAge(BIRTH_DATE));
 
   // Philosophy runway smooth scroll progress
   const philosophyRef = useRef<HTMLDivElement>(null);
@@ -140,42 +141,42 @@ export default function App() {
     target: philosophyRef,
     offset: ["start start", "end end"],
   });
-  const philosophySubtitleOpacity = useTransform(philosophyProgress, [0.35, 0.75], [0.2, 1]);
-  const philosophySubtitleY = useTransform(philosophyProgress, [0.35, 0.75], [12, 0]);
+  const philosophyEyebrowOpacity = useTransform(philosophyProgress, [0.02, 0.22], [0.2, 1]);
+  const philosophyEyebrowY = useTransform(philosophyProgress, [0.02, 0.22], [18, 0]);
+  const philosophySubtitleOpacity = useTransform(philosophyProgress, [0.55, 0.82], [0.1, 1]);
+  const philosophySubtitleY = useTransform(philosophyProgress, [0.55, 0.82], [32, 0]);
 
-  // Lock body overflow when modal is open
+  // Lock body overflow when welcome modal is open
   useEffect(() => {
-    if (selectedProject || selectedAward || selectedCompetitionForCert || showWelcome) {
+    if (showWelcome) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [selectedProject, selectedAward, selectedCompetitionForCert, showWelcome]);
+  }, [showWelcome]);
 
-  // Scroll listener for progress
+  // Update age on mount and set a timer to recalculate right after midnight
   useEffect(() => {
-    const handleScroll = () => {
-      const h = document.documentElement;
-      const progress = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-      setScrollProgress(progress);
-    };
+    // Initial calculation on mount
+    setAge(calculateDetailedAge(BIRTH_DATE));
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // IntersectionObserver for Stats
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setCountersVisible(true);
-        }
-      },
-      { threshold: 0.3 }
+    // Calculate milliseconds until next midnight in local timezone
+    const now = new Date();
+    const midnight = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+      0,
+      0,
+      1
     );
-    if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
+    const msUntilMidnight = midnight.getTime() - now.getTime();
+
+    const timer = setTimeout(() => {
+      setAge(calculateDetailedAge(BIRTH_DATE));
+    }, msUntilMidnight);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const copyEmail = () => {
@@ -184,10 +185,6 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const filteredProjects = projectFilter === 'all'
-    ? PROJECTS
-    : PROJECTS.filter((p) => p.category === projectFilter);
-
   return (
     <div className="min-h-screen bg-[#faf9f6] text-[#181818] selection:bg-neutral-900 selection:text-white">
       {/* 2-Step Welcome Screen with Diamond Loader & Animated Smile Emoji */}
@@ -195,10 +192,10 @@ export default function App() {
         <WelcomeScreen onComplete={() => setShowWelcome(false)} />
       )}
 
-      {/* Precision Scroll Progress Bar */}
-      <div
-        className="fixed top-0 left-0 h-[2.5px] bg-emerald-500 z-50 transition-all duration-150 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
-        style={{ width: `${scrollProgress}%` }}
+      {/* Precision Scroll Progress Bar (GPU Transform ScaleX — Zero Re-renders) */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2.5px] bg-emerald-500 z-50 origin-left shadow-[0_0_8px_rgba(16,185,129,0.7)]"
+        style={{ scaleX: globalScrollProgress }}
       />
 
       {/* Floating Toast Notification */}
@@ -210,227 +207,352 @@ export default function App() {
       )}
 
       {/* =========================================================================
-          ANIMATED FRAMER NAVIGATION MENU (COLLAPSIBLE FLOATING PILL / CIRCLE)
+          TOP-RIGHT BREADCRUMB ICON NAVIGATION (COMPACT)
           ========================================================================= */}
-      <AnimatedNavFramer onIntroClick={() => setShowWelcome(true)} />
+      <header className="fixed top-5 right-6 z-50 pointer-events-auto">
+        <BreadcrumbIcon />
+      </header>
 
       {/* =========================================================================
-          SECTION 1: HERO (100dvh FULL VIEWPORT COMPOSITION — DARK OBSIDIAN STUDIO)
+          SECTION 1: HERO (100dvh / 100svh FULL VIEWPORT COMPOSITION — DARK OBSIDIAN STUDIO)
           ========================================================================= */}
-      <section id="hero" className="relative h-[100dvh] w-full overflow-hidden select-none bg-[#09090b] snap-start">
+      <section
+        id="hero"
+        aria-label="Home introduction"
+        className="relative min-h-[100svh] lg:h-[100svh] w-full overflow-hidden select-none bg-[#09090b] text-white flex flex-col justify-between"
+      >
         {/* Background Image with Muted Dark Treatment */}
         <img
           src={minimalWhiteBg}
           alt=""
-          className="anim-fade-in absolute inset-0 h-full w-full object-cover opacity-15 brightness-[0.35] contrast-125 mix-blend-luminosity"
+          role="presentation"
+          aria-hidden="true"
+          decoding="async"
+          className="anim-fade-in absolute inset-0 h-full w-full object-cover opacity-15 brightness-[0.35] contrast-125 mix-blend-luminosity pointer-events-none"
         />
 
         {/* Ambient Studio Lighting Glows */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-[500px] h-[400px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute bottom-10 right-1/4 w-[500px] h-[400px] bg-emerald-500/5 rounded-full blur-[130px] pointer-events-none" />
 
         {/* Deep Vignette Overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/80 via-black/40 to-[#09090b] pointer-events-none" />
 
-        {/* Marquee Name Track (Luminous Minimalist Swiss Typography in Dark) */}
-        <div className="absolute inset-x-0 top-[12vh] sm:top-[10vh] z-10 overflow-hidden anim-fade-up delay-marquee py-6 sm:py-10">
-          <div className="marquee flex w-max whitespace-nowrap font-hn font-light text-[12vh] sm:text-[19vh] leading-[1.15] text-white/15 tracking-tight">
-            <span className="inline-block pr-[8vw]">Kantapon &mdash; Wongprot&nbsp;</span>
-            <span className="inline-block pr-[8vw]">Kantapon &mdash; Wongprot&nbsp;</span>
+        {/* Subtle Background Giant Typography: "Kantapon Wongprot" */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[10vh] sm:top-[8vh] z-0 overflow-hidden anim-fade-up delay-marquee py-4 sm:py-8 pointer-events-none select-none hidden sm:block"
+        >
+          <div className="marquee flex w-max whitespace-nowrap font-inter font-light text-[10vh] sm:text-[14vh] lg:text-[17vh] leading-[1.1] text-white/[0.04] tracking-tight">
+            <span className="inline-block pr-[6vw]">Kantapon Wongprot &mdash; Kantapon Wongprot&nbsp;</span>
+            <span className="inline-block pr-[6vw]">Kantapon Wongprot &mdash; Kantapon Wongprot&nbsp;</span>
           </div>
         </div>
 
-        {/* Horizontal Neon/Silver Accent Rule */}
-        <div className="anim-line absolute inset-x-6 sm:inset-x-10 bottom-[5.5rem] sm:bottom-28 z-10 h-[1px] bg-white/20" />
-
-        {/* Hero Footer Meta */}
-        <div className="absolute inset-x-0 bottom-0 z-30 sm:z-10 flex items-end justify-between px-6 pb-5 sm:px-10 sm:pb-8 text-xs sm:text-sm leading-relaxed font-hn text-neutral-300">
-          <div className="anim-fade-up delay-footer-left flex flex-col font-light">
-            <span className="text-white font-medium">Computer Engineering Candidate</span>
-            <span className="text-neutral-400">Robotics & Embedded Dev</span>
-            <span className="text-neutral-400">Deep Learning & AI</span>
-          </div>
-
-          {/* Quick Scroll Indicator Center */}
-          <a
-            href="#about"
-            className="hidden md:flex flex-col items-center gap-1.5 opacity-70 hover:opacity-100 text-white transition-opacity text-[11px] font-mono tracking-widest uppercase cursor-pointer"
-          >
-            <span>Explore Portfolio</span>
-            <ChevronDown size={14} className="animate-bounce text-emerald-400" />
-          </a>
-
-          <div className="anim-fade-up delay-footer-right text-right flex flex-col font-light">
-            <span className="text-neutral-400">Portfolio 2025</span>
-            <span className="font-medium text-white">Kantapon Wongprot</span>
-          </div>
-        </div>
-
-        {/* Real User Studio Portrait with Animated Levitating Arduino Board — Spacious, Uncropped Framing */}
-        <div className="absolute inset-0 z-20 pointer-events-none flex items-end justify-center overflow-hidden">
-          <svg
-            className="anim-rise-in absolute inset-0 h-full w-full pointer-events-none"
-            viewBox="0 -30 1920 1110"
-            preserveAspectRatio="xMidYMax meet"
-          >
-            <defs>
-              <radialGradient id="blueEnergyGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.9" />
-                <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-              </radialGradient>
-              <filter id="glowFilter" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="3.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* 1. Body Base Image (White school uniform stands out crisply on dark backdrop!) */}
-            <image
-              href={realUserBody}
-              x="0"
-              y="0"
-              width="1920"
-              height="1080"
+        {/* =========================================================================
+            DESKTOP HERO (lg:flex) — Side-by-side full viewport obsidian studio
+            ========================================================================= */}
+        <div className="hidden lg:flex flex-col justify-between h-[100svh] w-full relative z-20">
+          {/* DESKTOP ONLY (lg+): Real User Studio Portrait with Levitating Arduino Board on Right */}
+          <div className="absolute inset-0 z-10 pointer-events-none flex items-end justify-center overflow-hidden">
+            <HeroPortraitSvg
+              className="anim-rise-in absolute inset-0 h-full w-full pointer-events-none lg:translate-x-[7%] xl:translate-x-[9%]"
+              viewBox="0 -30 1920 1110"
+              preserveAspectRatio="xMidYMax meet"
             />
+          </div>
 
-            {/* 2. Levitating Floating Arduino Board with Glowing Holographic Circuit Rings */}
-            <g className="anim-arduino-float pointer-events-auto cursor-pointer group">
-              {/* Soft Energy Field on Palm */}
-              <ellipse
-                cx="791"
-                cy="614"
-                rx="65"
-                ry="22"
-                fill="url(#blueEnergyGlow)"
-                className="anim-energy-pulse"
-              />
+          {/* Center-Left Content Column on Desktop */}
+          <div className="relative z-30 w-full max-w-[1536px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 pt-20 sm:pt-24 lg:pt-28 flex-1 flex flex-col justify-center pointer-events-none">
+            <div className="max-w-[480px] lg:max-w-[520px] text-left pointer-events-auto anim-fade-up">
+              {/* 1. Eyebrow */}
+              <div className="inline-flex items-center gap-2 mb-3 sm:mb-4">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.2em] text-neutral-400 font-medium">
+                  HELLO, I’M KANTAPON
+                </span>
+              </div>
 
-              {/* Holographic Circuit Orbit Ring 1 */}
-              <ellipse
-                cx="791"
-                cy="606"
-                rx="86"
-                ry="28"
-                fill="none"
-                stroke="#38bdf8"
-                strokeWidth="1.4"
-                strokeDasharray="20 12 8 8"
-                filter="url(#glowFilter)"
-                className="anim-ring-spin opacity-90"
-              />
+              {/* 2. Main Heading: Kantapon Wongprot */}
+              <h1 className="font-inter font-semibold text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem] text-neutral-100 tracking-tight leading-[1.06]">
+                Kantapon<br />
+                Wongprot
+              </h1>
 
-              {/* Holographic Circuit Orbit Ring 2 (counter-tilted) */}
-              <g transform="rotate(-9 791 606)">
-                <ellipse
-                  cx="791"
-                  cy="606"
-                  rx="78"
-                  ry="24"
-                  fill="none"
-                  stroke="#93c5fd"
-                  strokeWidth="1.2"
-                  strokeDasharray="14 10"
-                  className="anim-ring-spin opacity-75"
-                  style={{ animationDirection: 'reverse', animationDuration: '14s' }}
+              {/* 3. Secondary Tagline: Building ideas with AI & Embedded Systems. */}
+              <p className="font-inter font-medium text-lg sm:text-2xl lg:text-[1.75rem] text-neutral-300 mt-3 sm:mt-4 leading-snug">
+                Building ideas with<br />
+                <span className="text-white">AI &amp; Embedded Systems.</span>
+              </p>
+
+              {/* 4. Thai Introduction */}
+              <p className="mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-[17px] text-neutral-300/90 font-normal leading-[1.75] font-thai max-w-[480px] lg:max-w-[500px]">
+                ผมชื่อกันตภณ นักเรียนชั้น ม.6 ที่สนใจ AI, Robotics<br className="hidden sm:inline" />
+                และ Embedded Systems ชอบเปลี่ยนไอเดียให้กลายเป็น<br className="hidden sm:inline" />
+                โปรเจกต์ที่ทดลองและใช้งานได้จริง
+              </p>
+
+              {/* 5. CTAs */}
+              <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3.5 sm:gap-5 text-xs sm:text-sm">
+                <a
+                  href="#projects"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-700 bg-neutral-900/70 backdrop-blur-sm text-neutral-100 hover:text-white hover:border-neutral-400 hover:bg-neutral-800 transition-all font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                >
+                  <span>View selected projects</span>
+                  <span className="text-emerald-400">↗</span>
+                </a>
+                <a
+                  href="#about"
+                  className="group inline-flex items-center gap-1.5 px-3 py-2 text-neutral-400 hover:text-white transition-colors font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-md"
+                >
+                  <span>About me</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Horizontal Neon/Silver Accent Rule (Desktop) */}
+          <div className="anim-line inset-x-6 sm:inset-x-10 lg:inset-x-16 xl:inset-x-20 bottom-[5rem] sm:bottom-24 z-20 h-[1px] bg-white/15 block" />
+
+          {/* Hero Footer Meta & Scroll to explore (Desktop) */}
+          <div className="flex relative z-30 w-full max-w-[1536px] mx-auto items-end justify-between px-6 pb-5 sm:px-10 sm:pb-8 lg:px-16 xl:px-20 text-xs sm:text-sm leading-relaxed text-neutral-300">
+            {/* Bottom Left: Identity & Location */}
+            <div className="anim-fade-up delay-footer-left flex flex-col font-normal text-left">
+              <span className="text-neutral-100 font-medium text-xs sm:text-sm">M.6 Student</span>
+              <span className="text-neutral-300 text-[11px] sm:text-xs">AI, Robotics &amp; Embedded Systems</span>
+              <span className="text-neutral-400 font-mono text-[10px] sm:text-[11px] mt-0.5 tracking-normal">Nakhon Si Thammarat, Thailand</span>
+            </div>
+
+            {/* Center-Bottom: Scroll Indicator */}
+            <a
+              href="#about"
+              className="hidden md:inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-neutral-400 hover:text-white transition-colors uppercase cursor-pointer py-1 px-2.5 rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400"
+              aria-label="Scroll to explore about me"
+            >
+              <span>SCROLL TO EXPLORE</span>
+              <span>↓</span>
+            </a>
+
+            {/* Bottom Right: Year & Name */}
+            <div className="anim-fade-up delay-footer-right text-right flex flex-col font-normal">
+              <span className="text-neutral-400 font-mono text-[11px] sm:text-xs">Portfolio 2026</span>
+              <span className="font-medium text-neutral-100 text-xs sm:text-sm">Kantapon Wongprot</span>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            MOBILE HERO (lg:hidden) — 2-Stage Story:
+            Stage 1: Portrait first (full head, zero cutoff, glowing Arduino & laptop)
+            Stage 2: Scroll down to reveal Kantapon Wongprot headline, tagline & bio
+            ========================================================================= */}
+        <div className="lg:hidden flex flex-col w-full relative z-20">
+          {/* Mobile Stage 1 (100svh): Kantapon Portrait with Full Head & Scroll Prompt */}
+          <div className="min-h-[100svh] flex flex-col justify-between items-center px-6 pt-20 pb-8 relative">
+            {/* Eyebrow badge */}
+            <div className="pt-2 flex justify-center w-full anim-fade-up">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 backdrop-blur-md shadow-lg">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-300 font-medium">
+                  HELLO, I’M KANTAPON
+                </span>
+              </div>
+            </div>
+
+            {/* Centered User Portrait (Zero Cutoff: viewBox="590 60 740 1020" gives 60px breathing headroom) */}
+            <div className="flex-1 flex items-center justify-center relative w-full my-auto py-2">
+              {/* Soft Ambient Studio Lighting Glow */}
+              <div className="absolute inset-0 max-w-[320px] max-h-[320px] m-auto bg-gradient-to-b from-sky-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[58svh] flex items-center justify-center">
+                <HeroPortraitSvg
+                  className="anim-rise-in w-full h-full pointer-events-auto drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)]"
+                  viewBox="590 60 740 1020"
+                  preserveAspectRatio="xMidYMid meet"
                 />
-              </g>
+              </div>
+            </div>
 
-              {/* The Isolated Floating Arduino Board */}
-              <image
-                href={arduinoBoard}
-                x="721"
-                y="548"
-                width="140"
-                height="115"
-                className="transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_8px_20px_rgba(56,189,248,0.55)]"
-                style={{ transformOrigin: '791px 605px' }}
-              />
-            </g>
-          </svg>
+            {/* Scroll Indicator Prompt */}
+            <div className="pb-4 flex justify-center w-full anim-fade-up">
+              <a
+                href="#mobile-hero-details"
+                className="inline-flex flex-col items-center gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer group py-2 px-4 rounded-full bg-white/[0.04] border border-white/5 backdrop-blur-sm"
+                aria-label="Scroll down to view profile and introduction"
+              >
+                <span className="text-[10px] font-mono tracking-[0.25em] text-neutral-400 group-hover:text-neutral-200 uppercase font-medium">
+                  SCROLL TO EXPLORE
+                </span>
+                <span className="text-emerald-400 text-xs animate-bounce leading-none">↓</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Mobile Stage 2: Revealed on scroll — Kantapon Wongprot headline, tagline, bio, and CTAs */}
+          <div
+            id="mobile-hero-details"
+            className="min-h-[100svh] flex flex-col justify-between px-6 pt-20 pb-8 relative"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 36 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10% 0px" }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1 flex flex-col justify-center max-w-[480px] mx-auto w-full text-left"
+            >
+              {/* Eyebrow */}
+              <div className="inline-flex items-center gap-2 mb-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-400 font-medium">
+                  KANTAPON WONGPROT
+                </span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="font-inter font-semibold text-4xl sm:text-5xl text-neutral-100 tracking-tight leading-[1.06]">
+                Kantapon<br />
+                Wongprot
+              </h1>
+
+              {/* Secondary Tagline */}
+              <p className="font-inter font-medium text-lg sm:text-xl text-neutral-300 mt-3 leading-snug">
+                Building ideas with<br />
+                <span className="text-white">AI &amp; Embedded Systems.</span>
+              </p>
+
+              {/* Thai Introduction */}
+              <p className="mt-4 text-[15px] sm:text-base text-neutral-300/90 font-normal leading-[1.75] font-thai">
+                ผมชื่อกันตภณ นักเรียนชั้น ม.6 ที่สนใจ AI, Robotics<br />
+                และ Embedded Systems ชอบเปลี่ยนไอเดียให้กลายเป็น<br />
+                โปรเจกต์ที่ทดลองและใช้งานได้จริง
+              </p>
+
+              {/* CTAs */}
+              <div className="mt-6 flex flex-wrap items-center gap-3.5 text-xs sm:text-sm">
+                <a
+                  href="#projects"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-700 bg-neutral-900/80 backdrop-blur-sm text-neutral-100 hover:text-white hover:border-neutral-400 hover:bg-neutral-800 transition-all font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                >
+                  <span>View selected projects</span>
+                  <span className="text-emerald-400">↗</span>
+                </a>
+                <a
+                  href="#about"
+                  className="group inline-flex items-center gap-1.5 px-3 py-2 text-neutral-400 hover:text-white transition-colors font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-md"
+                >
+                  <span>About me</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Mobile Horizontal Accent Rule & Footer Meta */}
+            <div className="w-full max-w-[480px] mx-auto pt-8">
+              <div className="w-full h-[1px] bg-white/15 mb-4" />
+              <div className="flex items-center justify-between text-xs leading-relaxed text-neutral-300">
+                <div className="flex flex-col text-left">
+                  <span className="text-neutral-100 font-medium text-xs">M.6 Student</span>
+                  <span className="text-neutral-300 text-[11px]">AI, Robotics &amp; Embedded Systems</span>
+                  <span className="text-neutral-400 font-mono text-[10px] mt-0.5">Nakhon Si Thammarat, Thailand</span>
+                </div>
+                <div className="text-right flex flex-col">
+                  <span className="text-neutral-400 font-mono text-[11px]">Portfolio 2026</span>
+                  <span className="font-medium text-neutral-100 text-xs">Kantapon Wongprot</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 2: ABOUT ME & MASCOT SIGNATURE — 01 // ABOUT ME (IVORY EDITORIAL)
+          SECTION 2: ABOUT ME & MASCOT SIGNATURE — 01 // ABOUT ME (MINIMAL MODERN)
           ========================================================================= */}
       <div className="w-full bg-[#faf9f6] text-[#181818]">
-        <section id="about" className="py-24 sm:py-32 px-6 sm:px-12 max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-10">
+        <section id="about" className="py-24 sm:py-36 px-6 sm:px-12 max-w-5xl mx-auto">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-3 mb-12 sm:mb-16">
             <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
-              01 // About Me & Background
+              ABOUT ME
             </span>
-            <div className="h-px flex-1 bg-neutral-200/80" />
+            <div className="h-px flex-1 bg-neutral-200" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Left Column: Anime Mascot Signature (Interactive 9-direction cursor tracking) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Left Column: Anime Mascot Signature (Reduced size by 12-15%, minimalist presence) */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center">
               <MascotInteractive />
             </div>
 
-            {/* Right Column: Personal Information & Capstone Highlights */}
+            {/* Right Column: Personal Information with Generous White Space */}
             <div className="lg:col-span-7 flex flex-col justify-center">
+              {/* Heading & Subheading */}
               <div className="mb-6">
-                <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 font-semibold block mb-2">
-                  AI Engineering &amp; Embedded Systems
-                </span>
-                <h2 className="font-hn text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-neutral-900 leading-[1.15]">
-                  กันตภณ วงศ์พรต
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-neutral-900 leading-[1.2]">
+                  สวัสดีครับ ผมกันตภณ
                 </h2>
-                <p className="text-sm font-mono text-neutral-500 mt-1">
-                  Kantapon Wongprot (ธันวา) &bull; นักเรียนชั้น ม.6 &bull; ร.ร.เตรียมอุดมศึกษาภาคใต้
+                <p className="text-base sm:text-lg text-neutral-500 font-normal mt-2 leading-relaxed">
+                  จะเรียกว่า “ธันวา” ก็ได้ครับ
+                </p>
+
+                {/* Real-time Calculated Age (Clean text under subheading, no dark box, subtle accent) */}
+                <p
+                  className="mt-3 text-sm sm:text-base text-neutral-600 font-normal flex items-center gap-1.5"
+                  aria-label={age.ariaLabel}
+                >
+                  <span>ตอนนี้ผมอายุ</span>
+                  <span className="font-medium text-emerald-600 font-mono tracking-tight">
+                    {age.years} ปี {age.months} เดือน {age.days} วัน
+                  </span>
                 </p>
               </div>
 
-              <div className="space-y-4 text-neutral-700 font-light leading-relaxed text-base sm:text-lg">
+              {/* Body Paragraphs with Relaxed Leading & Normal Weight */}
+              <div className="space-y-4 text-neutral-700 font-normal leading-relaxed text-sm sm:text-base">
                 <p>
-                  นักเรียน ม.6 อายุ 17 ปี จากโรงเรียนเตรียมอุดมศึกษาภาคใต้ จ.นครศรีธรรมราช มุ่งมั่นพัฒนาในด้าน <strong className="font-semibold text-neutral-900">วิศวกรรมปัญญาประดิษฐ์</strong> และ <strong className="font-semibold text-neutral-900">ระบบสมองกลฝังตัว (Embedded Systems)</strong>
+                  กำลังเรียนอยู่ชั้น ม.6 ที่โรงเรียนเตรียมอุดมศึกษาภาคใต้ จังหวัดนครศรีธรรมราช
                 </p>
                 <p>
-                  ผ่านค่ายวิศวกรรมระดับชาติ <strong className="font-semibold text-neutral-900">CE NEXT GEN ครั้งที่ 3 (KMITL)</strong>, <strong className="font-semibold text-neutral-900">Engineering Up Skill (ม.เกษตรศาสตร์)</strong> และ <strong className="font-semibold text-neutral-900">Pre-Engineering KMITL</strong>
+                  ผมชอบสร้างโปรเจกต์ที่นำ AI ซอฟต์แวร์ และอุปกรณ์จริงมาทำงานร่วมกัน ตั้งแต่ Computer Vision ไปจนถึง Embedded Systems เพราะรู้สึกสนุกทุกครั้งที่สิ่งที่อยู่ในความคิดสามารถทำงานได้จริง
                 </p>
                 <p>
-                  เชื่อว่า "ทุกสิ่งในโลกนี้ เราสามารถสร้างมันขึ้นมาได้" — โค้ดคือเครื่องมือที่แปลงตรรกะและจินตนาการให้กลายเป็นนวัตกรรมที่ใช้งานได้จริง
+                  ช่วงนี้ผมกำลังพัฒนาทักษะด้าน AI และวิศวกรรมคอมพิวเตอร์ พร้อมทดลองสร้างโปรเจกต์ใหม่ ๆ ที่ช่วยแก้ปัญหาใกล้ตัวครับ
                 </p>
               </div>
 
-              {/* Capability Focus Tags */}
-              <div className="mt-7 flex flex-wrap gap-2">
-                {['AI & Machine Learning', 'Computer Vision', 'IoT & Embedded', 'Full-Stack Web', 'Python / C++', 'ประธานชุมนุม Computer & AI'].map((tag) => (
+              {/* Reduced Skill Tags (Only 3 tags requested) */}
+              <div className="mt-8 flex flex-wrap gap-2.5">
+                {[
+                  'AI & Computer Vision',
+                  'Embedded Systems',
+                  'Web Development'
+                ].map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-full border border-neutral-300 text-xs font-mono text-neutral-800 bg-neutral-100 hover:bg-neutral-900 hover:text-white transition-colors"
+                    className="px-3.5 py-1.5 rounded-full border border-neutral-200 text-xs font-mono text-neutral-700 bg-neutral-50 hover:border-neutral-900 hover:text-neutral-900 transition-colors"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
 
-              {/* Stats Counter Grid */}
-              <div ref={statsRef} className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { num: '6+', label: 'โปรเจกต์ที่พัฒนาจริง' },
-                  { num: '5+', label: 'รางวัล/ทุนระดับชาติ' },
-                  { num: '4', label: 'ค่ายวิศวกรรมระดับชาติ' },
-                  { num: '42', label: 'สมาชิกชุมนุมคอมพิวเตอร์' }
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="p-4 rounded-xl bg-neutral-900 text-white border border-neutral-800 flex flex-col justify-between group"
-                  >
-                    <span className="font-hn text-2xl sm:text-3xl font-light text-white tracking-tight flex items-baseline gap-1">
-                      {countersVisible ? stat.num : '0'}
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
-                    </span>
-                    <span className="mt-2 text-[11px] text-neutral-400 font-light leading-snug">
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
+              {/* Simple Text Links with Smooth Hover & Arrow */}
+              <div className="mt-10 pt-6 border-t border-neutral-200/80 flex flex-wrap items-center gap-6 text-sm font-medium">
+                <a
+                  href="#skills"
+                  className="group inline-flex items-center gap-1.5 text-neutral-800 hover:text-emerald-600 transition-colors"
+                >
+                  <span>ดูโปรเจกต์ของผม</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+                <a
+                  href="#contact"
+                  className="group inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                >
+                  <span>ประสบการณ์และกิจกรรม</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
               </div>
             </div>
           </div>
@@ -446,18 +568,12 @@ export default function App() {
           ========================================================================= */}
       <section
         id="skills"
-        className="relative min-h-[100dvh] h-[100dvh] w-full bg-[#050507] text-white flex flex-col items-center justify-between select-none scroll-mt-0 pb-6"
+        className="relative min-h-[100dvh] h-[100dvh] w-full bg-[#050507] text-white flex flex-col items-center justify-between select-none scroll-mt-0 pb-6 overflow-hidden"
       >
         {/* Studio Spotlight shining directly down seamlessly from above */}
-        <Spotlight
-          className="-top-24 left-1/2 -translate-x-1/2"
-          fill="white"
-        />
+        <Spotlight />
 
-        {/* Ambient Atmosphere Glows */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-emerald-500/5 rounded-full blur-[170px] pointer-events-none" />
-
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#050507] to-transparent pointer-events-none z-20" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#050507] to-transparent pointer-events-none z-20" />
 
         {/* TOP: Motto Directly Above Robot's Head (Clear, non-overlapping spacing) */}
         <div className="text-center z-20 shrink-0 px-6 pt-16 sm:pt-20">
@@ -467,7 +583,7 @@ export default function App() {
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-neutral-100 to-neutral-400 tracking-tight leading-tight uppercase">
             EVERYTHING IS POSSIBLE.
           </h1>
-          <p className="mt-2 text-base sm:text-xl md:text-2xl font-light text-neutral-300 font-hn tracking-wide">
+          <p className="mt-2 text-base sm:text-xl md:text-2xl font-light text-neutral-300 font-prompt tracking-wide">
             ทุกสิ่งเป็นไปได้
           </p>
         </div>
@@ -495,15 +611,24 @@ export default function App() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/5 rounded-full blur-[180px] pointer-events-none" />
 
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center relative z-10">
-            <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-neutral-500 block mb-6">
+            <motion.span
+              style={{
+                opacity: philosophyEyebrowOpacity,
+                y: philosophyEyebrowY,
+              }}
+              className="text-[11px] font-mono tracking-[0.3em] uppercase text-neutral-500 block mb-6 will-change-transform"
+            >
               Our Core Philosophy
-            </span>
+            </motion.span>
 
             <MagicText
-              text="เราไม่ได้ทำไม่ได้ เราแค่ยังไม่เคยถูกสอนให้ทำ"
+              lines={[
+                "เราไม่ได้ทำไม่ได้",
+                "เราแค่ยังไม่เคยถูกสอนให้ทำ"
+              ]}
               progress={philosophyProgress}
-              className="text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-center leading-[1.4]"
-              wordClassName="mx-3 sm:mx-5 my-2 block sm:inline-block"
+              className="font-prompt text-3xl sm:text-5xl md:text-6xl font-normal sm:font-light tracking-normal text-center leading-[1.6]"
+              wordClassName="my-2 sm:my-3 font-prompt"
             />
 
             <motion.p
@@ -511,7 +636,7 @@ export default function App() {
                 opacity: philosophySubtitleOpacity,
                 y: philosophySubtitleY,
               }}
-              className="mt-8 sm:mt-10 text-xs sm:text-sm md:text-base font-light font-mono text-neutral-400 tracking-wider"
+              className="mt-8 sm:mt-10 text-xs sm:text-sm md:text-base font-light font-mono text-neutral-400 tracking-wider will-change-transform"
             >
               “We are not incapable; we simply haven't been taught how to do it yet.”
             </motion.p>
@@ -523,418 +648,17 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          SECTION 4: SELECTED WORKS & PROJECTS (ผลงาน & โปรเจกต์) — 03 // PROJECTS
+          SECTION 5: SMART SONGTHAEW LIVE TRANSIT SHOWCASE (FULL-BLEED STAGE)
           ========================================================================= */}
-      <section id="projects" className="py-36 px-6 sm:px-12 max-w-6xl mx-auto border-t border-neutral-200/80">
-        <div className="flex items-center gap-3 mb-8">
-          <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
-            03 // Selected Projects
-          </span>
-          <div className="h-px flex-1 bg-neutral-200/80" />
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-          <div>
-            <h2 className="font-hn text-4xl sm:text-5xl font-normal tracking-tight text-neutral-900">
-              ผลงานที่พัฒนา<span className="font-serif italic text-neutral-400">จริง</span>
-            </h2>
-            <p className="mt-2 text-sm text-neutral-600 font-light">
-              คลิกที่การ์ดเพื่อดูสถาปัตยกรรมและรายละเอียดเชิงลึกของแต่ละโครงการ
-            </p>
-          </div>
-
-          {/* Minimalist Filter Pills */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-neutral-200/80 border border-neutral-300">
-            {[
-              { key: 'all', label: 'ทั้งหมด' },
-              { key: 'ai', label: 'AI / ML' },
-              { key: 'hw', label: 'Hardware' },
-              { key: 'web', label: 'Web App' }
-            ].map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setProjectFilter(f.key as typeof projectFilter)}
-                className={`px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
-                  projectFilter === f.key
-                    ? 'bg-neutral-900 text-white shadow-md'
-                    : 'text-neutral-600 hover:text-neutral-900'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((p) => (
-            <div
-              key={p.id}
-              onClick={() => setSelectedProject(p)}
-              className="group cursor-pointer rounded-2xl bg-white border border-neutral-200/90 p-7 flex flex-col justify-between hover:shadow-2xl hover:-translate-y-1.5 hover:border-neutral-900 transition-all duration-300 relative"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono font-semibold text-neutral-400 group-hover:text-neutral-900 transition-colors">
-                    #{p.number}
-                  </span>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-300 font-medium">
-                    {p.categoryLabel}
-                  </span>
-                </div>
-
-                <h3 className="text-base font-semibold text-neutral-900 group-hover:text-emerald-700 transition-colors mb-2">
-                  {p.title}
-                </h3>
-                <p className="text-xs text-neutral-600 font-light leading-relaxed mb-6">
-                  {p.desc}
-                </p>
-              </div>
-
-              <div>
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {p.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-200"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="pt-3.5 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500 group-hover:text-neutral-900 transition-colors">
-                  <span className="font-light text-[11px] truncate max-w-[200px]">{p.metrics}</span>
-                  <ExternalLink size={13} className="flex-shrink-0" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <SmartSongthaewShowcase />
 
       {/* =========================================================================
-          SECTION 4: COMPETITIONS & HONORS (CINEMATIC DARK EXHIBITION GALLERY) — 04 // COMPETITIONS
-          ========================================================================= */}
-      <CompetitionShowcase
-        isDark={true}
-        onOpenCertificate={(comp) => setSelectedCompetitionForCert(comp)}
-      />
-
-      {/* =========================================================================
-          SECTION 5: LEADERSHIP JOURNEY (เส้นทางผู้นำ) — 05 // LEADERSHIP
-          ========================================================================= */}
-      <section id="leadership" className="py-36 px-6 sm:px-12 max-w-6xl mx-auto border-t border-neutral-200/80">
-        <div className="flex items-center gap-3 mb-8">
-          <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
-            05 // Leadership & Teamwork
-          </span>
-          <div className="h-px flex-1 bg-neutral-200/80" />
-        </div>
-
-        <div className="mb-14">
-          <h2 className="font-hn text-4xl sm:text-5xl font-normal tracking-tight text-neutral-900">
-            ประสบการณ์<span className="font-serif italic text-neutral-400">การเป็นผู้นำ</span>
-          </h2>
-          <p className="mt-2 text-sm text-neutral-600 font-light">
-            บทบาทการบริหารทีม การจัดกิจกรรมวิชาการ และการถ่ายทอดความรู้สู่ชุมชนนักเรียน
-          </p>
-        </div>
-
-        {/* Aceternity UI Scroll-Linked Beam Timeline */}
-        <div className="w-full">
-          <Timeline
-            data={[
-              {
-                title: "2024 — ปัจจุบัน",
-                content: (
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-neutral-900 text-white font-medium shadow-sm">
-                        ประธานชุมนุมคอมพิวเตอร์ & AI
-                      </span>
-                      <span className="text-xs font-mono text-neutral-500">Club President</span>
-                    </div>
-                    <p className="text-neutral-700 text-sm md:text-base font-light mb-6 leading-relaxed">
-                      ดูแลและให้คำปรึกษาสมาชิก 42 คน วางโครงสร้างหลักสูตรและจัดเวิร์กช็อป Python & Machine Learning 6 ครั้ง/เทอม พร้อมริเริ่มระบบพี่สอนน้องจนสมาชิกเพิ่มขึ้น 2 เท่า
-                    </p>
-                    <div className="mb-6 space-y-2">
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> จัดเวิร์กช็อป Python & Machine Learning เจาะลึก 6 หัวข้อ
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> ก่อตั้ง AI Study Group ต่อยอดสร้างผลงานโครงงานระดับประเทศ
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> ริเริ่มระบบ Mentor & Mentee ขยายสมาชิกสู่ 42 คน
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compHackathonLab}
-                          alt="AI Workshop & Mentoring"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>AI Lab & Study Group</span>
-                          <span className="text-neutral-400">42 Members</span>
-                        </div>
-                      </div>
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compAiPresentation}
-                          alt="Technical Presentation"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>Workshop Presentation</span>
-                          <span className="text-neutral-400">Python & ML</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                title: "2024",
-                content: (
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-neutral-900 text-white font-medium shadow-sm">
-                        หัวหน้าทีมแข่งขันหุ่นยนต์ระดับภาค
-                      </span>
-                      <span className="text-xs font-mono text-neutral-500">Team Captain</span>
-                    </div>
-                    <p className="text-neutral-700 text-sm md:text-base font-light mb-6 leading-relaxed">
-                      วางแผนงาน จัดสรรบทบาทด้าน Hardware, Circuit, และ Code ให้ทีม 8 คน บริหารการซ้อมต่อเนื่อง 3 เดือน จนคว้ารางวัลรองชนะเลิศอันดับ 1 การแข่งขันหุ่นยนต์กู้ภัยระดับภาค 2567
-                    </p>
-                    <div className="mb-6 space-y-2">
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> วางสถาปัตยกรรมระบบควบคุมแบบผสาน (ESP32 + Arduino)
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> ฝึกฝนและแก้โจทย์เฉพาะหน้าในสนามจริงร่วมกับทีม 8 คน
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> คว้ารางวัลรองชนะเลิศอันดับ 1 ระดับภาค 2567
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compRobotRescue}
-                          alt="Robotics Rescue Competition"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>Rescue Robot Field Trial</span>
-                          <span className="text-emerald-600 font-medium">1st Runner-up</span>
-                        </div>
-                      </div>
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compAwardPodium}
-                          alt="Award Ceremony Podium"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>Award Ceremony</span>
-                          <span className="text-neutral-400">Regional Competition</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                title: "2023",
-                content: (
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-neutral-900 text-white font-medium shadow-sm">
-                        ผู้ร่วมก่อตั้งค่าย "Code for Junior"
-                      </span>
-                      <span className="text-xs font-mono text-neutral-500">Camp Founder</span>
-                    </div>
-                    <p className="text-neutral-700 text-sm md:text-base font-light mb-6 leading-relaxed">
-                      ริเริ่มค่ายสอนพื้นฐานการเขียนโปรแกรมให้รุ่นน้อง ม.ต้น 60 คน ระดมทีมวิทยากรอาสา 12 คน และจัดทำหลักสูตรแบบ Hands-on gamification ปลูกฝังแรงบันดาลใจด้านวิศวกรรมคอมพิวเตอร์
-                    </p>
-                    <div className="mb-6 space-y-2">
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> จัดการอบรมเชิงปฏิบัติการ (Coding Workshop) สำหรับน้อง ม.ต้น 60 คน
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> ออกแบบสื่อการเรียนรู้แบบ Game-based Learning
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> สถิติความพึงพอใจโครงการสูงถึง 96.4%
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compAiPresentation}
-                          alt="Code for Junior Workshop"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>Junior Coding Camp</span>
-                          <span className="text-neutral-400">60 Students</span>
-                        </div>
-                      </div>
-                      <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04)]">
-                        <img
-                          src={compHackathonLab}
-                          alt="Camp Hackathon Mentoring"
-                          className="rounded-lg object-cover h-40 md:h-52 w-full transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="p-3 text-[11px] font-mono text-neutral-600 bg-neutral-50/80 border-t border-neutral-100 flex justify-between items-center">
-                          <span>Hackathon Mentoring</span>
-                          <span className="text-neutral-400">12 Mentors</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                title: "2022",
-                content: (
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-neutral-900 text-white font-medium shadow-sm">
-                        คณะกรรมการนักเรียน ฝ่ายเทคโนโลยีและสารสนเทศ
-                      </span>
-                      <span className="text-xs font-mono text-neutral-500">School Committee</span>
-                    </div>
-                    <p className="text-neutral-700 text-sm md:text-base font-light mb-6 leading-relaxed">
-                      ร่วมพัฒนาระบบเช็กชื่อกิจกรรมออนไลน์ และดูแลงานถ่ายทอดสดระบบภาพและเสียงของโรงเรียนตลอดปีการศึกษา
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> พัฒนา Web Application สำหรับเช็กชื่อกิจกรรมโรงเรียน
-                      </div>
-                      <div className="flex gap-2 items-center text-neutral-700 text-xs md:text-sm">
-                        <span className="text-emerald-600 font-bold">✓</span> ควบคุมระบบมิกเซอร์และสวิตเชอร์ถ่ายทอดสดงานประจำปี
-                      </div>
-                    </div>
-                  </div>
-                ),
-              },
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 6: AWARDS & CERTIFICATES (เกียรติบัตร & รางวัล) — 06 // AWARDS
-          ========================================================================= */}
-      <section id="awards" className="py-36 px-6 sm:px-12 max-w-6xl mx-auto border-t border-neutral-200/80">
-        <div className="flex items-center gap-3 mb-8">
-          <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
-            06 // Honors & Awards
-          </span>
-          <div className="h-px flex-1 bg-neutral-200/80" />
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <h2 className="font-hn text-4xl sm:text-5xl font-normal tracking-tight text-neutral-900">
-              เกียรติประวัติ & <span className="font-serif italic text-neutral-400">ใบรับรอง</span>
-            </h2>
-            <p className="mt-2 text-sm text-neutral-600 font-light">
-              รางวัลจากการแข่งขันระดับชาติ ระดับภูมิภาค และการสอบวัดระดับทางวิชาการ
-            </p>
-          </div>
-
-          <span className="text-xs font-mono text-neutral-500">
-            คลิกที่การ์ดเพื่อดูรายละเอียดการรับรอง
-          </span>
-        </div>
-
-        {/* Minimal Awards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[
-            {
-              category: 'NSC 2026 — National',
-              title: 'ได้รับทุนสนับสนุน Smart Songthaew',
-              subtitle: 'การแข่งขันพัฒนาโปรแกรมคอมพิวเตอร์แห่งประเทศไทย ครั้งที่ 28',
-              org: 'สวทช. (NSTDA) ร่วมกับ วช.',
-              year: '2569'
-            },
-            {
-              category: 'ICS You Camp 2026',
-              title: 'รองชนะเลิศ อันดับ 2 — Pitching Project',
-              subtitle: 'กิจกรรม ICS YOU CAMP การแข่งขัน Pitching Project',
-              org: 'ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ ม.เกษตรศาสตร์',
-              year: '2569'
-            },
-            {
-              category: 'AI For Thai Hackathon',
-              title: 'Finalist รอบชิงชนะเลิศ',
-              subtitle: 'AI For Thai Hackathon 2026 แบบ 24 ชั่วโมง',
-              org: 'สาขาวิทยาศาสตร์การคำนวณ คณะวิทยาศาสตร์ ม.อ.',
-              year: '2569'
-            },
-            {
-              category: 'THE BEST Award',
-              title: 'รางวัล THE BEST ด้านการจัดกิจกรรมที่เป็นเลิศ',
-              subtitle: 'โครงการสารวัตรนักเรียนไซเบอร์ งาน "โตไปไม่สูบ Festival" ระดับเครือข่ายภาคใต้',
-              org: 'สสส. ร่วมกับ ร.ร.เตรียมอุดมศึกษาภาคใต้',
-              year: '2568'
-            },
-            {
-              category: 'National Training Camp',
-              title: 'ผ่านค่าย CE NEXT GEN ครั้งที่ 3',
-              subtitle: 'ค่ายฝึกอบรมเชิงปฏิบัติการด้านวิศวกรรมคอมพิวเตอร์',
-              org: 'ภาควิชาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ สจล.',
-              year: '2568'
-            },
-            {
-              category: 'Pre-Engineering KMITL',
-              title: 'ผ่านหลักสูตร Computer Programming',
-              subtitle: 'โครงการเตรียมวิศวกรรม KMITL Pre-Engineering School Program 2025',
-              org: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง',
-              year: '2568'
-            }
-          ].map((a) => (
-            <div
-              key={a.title}
-              onClick={() => setSelectedAward(a)}
-              className="p-6 rounded-2xl bg-white border border-neutral-200/90 hover:border-neutral-900 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded font-medium">
-                    {a.category}
-                  </span>
-                  <span className="text-[11px] font-mono text-neutral-500 font-medium">
-                    {a.year}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-neutral-900 text-base leading-snug">{a.title}</h3>
-                <p className="text-xs text-neutral-600 font-light mt-1.5 leading-relaxed">{a.subtitle}</p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-[11px] text-neutral-500">
-                <span className="truncate">{a.org}</span>
-                <span className="text-[11px] font-mono text-emerald-600 font-medium flex items-center gap-1">
-                  <ShieldCheck size={13} /> Verified
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 7: GRAND FINALE CONTACT HUB (DEEP RICH BLACK FINALE) — 07 // CONTACT
+          SECTION 6: GRAND FINALE CONTACT HUB (DEEP RICH BLACK FINALE) — 04 // CONTACT
           ========================================================================= */}
       <section id="contact" className="py-36 px-6 sm:px-12 bg-[#08080a] text-white text-center border-t border-neutral-900">
         <div className="max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 mb-6 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 font-mono">
-            <span>07 // Contact & Inquiries</span>
+            <span>04 // Contact & Inquiries</span>
           </div>
 
           <h2 className="font-hn text-4xl sm:text-6xl font-normal tracking-tight text-white mb-6">
@@ -962,23 +686,9 @@ export default function App() {
             </button>
           </div>
 
-          {/* Social / External Links */}
-          <div className="flex items-center justify-center gap-3 flex-wrap mb-16">
-            {[
-              { label: 'GitHub', href: 'https://github.com/Kantapon2030' },
-              { label: 'Instagram', href: 'https://instagram.com/kantapon_020' },
-              { label: 'Facebook', href: 'https://facebook.com/kantapon.wongprot' }
-            ].map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noreferrer"
-                className="px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs font-mono text-neutral-300 hover:bg-white hover:text-neutral-900 hover:border-white transition-all shadow-sm"
-              >
-                {s.label}
-              </a>
-            ))}
+          {/* Social / External Links (Rounded squircle cards with brand logos in dark theme) */}
+          <div className="mb-16">
+            <ButtonSocialIconDemo theme="dark" />
           </div>
 
           {/* Back To Top & Replay Intro Buttons */}
@@ -1002,144 +712,10 @@ export default function App() {
 
           {/* Final Copyright */}
           <div className="mt-14 pt-8 border-t border-neutral-900 text-xs text-neutral-500 font-light font-mono">
-            © 2025 กันตภณ วงศ์พรต (Kantapon Wongprot) — Computer Engineering Portfolio
+            © 2026 กันตภณ วงศ์พรต (Kantapon Wongprot) — Computer Engineering Portfolio
           </div>
         </div>
       </section>
-
-      {/* =========================================================================
-          MODAL 1: PROJECT DETAIL MODAL
-          ========================================================================= */}
-      {selectedProject && (
-        <div
-          onClick={() => setSelectedProject(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-xl bg-[#141418] rounded-3xl p-8 shadow-2xl border border-neutral-800 relative flex flex-col max-h-[90vh] overflow-y-auto text-white"
-          >
-            <button
-              onClick={() => setSelectedProject(null)}
-              className="absolute right-6 top-6 p-1.5 rounded-full text-neutral-400 hover:text-white transition-colors"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-sm font-mono text-white font-semibold px-2 py-1 rounded bg-neutral-800 border border-neutral-700">
-                #{selectedProject.number}
-              </span>
-              <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-neutral-400">
-                  {selectedProject.categoryLabel}
-                </span>
-                <h3 className="text-xl font-medium text-white">{selectedProject.title}</h3>
-              </div>
-            </div>
-
-            <div className="my-4 p-4 rounded-xl bg-neutral-900/90 border border-neutral-800 text-xs text-neutral-200 font-mono">
-              <strong className="text-emerald-400">ผลลัพธ์สำคัญ:</strong> {selectedProject.metrics}
-            </div>
-
-            <p className="text-sm text-neutral-300 font-light leading-relaxed mb-6">
-              {selectedProject.fullDesc}
-            </p>
-
-            <div className="mb-6">
-              <span className="text-xs font-mono text-neutral-400 block mb-2">เทคโนโลยีที่ใช้:</span>
-              <div className="flex flex-wrap gap-2">
-                {selectedProject.tech.map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs px-3 py-1 rounded-full bg-neutral-800 text-neutral-200 border border-neutral-700 font-mono text-[11px]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-auto pt-6 border-t border-neutral-800 flex items-center justify-between">
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="px-5 py-2.5 rounded-full bg-neutral-800 hover:bg-neutral-700 text-xs font-medium text-neutral-200 transition-colors"
-              >
-                ปิดหน้าต่าง
-              </button>
-              <a
-                href="#contact"
-                onClick={() => setSelectedProject(null)}
-                className="px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-xs font-medium text-black transition-colors"
-              >
-                สอบถามเกี่ยวกับโครงงานนี้
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          MODAL 2: AWARD DETAIL MODAL
-          ========================================================================= */}
-      {selectedAward && (
-        <div
-          onClick={() => setSelectedAward(null)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#141418] rounded-3xl p-7 shadow-2xl border border-neutral-800 relative text-left text-white"
-          >
-            <button
-              onClick={() => setSelectedAward(null)}
-              className="absolute right-6 top-6 p-1.5 rounded-full text-neutral-400 hover:text-white transition-colors"
-            >
-              <X size={18} />
-            </button>
-            <div className="flex items-center gap-2 mb-4 text-emerald-400">
-              <Award size={20} />
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">
-                Official Honor Record
-              </span>
-            </div>
-            <h3 className="text-lg font-medium text-white mb-1">{selectedAward.title}</h3>
-            <p className="text-sm text-neutral-400 font-light mb-4">{selectedAward.subtitle}</p>
-            
-            <div className="p-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 space-y-2 text-xs font-mono text-neutral-300 mb-6">
-              <div className="flex justify-between">
-                <span className="text-neutral-400">หน่วยงานผู้จัด:</span>
-                <span className="font-medium text-neutral-200">{selectedAward.org}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">ปีการศึกษา:</span>
-                <span className="font-medium text-neutral-200">{selectedAward.year}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-400">สถานะ:</span>
-                <span className="text-emerald-400 font-medium inline-flex items-center gap-1">
-                  <ShieldCheck size={12} /> ยืนยันเอกสารแล้ว
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setSelectedAward(null)}
-              className="w-full py-2.5 rounded-full bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium transition-colors"
-            >
-              ปิดหน้าต่าง
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          MODAL 3: CERTIFICATE HIGH-RESOLUTION PREVIEW MODAL
-          ========================================================================= */}
-      <CertificateModal
-        competition={selectedCompetitionForCert}
-        onClose={() => setSelectedCompetitionForCert(null)}
-      />
     </div>
   );
 }

@@ -7,58 +7,46 @@ type SpotlightProps = {
 
 export const Spotlight: React.FC<SpotlightProps> = ({
   className = "",
-  fill = "white"
 }) => {
   return (
-    <div className={`pointer-events-none absolute inset-x-0 -top-40 h-[1000px] flex items-center justify-center overflow-visible z-[1] ${className}`}>
-      {/* Infinite Ethereal Spotlight Beam with soft radial diffusion (no hard boundaries) */}
-      <div className="absolute top-0 w-[900px] h-[650px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-neutral-100/5 to-transparent blur-3xl pointer-events-none" />
-      
-      {/* Radiant Top Aperture Glow */}
-      <div className="absolute top-0 w-[450px] h-[350px] bg-gradient-to-b from-white/25 via-white/10 to-transparent rounded-full blur-2xl pointer-events-none" />
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none absolute inset-0 overflow-hidden z-[1] ${className}`}
+    >
+      {/* 1. Overhead Ceiling Fixture / Source Aperture (Centered & Crisp) */}
+      <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[340px] sm:w-[520px] h-[50px] bg-white/30 rounded-full blur-xl" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[180px] sm:w-[280px] h-[12px] bg-white/40 rounded-full blur-sm" />
 
-      {/* SVG Angled Ambient Light Flare with non-clipping filter bounds */}
-      <svg
-        className="w-[1200px] h-[900px] opacity-75 pointer-events-none -mt-20 [mask-image:linear-gradient(to_bottom,rgba(0,0,0,1)_0%,rgba(0,0,0,0.8)_60%,transparent_100%)]"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 3787 2842"
-        fill="none"
-      >
-        <g filter="url(#spotlight-filter-infinite)">
-          <ellipse
-            cx="1924.71"
-            cy="273.501"
-            rx="1924.71"
-            ry="273.501"
-            transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
-            fill={fill}
-            fillOpacity="0.22"
-          />
-        </g>
-        <defs>
-          <filter
-            id="spotlight-filter-infinite"
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-            filterUnits="userSpaceOnUse"
-            colorInterpolationFilters="sRGB"
-          >
-            <feFlood floodOpacity="0" result="BackgroundImageFix" />
-            <feBlend
-              mode="normal"
-              in="SourceGraphic"
-              in2="BackgroundImageFix"
-              result="shape"
-            />
-            <feGaussianBlur
-              stdDeviation="180"
-              result="effect1_foregroundBlur_infinite"
-            />
-          </filter>
-        </defs>
-      </svg>
+      {/* 2. Symmetrical Conical Light Beam (Photorealistic Studio Cone) */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[720px] sm:w-[1050px] h-[780px]"
+        style={{
+          clipPath: "polygon(36% 0%, 64% 0%, 92% 100%, 8% 100%)",
+          background:
+            "linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.01) 75%, transparent 100%)",
+          filter: "blur(36px)",
+        }}
+      />
+
+      {/* 3. Smooth Radial Core Glow directly illuminating the Motto & Head */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[900px] h-[600px]"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 45% at 50% 12%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 45%, transparent 75%)",
+          filter: "blur(20px)",
+        }}
+      />
+
+      {/* 4. Soft Stage Atmosphere behind the 3D Robot (Symmetrical & Subdued) */}
+      <div
+        className="absolute top-[42%] left-1/2 -translate-x-1/2 w-[500px] sm:w-[750px] h-[350px]"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(255, 255, 255, 0.035) 0%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+      />
     </div>
   );
 };
