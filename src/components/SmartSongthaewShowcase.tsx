@@ -500,6 +500,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 animate="center"
                 exit="exit"
                 drag="x"
+                dragDirectionLock
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.15}
                 onDragEnd={(_, info) => {

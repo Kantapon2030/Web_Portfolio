@@ -8,6 +8,7 @@
     overflow-x: hidden;
     max-width: 100vw;
     overflow-anchor: none;
+    touch-action: pan-y;
   }
   body {
     font-family: 'Prompt', 'Inter', 'IBM Plex Sans Thai', 'Noto Sans Thai', 'Helvetica Neue ME', Helvetica, Arial, sans-serif;
@@ -20,6 +21,7 @@
     max-width: 100vw;
     overflow-anchor: none;
     -webkit-tap-highlight-color: transparent;
+    touch-action: pan-y;
   }
 
   /* Custom sleek minimalist scrollbar */
