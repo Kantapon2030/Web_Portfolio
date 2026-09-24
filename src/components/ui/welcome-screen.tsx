@@ -11,32 +11,32 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
   // Step 2: Minimal white canvas with "ยินดีต้อนรับสู่" + "Kantapon Web Portfolio"
   // Step 'done': Smooth fade-out before unmounting
   const [step, setStep] = useState<1 | 2 | 'done'>(1);
-  const timer1Ref = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const timer2Ref = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFinishedRef = useRef<boolean>(false);
   const finishTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleFinish = useCallback(() => {
-    if (timer1Ref.current) clearTimeout(timer1Ref.current);
-    if (timer2Ref.current) clearTimeout(timer2Ref.current);
-    if (step === 'done') return;
-
+    if (isFinishedRef.current) return;
+    isFinishedRef.current = true;
     setStep('done');
+
     // Allow the 600ms exit fade animation to complete cleanly before unmounting
     finishTimeoutRef.current = setTimeout(() => {
       onComplete();
     }, 600);
-  }, [step, onComplete]);
+  }, [onComplete]);
 
   useEffect(() => {
-    // Step 1 -> Step 2 after smooth morph animation (2.4s)
-    timer1Ref.current = setTimeout(() => {
-      setStep(2);
-    }, 2400);
+    // Step 1 -> Step 2 after smooth morph animation (2.2s)
+    const timer1 = setTimeout(() => {
+      if (!isFinishedRef.current) {
+        setStep(2);
+      }
+    }, 2200);
 
-    // Step 2 -> Finish after comfortable reading time (2.3s after step 2, total ~4.7s)
-    timer2Ref.current = setTimeout(() => {
+    // Step 2 -> Finish after reading time (total ~4.4s)
+    const timer2 = setTimeout(() => {
       handleFinish();
-    }, 4700);
+    }, 4400);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
@@ -46,8 +46,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      if (timer1Ref.current) clearTimeout(timer1Ref.current);
-      if (timer2Ref.current) clearTimeout(timer2Ref.current);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
       if (finishTimeoutRef.current) clearTimeout(finishTimeoutRef.current);
       window.removeEventListener('keydown', handleKeyDown);
     };

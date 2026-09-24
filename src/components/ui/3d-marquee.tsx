@@ -65,7 +65,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   }, [images]);
 
 
-  // Distribute all 26 certificates evenly across 3 columns (9 items each, 100% unique certs represented)
+  // Distribute certificates evenly across 3 columns (100% unique certs represented)
   const columnsData: MarqueeImageObject[][] = useMemo(() => {
     if (normalizedImages.length === 0)
       return [[], [], []];
@@ -74,10 +74,13 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     normalizedImages.forEach((img, idx) => {
       cols[idx % 3].push(img);
     });
-    // Ensure all 3 columns have equal length (9 items each)
-    if (cols[2].length < cols[0].length && cols[0].length > 0) {
-      cols[2].push(cols[0][0]);
-    }
+    // Ensure all 3 columns have equal length
+    const maxLen = Math.max(...cols.map(c => c.length));
+    cols.forEach(col => {
+      while (col.length < maxLen && normalizedImages.length > 0) {
+        col.push(normalizedImages[(col.length * 7) % normalizedImages.length]);
+      }
+    });
     return cols;
   }, [normalizedImages]);
 

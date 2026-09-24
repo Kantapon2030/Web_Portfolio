@@ -329,9 +329,9 @@ export const SmartSongthaewShowcase: React.FC = () => {
           ========================================================================= */}
       <section
         ref={runwayRef}
-        className="w-full bg-white text-neutral-900 py-16 sm:py-24 px-6 sm:px-12 flex flex-col items-center justify-center relative overflow-hidden select-none"
+        className="w-full bg-white text-neutral-900 py-10 sm:py-16 px-4 sm:px-8 flex flex-col items-center justify-center relative overflow-hidden select-none"
       >
-        <div className="max-w-6xl w-full flex flex-col items-center text-center relative z-10">
+        <div className="max-w-3xl w-full flex flex-col items-center text-center relative z-10">
           {/* Eyebrow Pill */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-mono mb-4">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -339,7 +339,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
           </div>
 
           {/* Giant Animated "PROJECT" Typography */}
-          <div className="w-full overflow-hidden py-4 sm:py-6">
+          <div className="w-full overflow-hidden py-3 sm:py-4">
             <motion.h2
               style={{
                 x: projectTextX,
@@ -348,14 +348,14 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 willChange: 'transform, opacity',
                 transform: 'translateZ(0)',
               }}
-              className="font-black text-6xl sm:text-8xl md:text-9xl lg:text-[13rem] tracking-tighter uppercase leading-none text-neutral-900 select-none"
+              className="font-black text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter uppercase leading-none text-neutral-900 select-none"
             >
               <span className="text-red-600">P</span>ROJECT
             </motion.h2>
           </div>
 
           {/* Scroll Down Guide Prompt */}
-          <div className="mt-4 sm:mt-6 flex flex-col items-center gap-2 text-xs sm:text-sm font-mono text-neutral-500">
+          <div className="mt-3 sm:mt-4 flex flex-col items-center gap-2 text-xs sm:text-sm font-mono text-neutral-500">
             <span className="tracking-widest uppercase text-neutral-400">
               SCROLL DOWN TO EXPLORE
             </span>
@@ -377,11 +377,11 @@ export const SmartSongthaewShowcase: React.FC = () => {
         ref={showcaseSectionRef}
         id="projects"
         style={{ overflowAnchor: 'none' }}
-        className="w-full bg-white text-neutral-900 pb-20 sm:pb-32 px-6 sm:px-12 lg:px-16"
+        className="w-full bg-white text-neutral-900 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {/* Carousel Navigation Toolbar & Slide Ticker (Top Bar) */}
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-2">
+          <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-1">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono font-bold text-red-600 tracking-wider">
                 {currentProject.indexTag}
@@ -443,7 +443,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
           <div
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
-            className="relative p-6 sm:p-10 lg:p-12 bg-white rounded-3xl transition-all shadow-sm border border-neutral-100 overflow-hidden"
+            className="relative p-5 sm:p-7 bg-white rounded-3xl transition-all shadow-sm border border-neutral-200/90 overflow-hidden"
           >
             {/* 5-Second Linear Progress Bar (At Top Edge — GPU Animated) */}
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-neutral-100 overflow-hidden">
@@ -462,22 +462,22 @@ export const SmartSongthaewShowcase: React.FC = () => {
             {/* Top-Left Corner */}
             <div
               aria-hidden="true"
-              className="absolute -top-1 -left-1 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-l-2 border-red-500 rounded-tl-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
+              className="absolute -top-1 -left-1 w-8 h-8 sm:w-10 sm:h-10 border-t-2 border-l-2 border-red-500 rounded-tl-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
             {/* Top-Right Corner */}
             <div
               aria-hidden="true"
-              className="absolute -top-1 -right-1 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-r-2 border-red-500 rounded-tr-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
+              className="absolute -top-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 border-t-2 border-r-2 border-red-500 rounded-tr-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
             {/* Bottom-Left Corner */}
             <div
               aria-hidden="true"
-              className="absolute -bottom-1 -left-1 w-8 h-8 sm:w-12 sm:h-12 border-b-2 border-l-2 border-red-500 rounded-bl-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
+              className="absolute -bottom-1 -left-1 w-8 h-8 sm:w-10 sm:h-10 border-b-2 border-l-2 border-red-500 rounded-bl-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
             {/* Bottom-Right Corner */}
             <div
               aria-hidden="true"
-              className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-12 sm:h-12 border-b-2 border-r-2 border-red-500 rounded-br-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
+              className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 border-b-2 border-r-2 border-red-500 rounded-br-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
 
             {/* Subtle Red Ambient Glow behind corners */}
@@ -514,111 +514,54 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 className="w-full cursor-grab active:cursor-grabbing touch-pan-y"
               >
                 {/* Section Eyebrow Header */}
-                <div className="flex items-center gap-3 mb-8 sm:mb-10">
+                <div className="flex items-center gap-3 mb-4 sm:mb-5">
                   <span className="text-[11px] font-mono tracking-[0.25em] text-neutral-400 uppercase">
                     03 // SELECTED PROJECT
                   </span>
                   <div className="h-px flex-1 bg-neutral-200" />
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-mono">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 text-[11px] font-mono">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                     <span>{currentProject.badge}</span>
                   </div>
                 </div>
 
-                {/* Section Header */}
-                <div className="max-w-3xl mb-10 sm:mb-12">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-red-50/80 border border-red-200 text-red-700 text-xs font-mono mb-4">
-                    <Award size={14} className="text-red-600" />
-                    <span>{currentProject.recognition}</span>
-                  </div>
-
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-neutral-900 leading-[1.2]">
+                {/* Section Header: Title & Subtitle Only (Name) */}
+                <div className="mb-4 sm:mb-5">
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 leading-snug">
                     {currentProject.title}
                   </h2>
-                  <p className="text-lg sm:text-xl text-neutral-600 font-normal mt-2">
+                  <p className="text-sm sm:text-base text-neutral-600 font-medium mt-1">
                     {currentProject.thaiSubtitle}
-                  </p>
-
-                  <p className="mt-5 text-base sm:text-lg text-neutral-700 font-normal leading-relaxed">
-                    {currentProject.description}
                   </p>
                 </div>
 
-                {/* Featured Visuals Showcase: Presentation Photo + Official Certificate */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start mb-8 sm:mb-10">
-                  {/* Left: Presentation Photo */}
-                  <div className="lg:col-span-7 flex flex-col">
-                    <div className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 shadow-sm group">
-                      <img
-                        src={currentProject.presentationImg}
-                        alt={`ภาพการนำเสนอผลงาน ${currentProject.title}`}
-                        decoding="async"
-                        className="w-full h-auto object-cover max-h-[460px] transition-transform duration-500 group-hover:scale-[1.01]"
-                        loading="lazy"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 rounded-full bg-neutral-900/80 backdrop-blur-md text-white text-[11px] font-mono tracking-wide shadow-sm">
-                          LIVE PRESENTATION
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-neutral-500 font-mono gap-1">
-                      <span>{currentProject.presentationCaption}</span>
-                      <span className="text-neutral-400 text-[11px]">ภาพถ่ายจริงในการแข่งขัน</span>
+                {/* Featured Visual: Presentation Photo Only */}
+                <div className="flex flex-col mb-5">
+                  <div className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 shadow-xs group w-full aspect-[16/10] sm:aspect-[16/9] max-h-[380px]">
+                    <img
+                      src={currentProject.presentationImg}
+                      alt={`ภาพการนำเสนอผลงาน ${currentProject.title}`}
+                      decoding="async"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 pointer-events-none">
+                      <span className="px-3 py-1 rounded-full bg-neutral-900/80 backdrop-blur-md text-white text-[11px] font-mono tracking-wide shadow-sm">
+                        LIVE PRESENTATION
+                      </span>
                     </div>
                   </div>
-
-                  {/* Right: Certificate Image with Zoom Lightbox Option */}
-                  <div className="lg:col-span-5 flex flex-col">
-                    <div
-                      onClick={() => setCertModalOpen(true)}
-                      className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-50 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                      title="คลิกเพื่อดูเกียรติบัตรขนาดเต็ม"
-                    >
-                      <img
-                        src={currentProject.certificateImg}
-                        alt={`เกียรติบัตร ${currentProject.title}`}
-                        decoding="async"
-                        className="w-full h-auto object-cover max-h-[460px] transition-transform duration-500 group-hover:scale-[1.02]"
-                        loading="lazy"
-                      />
-
-                      {/* Hover overlay hint */}
-                      <div className="absolute inset-0 bg-neutral-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="px-4 py-2 rounded-full bg-white/95 text-neutral-900 text-xs font-mono font-medium shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
-                          <Maximize2 size={13} className="text-red-600" />
-                          <span>คลิกเพื่อดูภาพขนาดเต็ม</span>
-                        </span>
-                      </div>
-
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 rounded-full bg-red-700/90 backdrop-blur-md text-white text-[11px] font-mono tracking-wide shadow-sm flex items-center gap-1">
-                          <Award size={12} />
-                          <span>OFFICIAL CERTIFICATE</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-neutral-500 font-mono gap-1.5">
-                      <span>{currentProject.certificateCaption}</span>
-                      <button
-                        type="button"
-                        onClick={() => setCertModalOpen(true)}
-                        className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 font-medium self-start sm:self-auto transition-colors"
-                      >
-                        <Maximize2 size={13} />
-                        <span>คลิกขยายดูภาพเต็ม</span>
-                      </button>
-                    </div>
+                  <div className="mt-2 text-xs text-neutral-500 font-mono">
+                    <span>{currentProject.presentationCaption} · ภาพถ่ายจริงในการแข่งขัน</span>
                   </div>
                 </div>
 
                 {/* =========================================================================
-                    MASCOT GUIDE & "VIEW MORE / COLLAPSE" BUTTON INTERACTION AREA
+                    ACTION BAR: MASCOT + CERTIFICATE BUTTON + VIEW DETAILS
                     ========================================================================= */}
-                <div className="pt-4 pb-2 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                  {/* Subtle Mascot Companion with Pose Micro-Interactions (No Speech Bubble) */}
-                  <div className="flex items-center gap-3">
+                <div className="pt-3 pb-1 border-t border-neutral-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  {/* Subtle Mascot Companion with Pose Micro-Interactions */}
+                  <div className="flex items-center gap-2.5">
                     <CornerMascot
                       pose="guide"
                       size="sm"
@@ -631,16 +574,27 @@ export const SmartSongthaewShowcase: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* "View More / ดูเพิ่มเติม" Action Button */}
-                  <div className="shrink-0 flex items-center gap-3">
+                  {/* Actions: View Certificate & Expand Details */}
+                  <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={() => setCertModalOpen(true)}
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-xs font-mono transition-colors cursor-pointer active:scale-95"
+                      title="คลิกเพื่อดูเกียรติบัตร"
+                    >
+                      <Award size={13} className="text-red-600" />
+                      <span>ดูเกียรติบัตร</span>
+                      <Maximize2 size={11} />
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => setIsExpanded(!isExpanded)}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium text-sm shadow-md hover:shadow-lg hover:shadow-red-600/25 transition-all active:scale-95"
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium text-xs font-mono shadow-sm transition-all active:scale-95"
                     >
-                      <span>{isExpanded ? 'ย่อรายละเอียด' : 'ดูเพิ่มเติม (System Architecture & Role)'}</span>
+                      <span>{isExpanded ? 'ย่อรายละเอียด' : 'ดูรายละเอียดเพิ่มเติม'}</span>
                       <ChevronDown
-                        size={16}
+                        size={14}
                         className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                       />
                     </button>
@@ -657,8 +611,19 @@ export const SmartSongthaewShowcase: React.FC = () => {
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden pt-8 space-y-12 border-t border-neutral-200/80 mt-6"
+                      className="overflow-hidden pt-6 space-y-8 border-t border-neutral-200/80 mt-4"
                     >
+                      {/* Description & Recognition */}
+                      <div className="p-4 sm:p-5 rounded-2xl bg-neutral-50 border border-neutral-200/80">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-red-50/80 border border-red-200 text-red-700 text-xs font-mono mb-3">
+                          <Award size={14} className="text-red-600" />
+                          <span>{currentProject.recognition}</span>
+                        </div>
+                        <p className="text-sm sm:text-base text-neutral-700 font-normal leading-relaxed">
+                          {currentProject.description}
+                        </p>
+                      </div>
+
                       {/* System Architecture Flow (Minimal Transit Flow) */}
                       <div className="p-6 sm:p-8 rounded-2xl border border-neutral-200 bg-neutral-50">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-neutral-200/80">
@@ -803,6 +768,45 @@ export const SmartSongthaewShowcase: React.FC = () => {
                                 </span>
                               ))}
                             </div>
+                          </div>
+
+                          {/* Official Certificate Card (In Details) */}
+                          <div className="pt-4 border-t border-neutral-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                                <Award size={13} className="text-red-600" />
+                                <span>OFFICIAL CERTIFICATE:</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setCertModalOpen(true)}
+                                className="text-xs font-mono text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
+                              >
+                                <Maximize2 size={12} />
+                                <span>ขยายดูขนาดเต็ม</span>
+                              </button>
+                            </div>
+                            <div
+                              onClick={() => setCertModalOpen(true)}
+                              className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-50 shadow-xs hover:shadow-md transition-all cursor-pointer group max-w-xl"
+                            >
+                              <img
+                                src={currentProject.certificateImg}
+                                alt={`เกียรติบัตร ${currentProject.title}`}
+                                decoding="async"
+                                className="w-full h-auto object-cover max-h-[340px] transition-transform duration-500 group-hover:scale-[1.01]"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-neutral-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span className="px-3.5 py-1.5 rounded-full bg-white/95 text-neutral-900 text-xs font-mono font-medium shadow-md flex items-center gap-1.5 backdrop-blur-sm">
+                                  <Maximize2 size={12} className="text-red-600" />
+                                  <span>คลิกดูขนาดเต็ม</span>
+                                </span>
+                              </div>
+                            </div>
+                            <p className="mt-2 text-xs text-neutral-500 font-mono">
+                              {currentProject.certificateCaption}
+                            </p>
                           </div>
                         </div>
                       </div>

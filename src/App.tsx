@@ -123,11 +123,26 @@ function HeroPortraitSvg({
 // Real birthdate: 2008-12-01 (17 years old)
 const BIRTH_DATE = '2008-12-01';
 
+// Session key: ensures welcome screen shows ONLY ONCE on the very first entry
+const WELCOME_SEEN_KEY = 'portfolio_welcome_completed_session';
+
 export default function App() {
-  // Welcome Loading Screen: greets visitors upon entering the site
-  const [showWelcome, setShowWelcome] = useState<boolean>(true);
+  // Show welcome loading screen ONLY on the very first entry in this browser session
+  const [showWelcome, setShowWelcome] = useState<boolean>(() => {
+    try {
+      if (typeof window === 'undefined') return false;
+      return !sessionStorage.getItem(WELCOME_SEEN_KEY);
+    } catch {
+      return false;
+    }
+  });
 
   const handleWelcomeComplete = () => {
+    try {
+      sessionStorage.setItem(WELCOME_SEEN_KEY, 'true');
+    } catch {
+      // ignore
+    }
     setShowWelcome(false);
   };
 
@@ -202,7 +217,7 @@ export default function App() {
       {/* =========================================================================
           TOP-RIGHT BREADCRUMB ICON NAVIGATION (COMPACT)
           ========================================================================= */}
-      <header className="fixed top-5 right-6 z-50 pointer-events-auto">
+      <header className="fixed top-3.5 right-3.5 sm:top-5 sm:right-6 z-50 pointer-events-auto">
         <BreadcrumbIcon />
       </header>
 
@@ -343,7 +358,7 @@ export default function App() {
           <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
             <HeroPortraitSvg
               className="anim-rise-in absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_16px_36px_rgba(0,0,0,0.85)]"
-              viewBox="515 60 640 1020"
+              viewBox="515 -60 640 1140"
               preserveAspectRatio="xMidYMax slice"
             />
           </div>
