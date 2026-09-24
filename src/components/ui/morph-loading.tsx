@@ -110,6 +110,9 @@ export const UniqueLoading: React.FC<UniqueLoadingProps> = ({
               style={{
                 animation: `morph-${d} 2s infinite ease-in-out`,
                 animationDelay: `${d * 0.2}s`,
+                willChange: 'transform, border-radius',
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
               }}
             />
           ))}

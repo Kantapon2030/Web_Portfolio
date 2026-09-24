@@ -14,7 +14,16 @@ export interface BreadcrumbIconProps {
 }
 
 const defaultItems: BreadcrumbItem[] = [
-  { label: 'Home', href: '#hero', icon: <Home size={14} className="text-emerald-400" /> },
+  {
+    label: 'Home',
+    href: '#hero',
+    icon: <Home size={14} className="text-emerald-400" />,
+    onClick: (e: React.MouseEvent) => {
+      e.preventDefault();
+      // Use JavaScript scrollTo for reliable smooth scrolling to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+  },
 ];
 
 export const BreadcrumbIcon: React.FC<BreadcrumbIconProps> = ({
@@ -24,7 +33,7 @@ export const BreadcrumbIcon: React.FC<BreadcrumbIconProps> = ({
   return (
     <nav
       aria-label="Breadcrumb navigation"
-      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-xl border border-white/10 shadow-lg text-xs font-mono text-neutral-300 transition-all ${className}`}
+      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 border border-white/10 shadow-lg text-xs font-mono text-neutral-300 transition-all ${className}`}
     >
       <ol className="inline-flex items-center gap-1.5">
         {items.map((item, index) => {
