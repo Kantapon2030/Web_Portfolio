@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, Award } from "lucide-react";
 
@@ -51,6 +51,24 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
 
+  // Detect mobile for reduced rendering (fewer columns + groups = dramatically fewer DOM nodes)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  // On touch devices, skip column hover tracking entirely (no mouse events)
+  const isTouchDevice = useMemo(() =>
+    typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0),
+    []
+  );
+
   // Pause marquee when offscreen to completely eliminate lag & save GPU/CPU cycles
   useEffect(() => {
     const el = containerRef.current;
@@ -74,17 +92,17 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     return images.map((item) => (typeof item === "string" ? item : item.src));
   }, [images]);
 
-  // Distribute all certificates across 7 columns using coprime dispersion
-  // Each group contains all unique certificates (26 items)
-  // Repeated across 3 groups (Group 1: Top Buffer, Group 2: Center, Group 3: Bottom Buffer)
-  // 3 * 26 = 78 cards per column (~13,500px track), ensuring 100% seamless, non-repeating loop
-  const columnsData = useMemo(() => {
-    if (normalizedImages.length === 0) return [[], [], [], [], [], [], []];
+  // Number of columns: 4 on mobile (saves ~350 DOM nodes), 7 on desktop
+  const columnCount = isMobile ? 4 : 7;
+
+  // Distribute all certificates across columns using coprime dispersion
+  const columnsData: string[][] = useMemo(() => {
+    if (normalizedImages.length === 0) return Array.from({ length: columnCount }, () => [] as string[]);
     const count = normalizedImages.length;
-    return [0, 1, 2, 3, 4, 5, 6].map((colIdx) =>
+    return Array.from({ length: columnCount }, (_, colIdx) =>
       generateDispersedColumn(normalizedImages, colIdx, count)
     );
-  }, [normalizedImages]);
+  }, [normalizedImages, columnCount]);
 
   // Close lightbox on Escape key
   useEffect(() => {
@@ -160,7 +178,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     },
   ];
 
-  const renderCard = (src: string, key: string, cardId: number) => (
+  const renderCard = useCallback((src: string, key: string, cardId: number) => (
     <div
       key={key}
       onClick={() => handleCardClick(src, cardId)}
@@ -177,26 +195,28 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         loading="lazy"
         decoding="async"
         draggable={false}
-        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        className="h-full w-full object-cover object-center"
       />
 
       {/* Glossy Gradient Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60" />
 
-      {/* Hover Sheen & Action Icon (High-performance overlay without backdrop-filter) */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-md">
-          <ZoomIn size={14} className="text-amber-400" />
-          <span>ดูขนาดเต็ม</span>
+      {/* Hover Sheen & Action Icon — hidden on mobile (touch) for perf */}
+      {!isTouchDevice && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-md">
+            <ZoomIn size={14} className="text-amber-400" />
+            <span>ดูขนาดเต็ม</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Subtle Badge Icon */}
-      <div className="absolute top-2.5 right-2.5 p-1 rounded-full bg-black/60 border border-white/10 text-amber-400/90 opacity-70 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-2.5 right-2.5 p-1 rounded-full bg-black/60 border border-white/10 text-amber-400/90 opacity-70">
         <Award size={12} />
       </div>
     </div>
-  );
+  ), [isTouchDevice]);
 
   return (
     <div
@@ -218,22 +238,24 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         >
           {columnsData.map((columnImages, colIndex) => {
             const config = columnConfigs[colIndex % columnConfigs.length];
+            // On mobile, use faster animation durations for smoother rendering
+            const duration = isMobile ? config.duration * 0.7 : config.duration;
 
             return (
               <div
                 key={`col-${colIndex}`}
-                onMouseEnter={() => setHoveredColIndex(colIndex)}
-                onMouseLeave={() => setHoveredColIndex(null)}
+                onMouseEnter={isTouchDevice ? undefined : () => setHoveredColIndex(colIndex)}
+                onMouseLeave={isTouchDevice ? undefined : () => setHoveredColIndex(null)}
                 className={`flex-1 min-w-[130px] sm:min-w-[160px] md:min-w-[190px] lg:min-w-[210px] xl:min-w-[230px] overflow-visible ${config.offsetClass}`}
               >
-                {/* Continuous 3-Group Hardware-Accelerated Infinite Track */}
+                {/* Continuous Hardware-Accelerated Infinite Track */}
                 <div
-                  className="w-full flex flex-col will-change-transform"
+                  className="w-full flex flex-col"
                   style={{
                     animationName: config.reverse
                       ? "marqueeScrollDown"
                       : "marqueeScrollUp",
-                    animationDuration: `${config.duration}s`,
+                    animationDuration: `${duration}s`,
                     animationTimingFunction: "linear",
                     animationIterationCount: "infinite",
                     animationDelay: `${config.delay}s`,
@@ -242,6 +264,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                         ? "paused"
                         : "running",
                     backfaceVisibility: "hidden",
+                    transform: "translateZ(0)",
                   }}
                 >
                   {/* Group 1: Buffer Above */}
@@ -261,15 +284,17 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                     )}
                   </div>
 
-                  {/* Group 3: Buffer Below */}
-                  <div
-                    className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
-                    aria-hidden="true"
-                  >
-                    {columnImages.map((src, imgIdx) =>
-                      renderCard(src, `g3-${colIndex}-${imgIdx}`, imgIdx)
-                    )}
-                  </div>
+                  {/* Group 3: Buffer Below — skip on mobile for fewer DOM nodes */}
+                  {!isMobile && (
+                    <div
+                      className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
+                      aria-hidden="true"
+                    >
+                      {columnImages.map((src, imgIdx) =>
+                        renderCard(src, `g3-${colIndex}-${imgIdx}`, imgIdx)
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             );

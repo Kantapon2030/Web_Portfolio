@@ -74,6 +74,9 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
   const [isBouncing, setIsBouncing] = useState(false);
   const [showSparkles, setShowSparkles] = useState(false);
 
+  // On touch devices, skip Framer Motion infinite animation loops entirely
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
   const imgSrc = POSE_IMAGES[pose] || POSE_IMAGES.center;
 
   // Idle movement variant
@@ -125,8 +128,9 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
       } ${className}`}
       onClick={interactive ? handleClick : undefined}
     >
-      {/* Tap Sparkle Particles Effect (Soundless visual joy, no text) */}
-      <AnimatePresence>
+      {/* Tap Sparkle Particles Effect — Skip on touch for performance */}
+      {!isTouchDevice && (
+        <AnimatePresence>
         {showSparkles && (
           <div className="absolute inset-0 pointer-events-none z-30 flex items-center justify-center">
             {/* Top sparkle */}
@@ -162,6 +166,7 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
           </div>
         )}
       </AnimatePresence>
+      )}
 
       {/* Mascot Animated Body */}
       <motion.div
@@ -173,10 +178,12 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
                 rotate: clickCount % 2 === 0 ? [0, -8, 6, -3, 0] : [0, 8, -6, 3, 0],
                 transition: { duration: 0.55, ease: [0.34, 1.56, 0.64, 1] },
               }
+            : isTouchDevice
+            ? {} // No idle animation on touch devices — saves per-frame JS work
             : getIdleAnimation()
         }
         whileHover={
-          interactive && !isBouncing
+          !isTouchDevice && interactive && !isBouncing
             ? {
                 scale: 1.1,
                 y: -6,
@@ -186,14 +193,14 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
             : undefined
         }
         whileTap={interactive ? { scale: 0.92 } : undefined}
-        className="relative flex items-center justify-center will-change-transform"
+        className="relative flex items-center justify-center"
       >
         <img
           src={imgSrc}
           alt={alt}
           loading="lazy"
           decoding="async"
-          className={`${SIZE_MAP[size]} object-contain drop-shadow-md transition-filter duration-200 hover:drop-shadow-lg`}
+          className={`${SIZE_MAP[size]} object-contain`}
         />
 
         {/* Ambient bottom shadow under feet/base if enabled */}

@@ -39,7 +39,10 @@ export const MascotInteractive: React.FC = () => {
   const [direction, setDirection] = useState<Direction>('center');
   const [isHovered, setIsHovered] = useState(false);
 
-  // Springs for subtle tilt & micro-motion
+  // Detect touch device — skip cursor tracking entirely on mobile (massive perf win)
+  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
+  // Springs for subtle tilt & micro-motion (only active on desktop)
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springConfig = { damping: 20, stiffness: 180, mass: 0.4 };
@@ -50,16 +53,20 @@ export const MascotInteractive: React.FC = () => {
   const translateX = useTransform(smoothX, [-1, 1], [-6, 6]);
   const translateY = useTransform(smoothY, [-1, 1], [-4, 4]);
 
-  // Preload all 9 images on mount
+  // Preload all 9 images on mount (only on desktop where cursor tracking is active)
   useEffect(() => {
+    if (isTouchDevice) return; // On mobile, only the center sprite is needed
     Object.values(SPRITES).forEach((src) => {
       const img = new Image();
       img.src = src;
     });
-  }, []);
+  }, [isTouchDevice]);
 
-  // Track cursor direction relative to mascot head (Throttled with rAF & IntersectionObserver)
+  // Track cursor direction relative to mascot head — DESKTOP ONLY
+  // On mobile: zero mousemove listeners, zero rAF loops, zero getBoundingClientRect calls
   useEffect(() => {
+    if (isTouchDevice) return; // Skip entirely on touch devices
+
     let animationFrameId: number | null = null;
     let isVisible = true;
 
@@ -128,7 +135,7 @@ export const MascotInteractive: React.FC = () => {
       if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
       observer.disconnect();
     };
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isTouchDevice]);
 
   const [isBouncing, setIsBouncing] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -154,9 +161,9 @@ export const MascotInteractive: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-sky-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-3 w-3/4 h-5 bg-black/10 dark:bg-black/40 rounded-full blur-md pointer-events-none" />
 
-        {/* Dynamic Sprite Container with Micro-Tilt & Click Reaction */}
+        {/* Dynamic Sprite Container — Micro-Tilt on desktop, static on mobile */}
         <motion.div
-          style={{
+          style={isTouchDevice ? {} : {
             rotateZ,
             x: translateX,
             y: translateY,
@@ -169,7 +176,7 @@ export const MascotInteractive: React.FC = () => {
                   rotate: clickCount % 2 === 0 ? [0, -4, 4, 0] : [0, 4, -4, 0],
                   transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] },
                 }
-              : isHovered
+              : !isTouchDevice && isHovered
               ? { scale: 1.04, transition: { duration: 0.2 } }
               : { scale: 1 }
           }
@@ -179,7 +186,7 @@ export const MascotInteractive: React.FC = () => {
             src={SPRITES[direction]}
             alt={`Kantapon Mascot looking ${direction}`}
             decoding="async"
-            className="w-full h-full object-contain pointer-events-none drop-shadow-[0_16px_32px_rgba(0,0,0,0.15)] transition-all duration-75"
+            className="w-full h-full object-contain pointer-events-none"
           />
         </motion.div>
       </div>
