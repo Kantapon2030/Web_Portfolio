@@ -38,7 +38,7 @@ export const ButtonSocialIconDemo: React.FC<ButtonSocialIconDemoProps> = ({
     {
       id: 'facebook',
       name: 'Facebook',
-      href: 'https://facebook.com/kantapon.wongprot',
+      href: 'https://www.facebook.com/kantapon21342',
       icon: (
         <svg
           className="w-5 h-5 fill-[#1877F2]"
