@@ -1,15 +1,13 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import {
   Copy,
-  Check,
-  Sparkles
+  Check
 } from 'lucide-react';
 import realUserBody from './assets/real_user_body.png';
 import arduinoBoard from './assets/arduino_board.png';
 import minimalWhiteBg from './assets/minimal_white_bg.jpg';
 import { motion, useScroll } from 'framer-motion';
 import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
-import { WelcomeScreen } from './components/ui/welcome-screen';
 const SplineScene = lazy(() => import('./components/ui/splite'));
 import { Spotlight } from './components/ui/spotlight';
 import { Typewriter } from './components/ui/typewriter-text';
@@ -125,9 +123,6 @@ function HeroPortraitSvg({
 const BIRTH_DATE = '2008-12-01';
 
 export default function App() {
-  // Welcome screen state
-  const [showWelcome, setShowWelcome] = useState<boolean>(true);
-
   // Global scroll progress (Framer Motion value — updates DOM directly with zero component re-renders)
   const { scrollYProgress: globalScrollProgress } = useScroll();
 
@@ -136,16 +131,6 @@ export default function App() {
 
   // Exact real-time age state (initial calculation prevents layout shift)
   const [age, setAge] = useState<DetailedAge>(() => calculateDetailedAge(BIRTH_DATE));
-
-
-  // Lock body overflow when welcome modal is open
-  useEffect(() => {
-    if (showWelcome) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-  }, [showWelcome]);
 
   // Update age on mount and set a timer to recalculate right after midnight
   useEffect(() => {
@@ -179,10 +164,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#faf9f6] text-[#181818] selection:bg-neutral-900 selection:text-white">
-      {/* 2-Step Welcome Screen with Diamond Loader */}
-      {showWelcome && (
-        <WelcomeScreen onComplete={() => setShowWelcome(false)} />
-      )}
+
 
       {/* Precision Scroll Progress Bar (GPU Transform ScaleX — Zero Re-renders) */}
       <motion.div
@@ -755,19 +737,11 @@ export default function App() {
             <span className="leading-tight">OPEN TO COLLABORATION &amp; ACADEMIC OPPORTUNITIES</span>
           </div>
 
-          {/* Back To Top & Replay Intro Buttons */}
-          <div className="flex items-center justify-center gap-6">
-            <button
-              onClick={() => setShowWelcome(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors uppercase tracking-wider"
-            >
-              <Sparkles size={13} className="text-emerald-400" />
-              <span>Replay Intro</span>
-            </button>
-            <span className="text-neutral-700">&bull;</span>
+          {/* Back To Top Button */}
+          <div className="flex items-center justify-center">
             <a
               href="#hero"
-              className="group inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors tracking-wider"
+              className="group inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors tracking-wider px-4 py-2 rounded-full hover:bg-neutral-900 border border-transparent hover:border-neutral-800"
             >
               <span>กลับไปด้านบน</span>
               <span className="transition-transform group-hover:-translate-y-1">↑</span>
