@@ -469,16 +469,26 @@ export const SmartSongthaewShowcase: React.FC = () => {
               aria-hidden="true"
               className="absolute -top-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 border-t-2 border-r-2 border-red-500 rounded-tr-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
-            {/* Bottom-Left Corner */}
+            {/* Bottom-Left Corner Frame Accent */}
             <div
               aria-hidden="true"
               className="absolute -bottom-1 -left-1 w-8 h-8 sm:w-10 sm:h-10 border-b-2 border-l-2 border-red-500 rounded-bl-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
-            {/* Bottom-Right Corner */}
+            {/* Bottom-Right Corner Frame Accent */}
             <div
               aria-hidden="true"
               className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 border-b-2 border-r-2 border-red-500 rounded-br-xl shadow-[0_0_12px_rgba(239,68,68,0.35)] pointer-events-none z-10"
             />
+
+            {/* Bottom-Left Corner Mascot (Stands right in bottom-left corner, zero vertical expansion) */}
+            <div className="absolute bottom-1.5 left-2 sm:bottom-2 sm:left-3 z-20 pointer-events-auto">
+              <CornerMascot
+                pose="up_right"
+                size="sm"
+                idleAnimation="peek"
+                alt="Tanwa Mascot Guide"
+              />
+            </div>
 
             {/* Subtle Red Ambient Glow behind corners */}
             <div
@@ -536,7 +546,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 </div>
 
                 {/* Featured Visual: Presentation Photo Only */}
-                <div className="flex flex-col mb-5">
+                <div className="flex flex-col mb-4 sm:mb-5">
                   <div className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 shadow-xs group w-full aspect-[16/10] sm:aspect-[16/9] max-h-[380px]">
                     <img
                       src={currentProject.presentationImg}
@@ -557,48 +567,31 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 </div>
 
                 {/* =========================================================================
-                    ACTION BAR: MASCOT + CERTIFICATE BUTTON + VIEW DETAILS
+                    ACTION BAR: CERTIFICATE BUTTON + VIEW DETAILS (RIGHT ALIGNED, ZERO VERTICAL BLOAT)
                     ========================================================================= */}
-                <div className="pt-3 pb-1 border-t border-neutral-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                  {/* Subtle Mascot Companion with Pose Micro-Interactions */}
-                  <div className="flex items-center gap-2.5">
-                    <CornerMascot
-                      pose="guide"
-                      size="sm"
-                      idleAnimation="wave"
-                      alt="Tanwa Mascot Guide"
+                <div className="pt-2.5 pb-0.5 border-t border-neutral-100 flex items-center justify-end gap-2 pl-14 sm:pl-16">
+                  <button
+                    type="button"
+                    onClick={() => setCertModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-xs font-mono transition-colors cursor-pointer active:scale-95"
+                    title="คลิกเพื่อดูเกียรติบัตร"
+                  >
+                    <Award size={13} className="text-red-600" />
+                    <span>ดูเกียรติบัตร</span>
+                    <Maximize2 size={11} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium text-xs font-mono shadow-sm transition-all active:scale-95"
+                  >
+                    <span>{isExpanded ? 'ย่อรายละเอียด' : 'ดูรายละเอียดเพิ่มเติม'}</span>
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                     />
-                    <div className="text-xs font-mono text-neutral-400">
-                      <span className="font-semibold text-neutral-600">Tanwa Guide</span>
-                      <span className="hidden sm:inline text-neutral-400"> · คลิกที่มาสคอตเพื่อทักทาย</span>
-                    </div>
-                  </div>
-
-                  {/* Actions: View Certificate & Expand Details */}
-                  <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto">
-                    <button
-                      type="button"
-                      onClick={() => setCertModalOpen(true)}
-                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-neutral-700 text-xs font-mono transition-colors cursor-pointer active:scale-95"
-                      title="คลิกเพื่อดูเกียรติบัตร"
-                    >
-                      <Award size={13} className="text-red-600" />
-                      <span>ดูเกียรติบัตร</span>
-                      <Maximize2 size={11} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium text-xs font-mono shadow-sm transition-all active:scale-95"
-                    >
-                      <span>{isExpanded ? 'ย่อรายละเอียด' : 'ดูรายละเอียดเพิ่มเติม'}</span>
-                      <ChevronDown
-                        size={14}
-                        className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-                  </div>
+                  </button>
                 </div>
 
                 {/* =========================================================================
