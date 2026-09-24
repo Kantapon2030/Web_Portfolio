@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export interface TypewriterProps {
   text: string | string[];
@@ -19,6 +19,9 @@ export function Typewriter({
   delay = 1500,
   className = "",
 }: TypewriterProps) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
   const [currentText, setCurrentText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -27,8 +30,28 @@ export function Typewriter({
   const textArray = Array.isArray(text) ? text : [text];
   const currentFullText = textArray[textIndex] || "";
 
+  // Viewport intersection observer: pause timer when off-screen, resume from exact state
   useEffect(() => {
-    if (!currentFullText) return;
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setIsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // If not in view or no text, pause timer without resetting current progress
+    if (!isInView || !currentFullText) return;
 
     let deleteTimeout: NodeJS.Timeout;
 
@@ -59,6 +82,7 @@ export function Typewriter({
       if (deleteTimeout) clearTimeout(deleteTimeout);
     };
   }, [
+    isInView,
     currentIndex,
     isDeleting,
     currentFullText,
@@ -71,7 +95,7 @@ export function Typewriter({
   ]);
 
   return (
-    <span className={className}>
+    <span ref={containerRef} className={className}>
       {currentText}
       <span className="animate-pulse ml-0.5 inline-block text-emerald-400 font-mono">
         {cursor}
