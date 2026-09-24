@@ -456,6 +456,9 @@ export default function App() {
         </div>
       </section>
 
+      {/* Seamless Connector: Hero Dark (#09090b) into About Me Light (#faf9f6) */}
+      <div className="w-full h-32 sm:h-48 bg-gradient-to-b from-[#09090b] to-[#faf9f6]" />
+
       {/* =========================================================================
           SECTION 2: ABOUT ME & MASCOT SIGNATURE — 01 // ABOUT ME (MINIMAL MODERN)
           ========================================================================= */}
@@ -548,9 +551,19 @@ export default function App() {
           </div>
         </section>
 
-        {/* Seamless Full-Bleed Dark Gradient Runway into Section 3 (Eliminating Any White Borders) */}
-        <div className="w-full h-48 sm:h-64 bg-gradient-to-b from-[#faf9f6] via-[#141418] to-[#050507]" />
-        <div className="w-full h-24 sm:h-36 bg-[#050507]" />
+        {/* Seamless Full-Bleed Dark Gradient Runway into Section 3 with Integrated Spotlight Light Origin */}
+        <div className="relative w-full h-56 sm:h-80 bg-gradient-to-b from-[#faf9f6] via-[#050507]/90 to-[#050507] overflow-hidden">
+          {/* Top origin of spotlight light beam shining seamlessly through the transition */}
+          <div
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] sm:w-[1200px] h-[360px] pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 55% 55% at 50% 100%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 45%, transparent 80%)",
+              filter: "blur(48px)",
+            }}
+          />
+        </div>
+
       </div>
 
       {/* =========================================================================
@@ -558,7 +571,7 @@ export default function App() {
           ========================================================================= */}
       <section
         id="skills"
-        className="relative min-h-[100dvh] h-[100dvh] w-full bg-[#050507] text-white flex flex-col items-center justify-between select-none scroll-mt-0 pb-6 overflow-hidden"
+        className="relative min-h-[100dvh] h-[100dvh] w-full bg-[#050507] text-white flex flex-col items-center justify-between select-none scroll-mt-0 pb-6"
       >
         {/* Studio Spotlight shining directly down seamlessly from above */}
         <Spotlight />
@@ -635,10 +648,13 @@ export default function App() {
           ========================================================================= */}
       <CampShowcase />
 
+      {/* Seamless Connector: Light Camps Section (#faf9f6) into Obsidian Contact Hub (#08080a) */}
+      <div className="w-full h-40 sm:h-64 bg-gradient-to-b from-[#faf9f6] to-[#08080a]" />
+
       {/* =========================================================================
           SECTION 5: GRAND FINALE CONTACT HUB (05 // CONTACT)
           ========================================================================= */}
-      <section id="contact" className="py-36 px-6 sm:px-12 bg-[#08080a] text-white text-center border-t border-neutral-900">
+      <section id="contact" className="py-28 sm:py-36 px-6 sm:px-12 bg-[#08080a] text-white text-center">
         <div className="max-w-4xl mx-auto">
           {/* Eyebrow: 05 // CONTACT */}
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 font-mono tracking-widest uppercase">

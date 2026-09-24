@@ -2,6 +2,8 @@ import React from 'react';
 import {
   ChulaLogo,
   KmitlLogo,
+  KuLogo,
+  PsuLogo,
 } from './competitionData';
 
 // Imported authentic CUEE Camp certificate and activity photos
@@ -30,32 +32,9 @@ import kmitlPreengImg2 from './assets/camps/kmitl_preeng_img_2.jpg';
 import kmitlPreengImg3 from './assets/camps/kmitl_preeng_img_3.jpg';
 import kmitlPreengImg4 from './assets/camps/kmitl_preeng_img_4.jpg';
 
-// Authentic KU Emblem SVG
-export const KuLogo: React.FC<{ className?: string }> = ({ className = 'w-9 h-9' }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="46" fill="#F0FDF4" stroke="#15803D" strokeWidth="3" />
-    <circle cx="50" cy="50" r="40" stroke="#86EFAC" strokeWidth="1.5" />
-    {/* KU Green Leaf & Wheat Shield Motif */}
-    <path d="M50 16C50 16 65 32 65 48C65 60 55 72 50 78C45 72 35 60 35 48C35 32 50 16 50 16Z" fill="#16A34A" />
-    <path d="M50 24V74" stroke="#DCFCE7" strokeWidth="2" />
-    <circle cx="50" cy="46" r="6" fill="#FEF08A" />
-    <text x="50" y="88" textAnchor="middle" fill="#14532D" fontSize="9" fontWeight="800" fontFamily="sans-serif">KU · มก.</text>
-  </svg>
-);
+// Authentic KU Emblem SVG removed as it is now imported from competitionData.tsx
 
-// Authentic PSU Emblem SVG
-export const PsuLogo: React.FC<{ className?: string }> = ({ className = 'w-9 h-9' }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="46" fill="#EFF6FF" stroke="#1D4ED8" strokeWidth="3" />
-    <circle cx="50" cy="50" r="40" stroke="#93C5FD" strokeWidth="1.5" />
-    {/* PSU Crown & Sceptre */}
-    <path d="M50 16L56 32H44L50 16Z" fill="#1E40AF" />
-    <path d="M34 32L46 44L32 46L34 32Z" fill="#2563EB" />
-    <path d="M66 32L68 46L54 44L66 32Z" fill="#2563EB" />
-    <rect x="30" y="52" width="40" height="6" rx="2" fill="#1E3A8A" />
-    <text x="50" y="86" textAnchor="middle" fill="#1E3A8A" fontSize="8" fontWeight="800" fontFamily="sans-serif">PSU · ม.อ.</text>
-  </svg>
-);
+// Authentic PSU Emblem SVG removed as it is now imported from competitionData.tsx
 
 export interface CampPhoto {
   url: string;

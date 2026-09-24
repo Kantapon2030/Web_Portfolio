@@ -167,7 +167,7 @@ export const CampShowcase: React.FC = () => {
       <section
         ref={runwayRef}
         style={{ overflowAnchor: 'none' }}
-        className="w-full bg-white text-neutral-900 pt-16 sm:pt-24 pb-8 sm:pb-12 px-6 sm:px-12 flex flex-col items-center justify-center relative overflow-hidden border-t border-neutral-100"
+        className="w-full bg-white text-neutral-900 pt-16 sm:pt-24 pb-8 sm:pb-12 px-6 sm:px-12 flex flex-col items-center justify-center relative overflow-hidden"
       >
         <div className="max-w-6xl w-full flex flex-col items-center text-center relative z-10">
           {/* Eyebrow Pill */}
@@ -607,9 +607,6 @@ export const CampShowcase: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Seamless Transition Runway from Pure White into Section 5 Dark Contact */}
-      <div className="w-full h-24 sm:h-36 bg-gradient-to-b from-white via-[#16161b] to-[#08080a]" />
 
       {/* Full-Screen Lightbox Modal for Any Image */}
       {lightboxOpen && lightboxImage && (

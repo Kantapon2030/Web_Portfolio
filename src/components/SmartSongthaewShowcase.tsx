@@ -337,7 +337,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
   return (
     <div className="w-full bg-[#050507]">
       {/* Seamless Transition Runway from Dark Section Above into Pure White */}
-      <div className="w-full h-24 sm:h-36 bg-gradient-to-b from-[#050507] via-[#23232a] to-white" />
+      <div className="w-full h-40 sm:h-64 bg-gradient-to-b from-[#050507] to-white" />
 
       {/* =========================================================================
           SECTION: SCROLL DOWN RUNWAY WITH GIANT ANIMATED "PROJECT" TYPOGRAPHY
