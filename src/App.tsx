@@ -7,7 +7,7 @@ import {
 import realUserBody from './assets/real_user_body.png';
 import arduinoBoard from './assets/arduino_board.png';
 import minimalWhiteBg from './assets/minimal_white_bg.jpg';
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
 import { WelcomeScreen } from './components/ui/welcome-screen';
 const SplineScene = lazy(() => import('./components/ui/splite'));
@@ -179,12 +179,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#faf9f6] text-[#181818] selection:bg-neutral-900 selection:text-white">
-      {/* 2-Step Welcome Screen with Diamond Loader & Animated Smile Emoji */}
-      <AnimatePresence>
-        {showWelcome && (
-          <WelcomeScreen onComplete={() => setShowWelcome(false)} />
-        )}
-      </AnimatePresence>
+      {/* 2-Step Welcome Screen with Diamond Loader */}
+      {showWelcome && (
+        <WelcomeScreen onComplete={() => setShowWelcome(false)} />
+      )}
 
       {/* Precision Scroll Progress Bar (GPU Transform ScaleX — Zero Re-renders) */}
       <motion.div

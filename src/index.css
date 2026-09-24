@@ -20,9 +20,6 @@
     max-width: 100vw;
     overflow-anchor: none;
     -webkit-tap-highlight-color: transparent;
-    /* GPU-accelerate the main scroll container to prevent layout thrashing */
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
   }
 
   /* Custom sleek minimalist scrollbar */
@@ -290,25 +287,14 @@
    on low-powered mobile devices.
    ========================================================================== */
 
-/* Content-visibility: auto for offscreen sections — lets the browser skip
-   rendering of sections that are not near the viewport, dramatically reducing
-   paint and composite work during scroll. */
+/* Content containment optimizations for mobile */
 @media (max-width: 1023px) {
-  /* Apply containment to heavy sections that are far from initial viewport */
-  section[id="skills"],
-  section[id="philosophy"],
-  section[id="other"],
-  section[id="contact"] {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 100vh;
-  }
-
-  /* Disable backdrop-blur on mobile — very expensive composite operation */
+  /* Disable expensive backdrop-blur on low-end mobile devices while maintaining sleek dark background */
   .backdrop-blur-sm,
   .backdrop-blur-md,
   .backdrop-blur-lg {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
   }
 
   /* Reduce expensive box-shadow rendering on scroll containers */

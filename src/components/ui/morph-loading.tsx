@@ -31,73 +31,73 @@ export const UniqueLoading: React.FC<UniqueLoadingProps> = ({
             @keyframes morph-0 {
               0%, 100% {
                 border-radius: 0%;
-                transform: translate(0) scale(1);
+                transform: translate3d(0, 0, 0) scale(1);
               }
               25% {
                 border-radius: 50%;
-                transform: translate(20px, -20px) scale(1.2);
+                transform: translate3d(20px, -20px, 0) scale(1.2);
               }
               50% {
                 border-radius: 25%;
-                transform: translate(40px) scale(0.8);
+                transform: translate3d(40px, 0, 0) scale(0.8);
               }
               75% {
                 border-radius: 75%;
-                transform: translate(20px, 20px) scale(1.1);
+                transform: translate3d(20px, 20px, 0) scale(1.1);
               }
             }
             @keyframes morph-1 {
               0%, 100% {
                 border-radius: 0%;
-                transform: translate(0) scale(1) rotate(0deg);
+                transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
               }
               25% {
                 border-radius: 50%;
-                transform: translate(-20px, -20px) scale(1.3) rotate(90deg);
+                transform: translate3d(-20px, -20px, 0) scale(1.3) rotate(90deg);
               }
               50% {
                 border-radius: 25%;
-                transform: translate(-40px) scale(0.7) rotate(180deg);
+                transform: translate3d(-40px, 0, 0) scale(0.7) rotate(180deg);
               }
               75% {
                 border-radius: 75%;
-                transform: translate(-20px, 20px) scale(1.2) rotate(270deg);
+                transform: translate3d(-20px, 20px, 0) scale(1.2) rotate(270deg);
               }
             }
             @keyframes morph-2 {
               0%, 100% {
                 border-radius: 0%;
-                transform: translate(0) scale(1);
+                transform: translate3d(0, 0, 0) scale(1);
               }
               25% {
                 border-radius: 100%;
-                transform: translate(-20px, 20px) scale(0.9);
+                transform: translate3d(-20px, 20px, 0) scale(0.9);
               }
               50% {
                 border-radius: 0%;
-                transform: translateY(40px) scale(1.4);
+                transform: translate3d(0, 40px, 0) scale(1.4);
               }
               75% {
                 border-radius: 50%;
-                transform: translate(20px, 20px) scale(0.8);
+                transform: translate3d(20px, 20px, 0) scale(0.8);
               }
             }
             @keyframes morph-3 {
               0%, 100% {
                 border-radius: 0%;
-                transform: translate(0) scale(1) rotate(0deg);
+                transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
               }
               25% {
                 border-radius: 25%;
-                transform: translate(20px, 20px) scale(1.1) rotate(-90deg);
+                transform: translate3d(20px, 20px, 0) scale(1.1) rotate(-90deg);
               }
               50% {
                 border-radius: 100%;
-                transform: translateY(-40px) scale(1.3) rotate(-180deg);
+                transform: translate3d(0, -40px, 0) scale(1.3) rotate(-180deg);
               }
               75% {
                 border-radius: 75%;
-                transform: translate(-20px, -20px) scale(0.9) rotate(-270deg);
+                transform: translate3d(-20px, -20px, 0) scale(0.9) rotate(-270deg);
               }
             }
           `}
@@ -106,13 +106,12 @@ export const UniqueLoading: React.FC<UniqueLoadingProps> = ({
           {[0, 1, 2, 3].map((d) => (
             <div
               key={d}
-              className="absolute w-4 h-4 bg-white dark:bg-white shadow-[0_0_12px_rgba(255,255,255,0.5)]"
+              className="absolute w-4 h-4 bg-white shadow-[0_0_12px_rgba(255,255,255,0.5)]"
               style={{
                 animation: `morph-${d} 2s infinite ease-in-out`,
                 animationDelay: `${d * 0.2}s`,
                 willChange: 'transform, border-radius',
                 backfaceVisibility: 'hidden',
-                transform: 'translateZ(0)',
               }}
             />
           ))}
