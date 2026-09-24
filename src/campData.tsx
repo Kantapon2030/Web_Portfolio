@@ -3,7 +3,6 @@ import {
   ChulaLogo,
   KmitlLogo,
   KuLogo,
-  PsuLogo,
 } from './competitionData';
 
 // Imported authentic CUEE Camp certificate and activity photos
@@ -17,15 +16,14 @@ import ceNextGenImg2 from './assets/camps/ce_nextgen_img_2.jpg';
 import ceNextGenImg3 from './assets/camps/ce_nextgen_img_3.jpg';
 import ceNextGenImg4 from './assets/camps/ce_nextgen_img_4.jpg';
 
-import kuUpskillImg1 from './assets/camps/ku_upskill_img_1.jpg';
-import kuUpskillImg2 from './assets/camps/ku_upskill_img_2.jpg';
-import kuUpskillImg3 from './assets/camps/ku_upskill_img_3.jpg';
-import kuUpskillImg4 from './assets/camps/ku_upskill_img_4.jpg';
+import kuUpskillCert from './assets/camps/up skill ku certificate.jpg';
+import kuUpskillPhoto from './assets/camps/upskill ku.jpg';
 
 import icsyouImg1 from './assets/camps/icsyou_camp_img_1.jpg';
 import icsyouImg2 from './assets/camps/icsyou_camp_img_2.jpg';
 import icsyouImg3 from './assets/camps/icsyou_camp_img_3.jpg';
 import icsyouImg4 from './assets/camps/icsyou_camp_img_4.jpg';
+import icsyouRealCert from './assets/camps/icsyou_real_cert.jpg';
 
 import kmitlPreengImg1 from './assets/camps/kmitl_preeng_img_1.jpg';
 import kmitlPreengImg2 from './assets/camps/kmitl_preeng_img_2.jpg';
@@ -171,107 +169,108 @@ export const CAMPS_DATA: CampItem[] = [
     accentColor: '#6366F1', // Royal Violet
   },
   {
-    id: 'ku-upskill-camp',
+    id: 'icsyou-camp',
     indexTag: '03 / 05 · KASETSART UNIVERSITY',
-    badge: 'KU · AI & SMART SYSTEMS',
+    badge: 'KU CS · 2ND RUNNER-UP',
+    badgeType: 'ku',
+    title: 'กิจกรรม I CS YOU CAMP 2026 และการแข่งขัน Pitching Project',
+    thaiSubtitle: 'ค่ายวิทยาการคอมพิวเตอร์ ม.เกษตรศาสตร์ · รางวัลรองชนะเลิศอันดับที่ 2 (Second Runner-Up)',
+    organizer: 'มหาวิทยาลัยเกษตรศาสตร์ (Kasetsart University)',
+    faculty: 'ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์',
+    organizerLogo: KuLogo,
+    date: '1 - 2 สิงหาคม 2569 (ระดับชาติ)',
+    description:
+      'เข้าร่วมกิจกรรมค่ายวิทยาการคอมพิวเตอร์ (I CS YOU CAMP 2026) ณ ภาควิชาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ ได้ศึกษาเรียนรู้กระบวนการออกแบบ UI/UX อย่างเป็นระบบด้วย Figma และ Stitch พร้อมทั้งฝึกฝนการพัฒนาเว็บแอปพลิเคชันแบบ Full-Stack ด้วยการประยุกต์ใช้ AI ในช่วงโปรเจกต์จบของค่ายได้ทำหน้าที่เป็น Prompt Engineer และเป็นแกนหลักในการนำเสนอและปรับจูนไอเดียนวัตกรรมร่วมกับเพื่อนในทีม จนสามารถพาทีมคว้ารางวัล "รองชนะเลิศอันดับที่ 2" (Second Runner-Up) ในการแข่งขัน Pitching Project มาครองได้สำเร็จ',
+    shortSummary:
+      'เรียนรู้ UI/UX ด้วย Figma & Stitch และสร้างเว็บ Full-Stack ด้วย AI พร้อมทำหน้าที่ Prompt Engineer ปรับจูนไอเดียจนคว้ารางวัลรองชนะเลิศอันดับ 2',
+    mascotTip: 'ค่ายนี้ผมทำหน้าที่ Prompt Engineer และคอยปรับจูนไอเดียกับเพื่อนๆ จนคว้ารองชนะเลิศอันดับ 2 มาได้ครับ!',
+    certificateImg: icsyouRealCert,
+    certificateCaption: 'ประกาศนียบัตรรางวัลรองชนะเลิศอันดับที่ 2 การแข่งขัน Pitching Project ในกิจกรรม I CS YOU CAMP 2026 มหาวิทยาลัยเกษตรศาสตร์',
+    galleryPhotos: [
+      {
+        url: icsyouImg1,
+        caption: 'ถ่ายภาพร่วมกับทีมและคณะกรรมการบนเวทีในพิธีมอบรางวัล "รองชนะเลิศอันดับที่ 2" (Second Runner-Up)',
+        tag: 'AWARD CEREMONY',
+      },
+      {
+        url: icsyouImg2,
+        caption: 'บรรยากาศการระดมความคิด นำเสนอ และปรับจูนไอเดียโปรเจกต์นวัตกรรมร่วมกับเพื่อนร่วมทีมอย่างจริงจัง',
+        tag: 'TEAM IDEATION',
+      },
+      {
+        url: icsyouImg3,
+        caption: 'การลงมือเขียนโค้ดและทำ Prompt Engineering พัฒนา Full-Stack Web ด้วย AI ในห้องแล็บคอมพิวเตอร์',
+        tag: 'FULL-STACK & AI',
+      },
+      {
+        url: icsyouImg4,
+        caption: 'การฝึกอบรมเชิงลึกด้านการออกแบบโครงสร้าง UI/UX และดีไซน์ซิสเต็มด้วยเครื่องมือ Figma และ Stitch',
+        tag: 'UI/UX DESIGN',
+      },
+    ],
+    role: 'Prompt Engineer & Ideation Lead (รองชนะเลิศอันดับ 2)',
+    technologies: [
+      'Prompt Engineering',
+      'Full-Stack Web (AI-Driven)',
+      'UI/UX Design (Figma)',
+      'Stitch Design System',
+      'Team Ideation & Brainstorming',
+      'Pitching & Presentation',
+    ],
+    highlights: [
+      'คว้ารางวัลรองชนะเลิศอันดับที่ 2 (Second Runner-Up) การแข่งขัน Pitching Project ของค่าย',
+      'ทำหน้าที่หลักด้าน Prompt Engineering ในการนำ AI มาช่วยพัฒนา Full-Stack Web Application',
+      'เรียนรู้การออกแบบ UI/UX เชิงลึกด้วย Figma และเทคนิคการวางระบบด้วย Stitch',
+      'เป็นแกนหลักในการนำเสนอ ถกเถียง และปรับจูนแนวคิดนวัตกรรมร่วมกับเพื่อนร่วมทีม',
+    ],
+    accentColor: '#10B981', // Emerald Green
+  },
+  {
+    id: 'ku-upskill-camp',
+    indexTag: '04 / 05 · KASETSART UNIVERSITY',
+    badge: 'KU · รศ.ยืน ภู่วรวรรณ',
     badgeType: 'ku',
     title: 'การฝึกอบรม Engineering Up Skill: Hands-on AI & Smart Systems',
-    thaiSubtitle: 'การถ่ายทอดกระบวนการคิดเชิงตรรกะแบบวิศวกร (Engineering Logic) โดย รศ. ยืน ภู่วรวรรณ',
+    thaiSubtitle: 'ถ่ายทอดทักษะวิศวกรและการคิดเชิงตรรกะ โดย รศ.ยืน ภู่วรวรรณ ปรมาจารย์ด้านคอมพิวเตอร์ไทย',
     organizer: 'มหาวิทยาลัยเกษตรศาสตร์',
     faculty: 'ภาควิชาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์',
     organizerLogo: KuLogo,
     date: '13 - 14 มิถุนายน 2569 (ระดับชาติ)',
     description:
-      'เป็นหนึ่งในผู้ที่ผ่านการคัดเลือกเข้ารับการถ่ายทอดความรู้และทักษะความเป็นวิศวกรจาก รองศาสตราจารย์ ยืน ภู่วรวรรณ โดยตรง ทำให้ได้รับการปลูกฝังกระบวนการคิดเชิงตรรกะแบบวิศวกร (Engineering Logic) ที่เชื่อมั่นว่า "ทุกสิ่งในโลกนี้เราสามารถสร้างมันขึ้นมาได้" พร้อมทั้งได้ลงมือปฏิบัติจริง (Hands-on) เกี่ยวกับการทำงานของเทคโนโลยีปัญญาประดิษฐ์ (AI) และระบบอัจฉริยะ (Smart Systems)',
+      'เป็นหนึ่งในผู้ผ่านการคัดเลือกเข้ารับการถ่ายทอดองค์ความรู้และทักษะความเป็นวิศวกรจาก "รองศาสตราจารย์ ยืน ภู่วรวรรณ" อาจารย์อาวุโสประจำภาควิชาวิศวกรรมคอมพิวเตอร์ มหาวิทยาลัยเกษตรศาสตร์ ผู้ได้รับการยกย่องเป็นปรมาจารย์คนสำคัญของวงการวิทยาการคอมพิวเตอร์และวิศวกรรมคอมพิวเตอร์ไทย โดยได้รับการปลูกฝังกระบวนการคิดเชิงตรรกะแบบวิศวกร (Engineering Logic) ตั้งแต่ระดับรากฐาน ซึมซับ Mindset สำคัญว่า "ทุกสิ่งในโลกนี้ เราสามารถสร้างมันขึ้นมาได้" พร้อมลงมือปฏิบัติจริง (Hands-on) ด้านเทคโนโลยีปัญญาประดิษฐ์ (AI) และระบบอัจฉริยะ (Smart Systems)',
     shortSummary:
-      'รับการถ่ายทอด Engineering Mindset จาก รศ. ยืน ภู่วรวรรณ พร้อมปฏิบัติการ AI และ Smart Systems เพื่อการแก้ปัญหาจริงในระดับวิศวกรรม',
-    mascotTip: 'ได้ Mindset จาก รศ. ยืน ภู่วรวรรณ: "ทุกสิ่งในโลกเราสร้างได้" ครับ!',
-    certificateImg: kuUpskillImg1,
-    certificateCaption: 'เกียรติบัตรผ่านการฝึกอบรม Hands-on AI & Smart Systems มหาวิทยาลัยเกษตรศาสตร์',
+      'รับการถ่ายทอดทักษะวิศวกรและการคิดเชิงตรรกะ (Engineering Logic) โดยตรงจาก รศ.ยืน ภู่วรวรรณ ปรมาจารย์คอมพิวเตอร์ไทย อาจารย์อาวุโส ภาควิชาวิศวกรรมคอมพิวเตอร์ ม.เกษตรศาสตร์',
+    mascotTip: 'ได้ถ่ายทอดวิชาและแนวคิดวิศวกรโดยตรงจาก รศ.ยืน ภู่วรวรรณ ปรมาจารย์คอมพิวเตอร์ไทย: "ทุกสิ่งในโลกเราสร้างได้" ครับ!',
+    certificateImg: kuUpskillCert,
+    certificateCaption: 'เกียรติบัตรผ่านการฝึกอบรม Engineering Up Skill: Hands-on AI & Smart Systems มหาวิทยาลัยเกษตรศาสตร์',
     galleryPhotos: [
       {
-        url: kuUpskillImg2,
-        caption: 'การรับฟังการบรรยายวิสัยทัศน์และการคิดแบบวิศวกรจาก รศ. ยืน ภู่วรวรรณ อย่างใกล้ชิด',
-        tag: 'KEYNOTE SESSION',
+        url: kuUpskillPhoto,
+        caption: 'ภาพถ่ายร่วมกับ รศ.ยืน ภู่วรวรรณ อาจารย์อาวุโส ภาควิชาวิศวกรรมคอมพิวเตอร์ ม.เกษตรศาสตร์ ปรมาจารย์แห่งวงการคอมพิวเตอร์ไทย',
+        tag: 'WITH MASTER YUEN',
       },
       {
-        url: kuUpskillImg3,
-        caption: 'การทดลองเขียนโปรแกรมเชื่อมต่อระบบตรวจจับภาพและอัลกอริทึมปัญญาประดิษฐ์',
-        tag: 'AI WORKSHOP',
-      },
-      {
-        url: kuUpskillImg4,
-        caption: 'บรรยากาศการร่วมแลกเปลี่ยนแนวคิดนวัตกรรมกับเพื่อนนักเรียนด้านวิศวกรรมทั่วประเทศ',
-        tag: 'SMART SYSTEMS LAB',
+        url: kuUpskillCert,
+        caption: 'เกียรติบัตรผ่านการฝึกอบรม Engineering Up Skill: Hands-on AI & Smart Systems มหาวิทยาลัยเกษตรศาสตร์',
+        tag: 'CERTIFICATE',
       },
     ],
-    role: 'ผู้เข้ารับการอบรม (Engineering Trainee & AI Researcher)',
+    role: 'ผู้เข้ารับการอบรม (Engineering Logic & AI Trainee)',
     technologies: [
-      'Engineering Logic & Philosophy',
+      'Engineering Logic & Thinking',
+      'Problem-Solving Mindset',
       'Artificial Intelligence (AI)',
       'Smart Systems Architecture',
       'Computer Vision Inference',
-      'Embedded Machine Learning',
-      'Problem Decomposition',
+      'Hands-on Prototyping',
     ],
     highlights: [
-      'รับการถ่ายทอด Mindset วิศวกร: "ทุกสิ่งในโลกนี้ เราสามารถสร้างมันขึ้นมาได้"',
-      'เรียนรู้สถาปัตยกรรมของระบบ AI ที่ทำงานร่วมกับอุปกรณ์ Smart Hardware',
-      'ฝึกวิเคราะห์โจทย์ปัญหาระดับประเทศและแตกองค์ประกอบเพื่อหาทางแก้ด้วยเทคโนโลยี',
-      'ต่อยอดแนวคิดสู่การเป็นนักพัฒนาเทคโนโลยี AI ที่แก้ปัญหาได้จริง',
+      'ได้รับการถ่ายทอดกระบวนการคิดเชิงตรรกะ (Engineering Logic) และทักษะวิศวกรจาก รศ.ยืน ภู่วรวรรณ ปรมาจารย์คอมพิวเตอร์ไทย',
+      'อาจารย์อาวุโสประจำภาควิชาวิศวกรรมคอมพิวเตอร์ มหาวิทยาลัยเกษตรศาสตร์',
+      'ปลูกฝัง Mindset สำคัญระดับปรมาจารย์: "ทุกสิ่งในโลกนี้ เราสามารถสร้างมันขึ้นมาได้"',
+      'ฝึกคิดวิเคราะห์ปัญหาอย่างเป็นเหตุเป็นผล และปฏิบัติการระบบ AI & Smart Systems จริงในห้องแล็บ',
     ],
     accentColor: '#7C3AED', // Deep Violet
-  },
-  {
-    id: 'icsyou-camp',
-    indexTag: '04 / 05 · CS & TECH HACKATHON',
-    badge: 'I CS YOU · PITCHING AWARD',
-    badgeType: 'cs',
-    title: 'กิจกรรม I CS YOU CAMP 2026 และการแข่งขัน Pitching Project',
-    thaiSubtitle: 'ค่ายวิทยาการคอมพิวเตอร์และการแข่งขันประชันไอเดียนวัตกรรมเทคโนโลยี',
-    organizer: 'สถาบันการศึกษาเครือข่ายความร่วมมือทางวิทยาการคอมพิวเตอร์',
-    faculty: 'สาขาวิทยาการคอมพิวเตอร์ (Computer Science)',
-    organizerLogo: PsuLogo,
-    date: 'พฤษภาคม 2569 (ระดับภูมิภาค)',
-    description:
-      'เข้าร่วมกิจกรรมค่ายวิทยาการคอมพิวเตอร์เพื่อเสริมสร้างทักษะ Computational Thinking, Data Structures และการทำงานเป็นทีม พร้อมเข้าร่วมการแข่งขัน Pitching Project ประชันไอเดียการประยุกต์ใช้เทคโนโลยีแก้ปัญหาเชิงสังคม นำเสนอแนวคิดต่อหน้าคณาจารย์ผู้ทรงคุณวุฒิ',
-    shortSummary:
-      'เสริมสร้างทักษะ Computational Thinking และการแข่งขัน Pitching Project ประชันไอเดียการประยุกต์ใช้เทคโนโลยีแก้ปัญหาเชิงสังคม',
-    mascotTip: 'ได้ขึ้นเวที Pitching นำเสนอไอเดียนวัตกรรมเทคโนโลยีเพื่อสังคมต่อหน้ากรรมการ!',
-    certificateImg: icsyouImg1,
-    certificateCaption: 'เกียรติบัตรผ่านการเข้าร่วมและแข่งขัน Pitching Project ในค่าย I CS YOU 2026',
-    galleryPhotos: [
-      {
-        url: icsyouImg2,
-        caption: 'บรรยากาศการร่วมทำกิจกรรมปฏิบัติการเขียนโค้ดและทดสอบตรรกะโปรแกรมกับเพื่อนร่วมทีม',
-        tag: 'CS WORKSHOP',
-      },
-      {
-        url: icsyouImg3,
-        caption: 'ช่วงเวลาการพัฒนาและปรับแต่ง Presentation Slide สำหรับการขึ้นเวที Pitching',
-        tag: 'PROJECT PITCH',
-      },
-      {
-        url: icsyouImg4,
-        caption: 'การแลกเปลี่ยนความรู้และมุมมองด้านเทคโนโลยีร่วมกับวิทยากรและรุ่นพี่ในค่าย',
-        tag: 'NETWORKING',
-      },
-    ],
-    role: 'Lead Tech Pitcher & Developer',
-    technologies: [
-      'Computational Thinking',
-      'Agile Team Collaboration',
-      'Tech Pitching & Communication',
-      'Data Analytics Fundamentals',
-      'Prototype Wireframing',
-      'User-Centric Design',
-    ],
-    highlights: [
-      'ฝึกทักษะการสื่อสารทางเทคนิค (Tech Storytelling) ให้เข้าใจง่ายและทรงพลัง',
-      'ระดมสมองและพัฒนาโปรเจกต์ต้นแบบภายในเวลาจำกัดร่วมกับเพื่อนในค่าย',
-      'รับคำแนะนำและมุมมองเชิงลึกจากคณาจารย์ผู้เชี่ยวชาญด้านวิทยาการคอมพิวเตอร์',
-    ],
-    accentColor: '#3B82F6', // Cobalt Blue
   },
   {
     id: 'kmitl-preeng-program',

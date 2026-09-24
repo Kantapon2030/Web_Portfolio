@@ -17,6 +17,7 @@ import { MascotInteractive } from './components/MascotInteractive';
 import { calculateDetailedAge, DetailedAge } from './lib/age';
 import { SmartSongthaewShowcase } from './components/SmartSongthaewShowcase';
 import { CampShowcase } from './components/CampShowcase';
+import { OtherCertificatesMarquee } from './components/OtherCertificatesMarquee';
 import ButtonSocialIconDemo from '@/components/ui/social-icon';
 
 // Hero Portrait SVG Component (Reusable for Desktop full-stage and Mobile centered-stage)
@@ -546,6 +547,13 @@ export default function App() {
                   <span>ค่ายและกิจกรรมวิชาการ</span>
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
+                <a
+                  href="#other"
+                  className="group inline-flex items-center gap-1.5 text-neutral-500 hover:text-amber-600 transition-colors"
+                >
+                  <span>เกียรติบัตรทั้งหมด</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
               </div>
             </div>
           </div>
@@ -648,8 +656,10 @@ export default function App() {
           ========================================================================= */}
       <CampShowcase />
 
-      {/* Seamless Connector: Light Camps Section (#faf9f6) into Obsidian Contact Hub (#08080a) */}
-      <div className="w-full h-40 sm:h-64 bg-gradient-to-b from-[#faf9f6] to-[#08080a]" />
+      {/* =========================================================================
+          SECTION: OTHER // CERTIFICATES SHOWCASE (3D MARQUEE ON BLACK)
+          ========================================================================= */}
+      <OtherCertificatesMarquee />
 
       {/* =========================================================================
           SECTION 5: GRAND FINALE CONTACT HUB (05 // CONTACT)

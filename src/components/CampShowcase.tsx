@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
-  Maximize2,
   Award,
   Sparkles,
   Calendar,
   X,
   Layers,
   CheckCircle2,
-  Image as ImageIcon,
   Camera,
+  Pause,
+  Clock,
+  ZoomIn,
 } from 'lucide-react';
 import { CAMPS_DATA, CampItem } from '../campData';
 import mascotDownLeft from '../assets/mascot_down_left.png';
 
 export const CampShowcase: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = slide next (right-to-left), -1 = prev
+  const [direction, setDirection] = useState(1); // 1 = slide next (left-to-right), -1 = prev
   const [isPaused, setIsPaused] = useState(false);
-  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ url: string; caption: string; tag: string } | null>(null);
   const [mascotBubbleIdx, setMascotBubbleIdx] = useState(0);
@@ -30,7 +30,7 @@ export const CampShowcase: React.FC = () => {
   const campContainerRef = useRef<HTMLDivElement>(null);
   const currentCamp: CampItem = CAMPS_DATA[currentIndex];
 
-  // Scroll animations for the giant "CAMP" runway (restored as requested by user)
+  // Scroll animations for the giant "CAMP" background runway
   const { scrollYProgress: runwayProgress } = useScroll({
     target: runwayRef,
     offset: ['start end', 'end start'],
@@ -58,7 +58,6 @@ export const CampShowcase: React.FC = () => {
   // Navigate to next camp
   const goToNext = useCallback(() => {
     setDirection(1);
-    setActivePhotoIdx(0);
     setMascotBubbleIdx(0);
     setCurrentIndex((prev) => (prev + 1) % CAMPS_DATA.length);
   }, []);
@@ -66,7 +65,6 @@ export const CampShowcase: React.FC = () => {
   // Navigate to previous camp
   const goToPrev = useCallback(() => {
     setDirection(-1);
-    setActivePhotoIdx(0);
     setMascotBubbleIdx(0);
     setCurrentIndex((prev) => (prev - 1 + CAMPS_DATA.length) % CAMPS_DATA.length);
   }, []);
@@ -74,22 +72,9 @@ export const CampShowcase: React.FC = () => {
   const goToSlide = (idx: number) => {
     if (idx === currentIndex) return;
     setDirection(idx > currentIndex ? 1 : -1);
-    setActivePhotoIdx(0);
     setMascotBubbleIdx(0);
     setCurrentIndex(idx);
   };
-
-  // High-performance automatic sliding ticker ONLY when in view and not paused
-  useEffect(() => {
-    const shouldPause = isPaused || lightboxOpen || !isCampInView;
-    if (shouldPause) return;
-
-    const interval = setInterval(() => {
-      goToNext();
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, [isPaused, lightboxOpen, isCampInView, goToNext]);
 
   // Keyboard navigation when lightbox is open
   useEffect(() => {
@@ -114,34 +99,34 @@ export const CampShowcase: React.FC = () => {
   // Mascot fun extra quotes on click
   const extraMascotQuotes = [
     currentCamp.mascotTip,
-    'คลิกที่รูปภาพเพื่อเปิดดูขนาดเต็มความละเอียดสูงได้นะ!',
-    'สไลด์เปลี่ยนค่ายอัตโนมัติทุก 6 วินาที หรือกดปุ่มลูกศรได้เลยครับ',
+    'คลิกที่ภาพเกียรติบัตรหรือภาพกิจกรรม เพื่อดูขนาดเต็มคมชัดได้เลยครับ!',
+    'รูปจะเลื่อนแสดงตลอดเวลา และสไลด์เปลี่ยนค่ายอัตโนมัติทุก 10 วินาทีครับ',
   ];
 
   const handleMascotClick = () => {
     setMascotBubbleIdx((prev) => (prev + 1) % extraMascotQuotes.length);
   };
 
-  // Ultra-smooth GPU compositor slide transitions (zero layout shift, zero jank)
+  // Slide transition variants: slides to right/left smoothly
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 32 : -32,
+      x: dir > 0 ? 48 : -48,
       opacity: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
       transition: {
-        duration: 0.22,
-        ease: [0.25, 1, 0.5, 1] as const,
+        duration: 0.35,
+        ease: [0.16, 1, 0.3, 1] as const,
       },
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -32 : 32,
+      x: dir > 0 ? -48 : 48,
       opacity: 0,
       transition: {
-        duration: 0.18,
-        ease: [0.5, 0, 0.75, 0] as const,
+        duration: 0.25,
+        ease: [0.7, 0, 0.84, 0] as const,
       },
     }),
   };
@@ -151,78 +136,120 @@ export const CampShowcase: React.FC = () => {
     setLightboxOpen(true);
   };
 
+  // Media list for the left continuous vertical marquee:
+  // Starts strictly with the Official Certificate, followed by activity photos
+  const campMediaList = useMemo(() => {
+    const list = [
+      {
+        url: currentCamp.certificateImg,
+        caption: currentCamp.certificateCaption,
+        tag: 'OFFICIAL CERTIFICATE',
+        isCertificate: true,
+      },
+      ...currentCamp.galleryPhotos.map((p) => ({
+        url: p.url,
+        caption: p.caption,
+        tag: p.tag,
+        isCertificate: false,
+      })),
+    ];
+    return list;
+  }, [currentCamp]);
+
+  // Duplicate list to achieve a seamless, continuous, infinite vertical scroll
+  const duplicatedMediaList = useMemo(() => {
+    let list = [...campMediaList];
+    while (list.length < 4) {
+      list = [...list, ...campMediaList];
+    }
+    return [...list, ...list];
+  }, [campMediaList]);
+
+  // Calculate scrolling duration based on number of items for an optimal viewing pace
+  const marqueeDuration = Math.max(18, duplicatedMediaList.length * 4.5);
+
   const OrganizerLogo = currentCamp.organizerLogo;
-  const currentActivePhoto = currentCamp.galleryPhotos[activePhotoIdx] || currentCamp.galleryPhotos[0];
 
   return (
     <div
       id="camps"
       ref={campContainerRef}
       style={{ overflowAnchor: 'none' }}
-      className="w-full bg-[#faf9f6] text-neutral-900 select-none"
+      className="relative w-full bg-[#faf9f6] text-neutral-900 select-none overflow-hidden"
     >
       {/* =========================================================================
-          SECTION: SCROLL DOWN RUNWAY WITH GIANT ANIMATED "CAMP" TYPOGRAPHY
+          GIANT TYPOGRAPHIC RUNWAY ("CAMP")
           ========================================================================= */}
       <section
         ref={runwayRef}
         style={{ overflowAnchor: 'none' }}
-        className="w-full bg-white text-neutral-900 pt-16 sm:pt-24 pb-8 sm:pb-12 px-6 sm:px-12 flex flex-col items-center justify-center relative overflow-hidden"
+        className="relative w-full min-h-[160px] sm:min-h-[220px] lg:min-h-[260px] flex flex-col items-center justify-center overflow-hidden pt-12 sm:pt-16 pb-4 pointer-events-none"
       >
-        <div className="max-w-6xl w-full flex flex-col items-center text-center relative z-10">
-          {/* Eyebrow Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-mono mb-3 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-            <span>04 // ACADEMIC CAMPS &amp; WORKSHOPS</span>
-          </div>
-
-          {/* Giant Animated "CAMP" Typography */}
-          <div className="w-full overflow-hidden py-2 sm:py-4">
-            <motion.h2
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+          <motion.div
+            style={{
+              x: campTextX,
+              opacity: campTextOpacity,
+              scale: campScale,
+            }}
+            className="flex items-center justify-center will-change-transform"
+          >
+            <span
+              className="text-[14vw] sm:text-[15vw] md:text-[16vw] font-black tracking-tighter leading-none select-none text-transparent"
               style={{
-                x: campTextX,
-                opacity: campTextOpacity,
-                scale: campScale,
-                willChange: 'transform, opacity',
-                transform: 'translateZ(0)',
+                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                WebkitTextStroke: '2px rgba(99, 102, 241, 0.45)',
+                color: 'rgba(99, 102, 241, 0.08)',
+                filter: 'drop-shadow(0 20px 30px rgba(99, 102, 241, 0.12))',
               }}
-              className="font-black text-6xl sm:text-8xl md:text-9xl lg:text-[12rem] tracking-tighter uppercase leading-none text-neutral-900"
             >
-              <span className="text-indigo-600">C</span>AMP
-            </motion.h2>
-          </div>
+              CAMP
+            </span>
+          </motion.div>
+        </div>
 
-          {/* Subtitle description */}
-          <p className="max-w-2xl text-xs sm:text-sm font-light font-mono text-neutral-500 tracking-wide mt-1">
+        {/* Section Subtitle */}
+        <div className="relative z-10 text-center px-4 mt-8 sm:mt-12">
+          <p className="text-neutral-500 font-prompt text-xs sm:text-sm md:text-base font-light tracking-wide max-w-xl mx-auto">
             ประสบการณ์การเรียนรู้เชิงปฏิบัติการ ค่ายวิชาการ และเวทีประชันไอเดียในระดับชั้นมัธยมศึกษา
           </p>
         </div>
       </section>
 
       {/* =========================================================================
-          MAIN CAMP SHOWCASE SECTION (BOX FIT COMFORTABLY IN SINGLE VIEWPORT)
+          MAIN CAMP SHOWCASE SECTION (1 HIGH-IMPACT UNIFIED BOX)
           ========================================================================= */}
       <section
         style={{ overflowAnchor: 'none' }}
-        className="w-full bg-white text-neutral-900 pb-16 sm:pb-24 px-4 sm:px-8 lg:px-12"
+        className="w-full bg-[#faf9f6] text-neutral-900 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-10"
       >
         <div className="max-w-6xl mx-auto" style={{ overflowAnchor: 'none' }}>
-          {/* Navigation Toolbar & Slide Ticker (Top Bar) */}
+          {/* Top Control Toolbar */}
           <div className="mb-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-2">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono font-bold text-indigo-600 tracking-wider">
                 {currentCamp.indexTag}
               </span>
               <span className="text-neutral-300">|</span>
-              <span className="text-xs font-mono text-neutral-400">
-                {isPaused || !isCampInView ? '⏸ หยุดชั่วคราว' : '▶ เลื่อนอัตโนมัติทุก 6 วิ'}
+              <span className="text-xs font-mono text-neutral-500 flex items-center gap-1.5">
+                {isPaused || lightboxOpen || !isCampInView ? (
+                  <>
+                    <Pause size={12} className="text-amber-500" />
+                    <span>หยุดชั่วคราว (ชี้เมาส์)</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock size={12} className="text-indigo-600" />
+                    <span>เลื่อนอัตโนมัติทุก 10 วินาที</span>
+                  </>
+                )}
               </span>
             </div>
 
             {/* Navigation Buttons & Progress Dots */}
             <div className="flex items-center gap-2.5 self-end sm:self-auto">
               {/* Pagination Dots */}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-neutral-200 shadow-2xs">
                 {CAMPS_DATA.map((c, idx) => (
                   <button
                     key={c.id}
@@ -236,7 +263,7 @@ export const CampShowcase: React.FC = () => {
                     <span
                       className={`h-1.5 rounded-full transition-all duration-300 block ${
                         idx === currentIndex
-                          ? 'w-5 bg-indigo-600'
+                          ? 'w-6 bg-indigo-600'
                           : 'w-1.5 bg-neutral-300 group-hover:bg-neutral-400'
                       }`}
                     />
@@ -250,7 +277,7 @@ export const CampShowcase: React.FC = () => {
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={goToPrev}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-neutral-200 flex items-center justify-center text-neutral-700 transition-colors shadow-xs active:scale-95 touch-manipulation"
+                  className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-neutral-200 flex items-center justify-center text-neutral-700 transition-colors shadow-2xs active:scale-95 touch-manipulation"
                   title="ค่ายก่อนหน้า (Previous)"
                   aria-label="Previous camp"
                 >
@@ -260,7 +287,7 @@ export const CampShowcase: React.FC = () => {
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={goToNext}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-neutral-200 flex items-center justify-center text-neutral-700 transition-colors shadow-xs active:scale-95 touch-manipulation"
+                  className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-neutral-200 flex items-center justify-center text-neutral-700 transition-colors shadow-2xs active:scale-95 touch-manipulation"
                   title="ค่ายถัดไป (Next)"
                   aria-label="Next camp"
                 >
@@ -271,56 +298,52 @@ export const CampShowcase: React.FC = () => {
           </div>
 
           {/* =========================================================================
-              THE MAIN CAMP DATA BOX:
-              - Strictly locked height on desktop (lg:h-[435px]) to prevent height shifts
-              - overflowAnchor: 'none' to block browser scroll anchoring
-              - Smooth hardware-accelerated crossfade transitions
+              THE MAIN CAMP SHOWCASE BOX:
+              - Left side: Large Certificate & Activity Photos vertically scrolling
+              - Subtle edge fade feathering smoothly into the right side without damaging images
+              - Right side: Camp information, badges, title, skills, highlights, mascot
+              - Top: 10-Second Linear Progress Bar indicating auto-advance to next camp
               ========================================================================= */}
           <div
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             style={{ overflowAnchor: 'none' }}
-            className="relative p-4 sm:p-6 lg:p-7 bg-white rounded-3xl shadow-sm border border-neutral-200/90 overflow-hidden lg:h-[442px] min-h-[442px]"
+            className="relative bg-white rounded-3xl shadow-lg border border-neutral-200/90 overflow-hidden lg:h-[530px] min-h-[530px]"
           >
-            {/* 6-Second Linear Progress Bar (At Top Edge) */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-neutral-100 overflow-hidden z-20">
+            {/* 10-Second Linear Progress Bar (At Top Edge of Box) */}
+            <div className="absolute top-0 left-0 right-0 h-[4px] bg-neutral-100/90 overflow-hidden z-30">
               <div
-                key={`camp-progress-${currentIndex}`}
-                className="h-full bg-indigo-600 origin-left"
+                key={`camp-10s-timer-${currentIndex}`}
+                onAnimationEnd={() => {
+                  if (!isPaused && !lightboxOpen && isCampInView) {
+                    goToNext();
+                  }
+                }}
+                className="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 origin-left shadow-[0_0_10px_rgba(99,102,241,0.6)]"
                 style={{
                   transformOrigin: '0% 50%',
-                  animation: 'showcaseProgress 6s linear forwards',
-                  animationPlayState: (isPaused || lightboxOpen || !isCampInView) ? 'paused' : 'running',
+                  animation: 'camp10sProgress 10s linear forwards',
+                  animationPlayState: isPaused || lightboxOpen || !isCampInView ? 'paused' : 'running',
                 }}
               />
             </div>
 
-            {/* Indigo Corner Frame Accents (Corner Brackets) */}
+            {/* Tech Corner Accent Brackets */}
             <div
               aria-hidden="true"
-              className="absolute -top-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-l-2 border-indigo-600 rounded-tl-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-10"
+              className="absolute -top-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-l-2 border-indigo-600 rounded-tl-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-20"
             />
             <div
               aria-hidden="true"
-              className="absolute -top-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-indigo-600 rounded-tr-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-10"
+              className="absolute -top-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-indigo-600 rounded-tr-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-20"
             />
             <div
               aria-hidden="true"
-              className="absolute -bottom-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-indigo-600 rounded-bl-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-10"
+              className="absolute -bottom-1 -left-1 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-indigo-600 rounded-bl-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-20"
             />
             <div
               aria-hidden="true"
-              className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-r-2 border-indigo-600 rounded-br-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-10"
-            />
-
-            {/* Subtle Indigo Ambient Glow */}
-            <div
-              aria-hidden="true"
-              className="absolute -top-6 -left-6 w-36 h-36 bg-indigo-500/8 rounded-full blur-2xl pointer-events-none"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-6 -right-6 w-36 h-36 bg-violet-500/8 rounded-full blur-2xl pointer-events-none"
+              className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-r-2 border-indigo-600 rounded-br-xl shadow-[0_0_8px_rgba(79,70,229,0.3)] pointer-events-none z-20"
             />
 
             {/* Slide Content with AnimatePresence */}
@@ -338,153 +361,229 @@ export const CampShowcase: React.FC = () => {
                 }}
                 className="w-full h-full will-change-[transform,opacity]"
               >
-                {/* 2-COLUMN SPLIT GRID */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-start">
+                {/* 2-COLUMN LAYOUT:
+                    LEFT (56%): Large Certificate & Activity Photos Vertical Marquee
+                    RIGHT (44%): Camp Details, Highlights, Skills & Mascot Guide */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 h-full items-stretch">
                   {/* -------------------------------------------------------------
-                      LEFT COLUMN (44% Width): Strictly Dimensioned for Zero Shift
+                      LEFT COLUMN: Large Visual Showcase with Continuous Scroll
                       ------------------------------------------------------------- */}
-                  <div className="lg:col-span-5 flex flex-col justify-between">
-                    {/* Organizer & Badge Bar (Strictly 46px) */}
-                    <div className="flex items-center justify-between gap-2 pb-2.5 mb-2 border-b border-neutral-100 h-[46px] overflow-hidden">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center p-1.5 shrink-0 shadow-2xs">
-                          <OrganizerLogo className="w-full h-full object-contain" />
+                  <div className="lg:col-span-7 relative h-[380px] sm:h-[440px] lg:h-[530px] overflow-hidden bg-neutral-900/5 flex flex-col justify-center">
+                    {/* Top Status Pill: Explains Marquee Interaction */}
+                    <div className="absolute top-3 left-4 z-20 pointer-events-none">
+                      <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-neutral-200/80 text-[10px] font-mono text-neutral-700 shadow-xs flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+                        <span>แกลเลอรีภาพ &amp; เกียรติบัตร (เลื่อนต่อเนื่อง)</span>
+                      </span>
+                    </div>
+
+                    {/* Continuous Vertical Marquee Track */}
+                    <div
+                      className="flex flex-col gap-4 sm:gap-6 py-4 px-4 sm:px-6 w-full"
+                      style={{
+                        animation: `campVerticalMarquee ${marqueeDuration}s linear infinite`,
+                        animationPlayState: isPaused || lightboxOpen ? 'paused' : 'running',
+                      }}
+                    >
+                      {duplicatedMediaList.map((item, mIdx) => (
+                        <div
+                          key={`camp-media-${currentIndex}-${mIdx}`}
+                          onClick={() => openLightbox(item)}
+                          className="group relative cursor-pointer overflow-hidden rounded-2xl border border-neutral-200/90 bg-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-indigo-500 shrink-0 w-full max-w-[560px] mx-auto aspect-[16/10]"
+                          title="คลิกเพื่อดูภาพขนาดเต็ม"
+                        >
+                          {/* Image Component */}
+                          <img
+                            src={item.url}
+                            alt={item.caption}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                          />
+
+                          {/* Tag Badge (Certificate vs Photo) */}
+                          <div className="absolute top-3 left-3 pointer-events-none z-10">
+                            <span
+                              className={`px-3 py-1 rounded-full text-[10px] font-mono font-semibold tracking-wide shadow-xs flex items-center gap-1.5 backdrop-blur-md ${
+                                item.isCertificate
+                                  ? 'bg-indigo-700/95 text-white shadow-indigo-700/20'
+                                  : 'bg-neutral-900/85 text-white shadow-black/20'
+                              }`}
+                            >
+                              {item.isCertificate ? (
+                                <Award size={12} className="text-amber-300" />
+                              ) : (
+                                <Camera size={12} className="text-indigo-300" />
+                              )}
+                              <span>{item.tag}</span>
+                            </span>
+                          </div>
+
+                          {/* Subtle Gloss Sheen Overlay */}
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-40 group-hover:opacity-20 transition-opacity" />
+
+                          {/* Hover Action Overlay: Zoom Button & Caption Toast */}
+                          <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4 text-white z-10">
+                            <div className="flex justify-end">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-neutral-900 text-xs font-mono font-semibold shadow-md">
+                                <ZoomIn size={14} className="text-indigo-600" />
+                                <span>ขยายขนาดเต็ม</span>
+                              </span>
+                            </div>
+                            <div className="bg-black/75 backdrop-blur-md p-3 rounded-xl border border-white/15">
+                              <p className="text-xs sm:text-sm font-medium line-clamp-2 leading-snug">
+                                {item.caption}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="min-w-0 truncate">
-                          <div className="text-xs font-mono font-bold text-indigo-700 truncate">
-                            {currentCamp.organizer}
-                          </div>
-                          <div className="text-[11px] font-mono text-neutral-400 truncate">
-                            {currentCamp.faculty}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-mono font-medium shrink-0">
-                        <Sparkles size={11} className="text-indigo-500" />
-                        <span>{currentCamp.badge}</span>
-                      </div>
+                      ))}
                     </div>
 
-                    {/* Title & Subtitle (Strictly 58px) */}
-                    <div className="h-[58px] flex flex-col justify-start overflow-hidden">
-                      <h3 className="text-base sm:text-[17px] font-bold tracking-tight text-neutral-900 leading-snug line-clamp-2">
-                        {currentCamp.title}
-                      </h3>
-                      <p className="text-xs text-indigo-700 font-medium truncate mt-0.5">
-                        {currentCamp.thaiSubtitle}
-                      </p>
-                    </div>
+                    {/* Refined Edge Fade Vignettes (Soft feathering strictly at borders so images stay crisp) */}
+                    {/* Right Edge Fade: Gently blends into the white information panel on the right */}
+                    <div className="hidden lg:block pointer-events-none absolute top-0 bottom-0 right-0 w-8 sm:w-12 bg-gradient-to-r from-transparent to-white z-20" />
 
-                    {/* Short Summary (Strictly 38px) */}
-                    <div className="mt-1.5 h-[38px] overflow-hidden">
-                      <p className="text-xs sm:text-[13px] text-neutral-600 font-normal leading-relaxed line-clamp-2">
-                        {currentCamp.shortSummary}
-                      </p>
-                    </div>
+                    {/* Top Edge Fade: Soft entrance for scrolling cards */}
+                    <div className="pointer-events-none absolute top-0 left-0 right-0 h-10 sm:h-14 bg-gradient-to-b from-white via-white/80 to-transparent z-20" />
 
-                    {/* Date & Role Tag (Strictly 26px) */}
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 h-[26px] overflow-hidden">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-neutral-100 border border-neutral-200 truncate">
-                        <Calendar size={11} className="text-indigo-500 shrink-0" />
-                        <span className="truncate">{currentCamp.date}</span>
-                      </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 truncate">
-                        <Layers size={11} className="shrink-0" />
-                        <span className="truncate max-w-[170px]">{currentCamp.role}</span>
-                      </span>
-                    </div>
-
-                    {/* Core Skills Pills (Strictly 58px) */}
-                    <div className="mt-2.5 pt-2 border-t border-neutral-100 h-[58px] overflow-hidden">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
-                        CORE SKILLS &amp; TECHNOLOGIES
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {currentCamp.technologies.slice(0, 5).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 rounded-md border border-neutral-200 text-[11px] font-mono text-neutral-700 bg-neutral-50 hover:border-indigo-400 transition-colors"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Hands-on Highlights (Strictly 60px) */}
-                    <div className="mt-2 pt-2 border-t border-neutral-100 h-[60px] overflow-hidden">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
-                        สิ่งที่ได้ลงมือทำจริง (HANDS-ON HIGHLIGHTS)
-                      </span>
-                      <div className="space-y-1">
-                        {currentCamp.highlights.slice(0, 2).map((h, i) => (
-                          <div
-                            key={i}
-                            className="flex items-start gap-2 text-[11px] text-neutral-700 leading-tight"
-                          >
-                            <CheckCircle2 size={13} className="text-indigo-600 shrink-0 mt-0.5" />
-                            <span className="line-clamp-1">{h}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    {/* Bottom Edge Fade: Soft exit for scrolling cards */}
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 sm:h-14 bg-gradient-to-t from-white via-white/80 to-transparent z-20" />
                   </div>
 
                   {/* -------------------------------------------------------------
-                      RIGHT COLUMN (56% Width): Strictly Dimensioned for Zero Shift
+                      RIGHT COLUMN: Information, Description, Skills, Mascot Guide
                       ------------------------------------------------------------- */}
-                  <div className="lg:col-span-7 flex flex-col justify-between">
-                    {/* Top Bar of Right Column: Section Sub-labels & MASCOT AT TOP-RIGHT! */}
-                    <div className="flex items-center justify-between gap-3 mb-2 min-h-[48px] overflow-visible">
-                      <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-500 uppercase tracking-wide">
-                        <ImageIcon size={13} className="text-indigo-600" />
-                        <span>OFFICIAL CERTIFICATE &amp; GALLERY</span>
-                      </div>
-
-                      {/* =========================================================================
-                          MASCOT AT TOP-RIGHT (OPPOSITE OF PROJECT SECTION'S BOTTOM-LEFT)
-                          ========================================================================= */}
-                      <div
-                        onClick={handleMascotClick}
-                        className="flex items-center gap-2 cursor-pointer group select-none relative"
-                        title="คลิกที่มาสคอตเพื่อฟังคำแนะนำ!"
-                      >
-                        {/* Speech Bubble (Pointing towards the Mascot on the right) */}
-                        <div
-                          key={`${currentIndex}-${mascotBubbleIdx}`}
-                          className="relative px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200/90 shadow-2xs text-xs font-mono text-neutral-800 max-w-[210px] sm:max-w-[270px] text-right"
-                        >
-                          <div className="flex items-center justify-end gap-1 text-indigo-700 font-bold text-[10px] leading-tight">
-                            <span className="text-neutral-400 font-normal">ไกด์ค่าย ·</span>
-                            <span>Tanwa</span>
+                  <div className="lg:col-span-5 relative p-5 sm:p-7 lg:p-7 flex flex-col justify-between h-full bg-white z-10">
+                    <div>
+                      {/* Top Header: Organizer Logo & Badge */}
+                      <div className="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-neutral-100">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-8 h-8 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center p-1.5 shrink-0 shadow-2xs">
+                            <OrganizerLogo className="w-full h-full object-contain" />
                           </div>
-                          <p className="text-[11px] leading-tight line-clamp-2 text-neutral-700 mt-0.5">
-                            {extraMascotQuotes[mascotBubbleIdx]}
-                          </p>
-                          {/* Speech Bubble Beak Pointing Right */}
-                          <div className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-2 h-2 bg-indigo-50 border-t border-r border-indigo-200/90 rotate-45 pointer-events-none" />
+                          <div className="min-w-0 truncate">
+                            <div className="text-xs font-mono font-bold text-indigo-700 truncate">
+                              {currentCamp.organizer}
+                            </div>
+                            <div className="text-[11px] font-mono text-neutral-400 truncate">
+                              {currentCamp.faculty}
+                            </div>
+                          </div>
                         </div>
 
-                        {/* Mascot Figure (Top-Right, looking down-left) — fully visible without clipping */}
-                        <div className="relative shrink-0 flex items-center justify-center">
-                          <img
-                            src={mascotDownLeft}
-                            alt="Tanwa Camp Mascot Guide"
-                            decoding="async"
-                            className="h-11 sm:h-12 w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105"
-                          />
-                          <span className="absolute -bottom-0.5 -left-0.5 w-3.5 h-3.5 rounded-full bg-indigo-600 border-2 border-white flex items-center justify-center text-[7px] text-white">
-                            <Sparkles size={7} />
-                          </span>
+                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-mono font-medium shrink-0">
+                          <Sparkles size={11} className="text-indigo-500" />
+                          <span>{currentCamp.badge}</span>
+                        </div>
+                      </div>
+
+                      {/* Mascot Guide Tanwa (Integrated at top-right of description!) */}
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex-1 min-w-0">
+                          {/* Camp Title */}
+                          <h3 className="text-base sm:text-lg lg:text-[19px] font-bold tracking-tight text-neutral-900 leading-snug line-clamp-2">
+                            {currentCamp.title}
+                          </h3>
+                          {/* Thai Subtitle */}
+                          <p className="text-xs text-indigo-700 font-semibold truncate mt-0.5">
+                            {currentCamp.thaiSubtitle}
+                          </p>
+                        </div>
+
+                        {/* Mascot Guide Component */}
+                        <div
+                          onClick={handleMascotClick}
+                          className="shrink-0 flex items-center gap-1.5 cursor-pointer group select-none ml-1"
+                          title="คลิกที่มาสคอตเพื่อฟังคำแนะนำ!"
+                        >
+                          <motion.div
+                            animate={{ y: [0, -3, 0] }}
+                            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                            className="relative flex items-center justify-center"
+                          >
+                            <img
+                              src={mascotDownLeft}
+                              alt="Tanwa Camp Guide"
+                              decoding="async"
+                              className="h-12 sm:h-14 lg:h-16 w-auto object-contain drop-shadow-sm transition-transform group-hover:scale-105"
+                            />
+                            <span className="absolute -bottom-1 -left-1 w-3.5 h-3.5 rounded-full bg-indigo-600 border border-white flex items-center justify-center text-[7px] text-white">
+                              <Sparkles size={7} />
+                            </span>
+                          </motion.div>
+                        </div>
+                      </div>
+
+                      {/* Mascot Speech Bubble / Camp Quote */}
+                      <div
+                        onClick={handleMascotClick}
+                        className="mb-2.5 px-3 py-1.5 rounded-xl bg-indigo-50/70 border border-indigo-200/70 text-xs font-mono text-neutral-700 cursor-pointer hover:bg-indigo-50 transition-colors flex items-center gap-2"
+                      >
+                        <span className="text-[10px] font-bold text-indigo-700 shrink-0">ไกด์ Tanwa:</span>
+                        <p className="text-[11px] text-neutral-700 truncate">
+                          {extraMascotQuotes[mascotBubbleIdx]}
+                        </p>
+                      </div>
+
+                      {/* Camp Short Summary */}
+                      <p className="text-xs sm:text-[13px] text-neutral-600 font-normal leading-relaxed line-clamp-2 sm:line-clamp-3 mb-2.5">
+                        {currentCamp.shortSummary}
+                      </p>
+
+                      {/* Date & Role Tags */}
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-neutral-500 mb-2.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-neutral-100 border border-neutral-200 truncate">
+                          <Calendar size={11} className="text-indigo-500 shrink-0" />
+                          <span className="truncate">{currentCamp.date}</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 truncate">
+                          <Layers size={11} className="shrink-0" />
+                          <span className="truncate max-w-[200px]">{currentCamp.role}</span>
+                        </span>
+                      </div>
+
+                      {/* Core Skills & Technologies */}
+                      <div className="pt-2 border-t border-neutral-100 mb-2">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
+                          CORE SKILLS &amp; TECHNOLOGIES
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentCamp.technologies.slice(0, 5).map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-0.5 rounded-md border border-neutral-200 text-[11px] font-mono text-neutral-700 bg-neutral-50 hover:border-indigo-400 transition-colors"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Hands-on Highlights */}
+                      <div className="pt-2 border-t border-neutral-100">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
+                          สิ่งที่ได้ลงมือทำจริง (HANDS-ON HIGHLIGHTS)
+                        </span>
+                        <div className="space-y-1">
+                          {currentCamp.highlights.slice(0, 2).map((h, i) => (
+                            <div
+                              key={i}
+                              className="flex items-start gap-1.5 text-[11px] text-neutral-700 leading-tight"
+                            >
+                              <CheckCircle2 size={13} className="text-indigo-600 shrink-0 mt-0.5" />
+                              <span className="line-clamp-1">{h}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
 
-                    {/* Dual Visuals: Side-by-side Certificate + Active Activity Photo (Strictly 208px) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 h-[208px]">
-                      {/* Left Visual: Official Certificate */}
-                      <div
+                    {/* Bottom Status & Interaction Tip */}
+                    <div className="pt-2.5 mt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-400">
+                      <span>เลื่อนเมาส์ชี้เพื่อหยุดดูภาพ</span>
+                      <button
+                        type="button"
                         onClick={() =>
                           openLightbox({
                             url: currentCamp.certificateImg,
@@ -492,113 +591,11 @@ export const CampShowcase: React.FC = () => {
                             tag: 'CERTIFICATE',
                           })
                         }
-                        className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-900/5 shadow-2xs hover:shadow-md transition-all cursor-pointer group h-full flex items-center justify-center p-1.5"
-                        title="คลิกเพื่อดูเกียรติบัตรขนาดเต็ม"
+                        className="text-indigo-600 hover:text-indigo-700 font-medium inline-flex items-center gap-1 hover:underline"
                       >
-                        <img
-                          src={currentCamp.certificateImg}
-                          alt={`เกียรติบัตร ${currentCamp.title}`}
-                          decoding="async"
-                          className="w-full h-full object-contain rounded-xl transition-transform duration-500 group-hover:scale-[1.02]"
-                          loading="lazy"
-                        />
-
-                        {/* Top Verified Badge */}
-                        <div className="absolute top-2 left-2 pointer-events-none">
-                          <span className="px-2.5 py-0.5 rounded-full bg-indigo-700/90 backdrop-blur-md text-white text-[9px] font-mono tracking-wide shadow-xs flex items-center gap-1">
-                            <Award size={10} className="text-amber-300" />
-                            <span>เกียรติบัตรรับรอง</span>
-                          </span>
-                        </div>
-
-                        {/* Zoom hint overlay */}
-                        <div className="absolute inset-0 bg-neutral-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
-                          <span className="px-3 py-1.5 rounded-full bg-white/95 text-neutral-900 text-[11px] font-mono font-medium shadow-md flex items-center gap-1.5 backdrop-blur-sm">
-                            <Maximize2 size={12} className="text-indigo-600" />
-                            <span>ขยายเกียรติบัตร</span>
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Right Visual: Active Activity Photo */}
-                      <div
-                        onClick={() => openLightbox(currentActivePhoto)}
-                        className="relative rounded-2xl overflow-hidden border border-neutral-200 bg-neutral-100 shadow-2xs hover:shadow-md transition-all cursor-pointer group h-full flex items-center justify-center"
-                        title="คลิกเพื่อดูรูปภาพขนาดเต็ม"
-                      >
-                        <img
-                          key={currentActivePhoto.url}
-                          src={currentActivePhoto.url}
-                          alt={currentActivePhoto.caption}
-                          decoding="async"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                          loading="lazy"
-                        />
-
-                        {/* Tag pill */}
-                        <div className="absolute top-2 left-2 pointer-events-none">
-                          <span className="px-2.5 py-0.5 rounded-full bg-neutral-900/85 backdrop-blur-md text-white text-[10px] font-mono tracking-wide shadow-xs flex items-center gap-1">
-                            <Camera size={10} className="text-indigo-300" />
-                            <span>{currentActivePhoto.tag}</span>
-                          </span>
-                        </div>
-
-                        {/* Active photo indicator */}
-                        <div className="absolute top-2 right-2 pointer-events-none">
-                          <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[9px] font-mono">
-                            {activePhotoIdx + 1}/{currentCamp.galleryPhotos.length}
-                          </span>
-                        </div>
-
-                        {/* Zoom hint overlay */}
-                        <div className="absolute inset-0 bg-neutral-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="px-3 py-1.5 rounded-full bg-white/95 text-neutral-900 text-[11px] font-mono font-medium shadow-md flex items-center gap-1.5 backdrop-blur-sm">
-                            <Maximize2 size={12} className="text-indigo-600" />
-                            <span>ขยายภาพกิจกรรม</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Interactive Thumbnail Filmstrip for Camp Photos (Strictly 52px) */}
-                    <div className="pt-1.5 border-t border-neutral-100 flex items-center justify-between gap-2 h-[52px] overflow-hidden">
-                      <div className="flex items-center gap-2 overflow-x-auto py-0.5 scrollbar-none">
-                        {currentCamp.galleryPhotos.map((photo, pIdx) => {
-                          const isSelected = pIdx === activePhotoIdx;
-                          return (
-                            <button
-                              key={`${photo.url}-${pIdx}`}
-                              type="button"
-                              onMouseDown={(e) => e.preventDefault()}
-                              onClick={() => setActivePhotoIdx(pIdx)}
-                              className={`relative rounded-xl overflow-hidden border-2 transition-all shrink-0 w-16 h-10 sm:w-18 sm:h-11 group ${
-                                isSelected
-                                  ? 'border-indigo-600 ring-2 ring-indigo-500/30 scale-105 shadow-sm'
-                                  : 'border-neutral-200 hover:border-indigo-300 opacity-65 hover:opacity-100'
-                              }`}
-                              title={photo.caption}
-                            >
-                              <img
-                                src={photo.url}
-                                alt=""
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                              />
-                              <div className="absolute bottom-0 inset-x-0 bg-black/70 text-[8px] font-mono text-white py-0.5 text-center truncate px-0.5">
-                                {photo.tag}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <div className="text-right hidden sm:block min-w-0 flex-1 pl-2">
-                        <p className="text-[11px] font-mono text-neutral-500 truncate">
-                          {currentActivePhoto.caption}
-                        </p>
-                        <span className="text-[10px] font-mono text-indigo-600">
-                          คลิก Thumbnail เพื่อเปลี่ยนรูปภาพกิจกรรม
-                        </span>
-                      </div>
+                        <Award size={12} />
+                        <span>ดูเกียรติบัตรเต็ม ↗</span>
+                      </button>
                     </div>
                   </div>
                 </div>
