@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Copy,
   Check,
-  ArrowUp,
   Sparkles
 } from 'lucide-react';
 import realUserBody from './assets/real_user_body.png';
@@ -17,6 +16,7 @@ import { Typewriter } from './components/ui/typewriter-text';
 import { MascotInteractive } from './components/MascotInteractive';
 import { calculateDetailedAge, DetailedAge } from './lib/age';
 import { SmartSongthaewShowcase } from './components/SmartSongthaewShowcase';
+import { CampShowcase } from './components/CampShowcase';
 import ButtonSocialIconDemo from '@/components/ui/social-icon';
 
 // Hero Portrait SVG Component (Reusable for Desktop full-stage and Mobile centered-stage)
@@ -530,17 +530,17 @@ export default function App() {
               {/* Simple Text Links with Smooth Hover & Arrow */}
               <div className="mt-10 pt-6 border-t border-neutral-200/80 flex flex-wrap items-center gap-6 text-sm font-medium">
                 <a
-                  href="#skills"
+                  href="#projects"
                   className="group inline-flex items-center gap-1.5 text-neutral-800 hover:text-emerald-600 transition-colors"
                 >
                   <span>ดูโปรเจกต์ของผม</span>
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
                 <a
-                  href="#contact"
-                  className="group inline-flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                  href="#camps"
+                  className="group inline-flex items-center gap-1.5 text-neutral-500 hover:text-indigo-600 transition-colors"
                 >
-                  <span>ประสบการณ์และกิจกรรม</span>
+                  <span>ค่ายและกิจกรรมวิชาการ</span>
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
               </div>
@@ -588,84 +588,115 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          SECTION 3.5: MOTTO PHILOSOPHY (TYPEWRITER ANIMATION & BALANCED SPACING)
+          SECTION 3.5: MOTTO PHILOSOPHY (TYPEWRITER ANIMATION & FULL SCREEN OBSIDIAN)
           ========================================================================= */}
       <section
         id="philosophy"
-        className="relative w-full py-20 sm:py-28 bg-[#050507] text-white select-none border-b border-neutral-900 scroll-mt-6"
+        className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center py-28 sm:py-36 md:py-44 bg-[#050507] text-white select-none scroll-mt-0 overflow-hidden"
       >
         {/* Subtle Ambient Atmosphere */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] sm:w-[1100px] h-[550px] bg-emerald-500/5 rounded-full blur-[180px] pointer-events-none" />
 
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center relative z-10 px-6">
-          <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-neutral-500 block mb-6">
-            Our Core Philosophy
-          </span>
+        <div className="w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center relative z-10 px-6 sm:px-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-xs sm:text-sm text-neutral-400 font-mono tracking-[0.25em] uppercase mb-8 sm:mb-12 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Our Core Philosophy</span>
+          </div>
 
-          <div className="min-h-[80px] sm:min-h-[110px] flex items-center justify-center font-prompt text-2xl sm:text-4xl md:text-5xl font-normal sm:font-light tracking-normal text-center leading-[1.4] text-white">
+          <div className="min-h-[140px] sm:min-h-[180px] md:min-h-[220px] lg:min-h-[250px] flex items-center justify-center font-prompt text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-center leading-[1.3] text-white">
             <Typewriter
               text={[
                 "เราไม่ได้ทำไม่ได้",
                 "เราแค่ยังไม่เคยถูกสอนให้ทำ",
                 "We are not incapable; we simply haven't been taught how to do it yet."
               ]}
-              speed={80}
-              deleteSpeed={40}
-              delay={2200}
+              speed={75}
+              deleteSpeed={35}
+              delay={2400}
               loop={true}
               cursor="|"
               className="text-white font-prompt"
             />
           </div>
 
-          <p className="mt-6 text-xs sm:text-sm font-light font-mono text-neutral-400 tracking-wider">
+          <p className="mt-8 sm:mt-12 text-sm sm:text-base md:text-xl font-light font-mono text-neutral-400 tracking-wider max-w-3xl leading-relaxed">
             “We are not incapable; we simply haven't been taught how to do it yet.”
           </p>
         </div>
       </section>
 
       {/* =========================================================================
-          SECTION 5: SMART SONGTHAEW LIVE TRANSIT SHOWCASE (FULL-BLEED STAGE)
+          SECTION 3: SMART SONGTHAEW LIVE TRANSIT SHOWCASE (FULL-BLEED STAGE)
           ========================================================================= */}
       <SmartSongthaewShowcase />
 
       {/* =========================================================================
-          SECTION 6: GRAND FINALE CONTACT HUB (DEEP RICH BLACK FINALE) — 04 // CONTACT
+          SECTION 4: ACADEMIC CAMPS & WORKSHOPS (ELECTRIC INDIGO SHOWCASE)
+          ========================================================================= */}
+      <CampShowcase />
+
+      {/* =========================================================================
+          SECTION 5: GRAND FINALE CONTACT HUB (05 // CONTACT)
           ========================================================================= */}
       <section id="contact" className="py-36 px-6 sm:px-12 bg-[#08080a] text-white text-center border-t border-neutral-900">
         <div className="max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 mb-6 px-3.5 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 font-mono">
-            <span>04 // Contact & Inquiries</span>
+          {/* Eyebrow: 05 // CONTACT */}
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 font-mono tracking-widest uppercase">
+            <span>05 // CONTACT</span>
           </div>
 
-          <h2 className="font-hn text-4xl sm:text-6xl font-normal tracking-tight text-white mb-6">
-            พร้อมร่วมงานและ<br />
-            <span className="font-serif italic text-neutral-400">แลกเปลี่ยนทางวิชาการ</span>
+          {/* Heading: มาคุยกันครับ */}
+          <h2 className="font-prompt text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white mb-6">
+            มาคุยกันครับ
           </h2>
-          <p className="text-neutral-400 font-light text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-            หากท่านมีข้อสงสัยเกี่ยวกับผลงาน โครงงาน หรือต้องการแลกเปลี่ยนข้อมูลด้านวิศวกรรมคอมพิวเตอร์ สามารถติดต่อได้เสมอครับ
+
+          {/* Description */}
+          <p className="text-neutral-400 font-light text-base sm:text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-prompt">
+            หากสนใจผลงาน อยากแลกเปลี่ยนไอเดีย<br className="hidden sm:inline" />
+            หรือมีโอกาสให้ได้เรียนรู้และร่วมพัฒนาโปรเจกต์<br className="hidden sm:inline" />
+            สามารถติดต่อผมได้เสมอครับ
           </p>
 
-          {/* Email Contact with 1-Click Copy */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-14">
+          {/* Email Contact Block: Send me an email ↗ & tawna20081@gmail.com */}
+          <div className="flex flex-col items-center justify-center gap-3 mb-12">
             <a
               href="mailto:tawna20081@gmail.com"
-              className="text-xl sm:text-3xl font-light text-white hover:text-emerald-400 underline underline-offset-8 transition-colors font-mono"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/50 text-sm font-medium transition-all shadow-[0_0_20px_rgba(16,185,129,0.12)] font-mono"
             >
-              tawna20081@gmail.com
+              <span>Send me an email</span>
+              <span className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
             </a>
-            <button
-              onClick={copyEmail}
-              className="p-3 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-neutral-300 hover:text-white shadow-md transition-all active:scale-95"
-              title="คัดลอกอีเมล"
-            >
-              <Copy size={16} />
-            </button>
+
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-1">
+              <a
+                href="mailto:tawna20081@gmail.com"
+                className="text-xl sm:text-3xl md:text-4xl font-light text-white hover:text-emerald-400 underline underline-offset-8 transition-colors font-mono"
+              >
+                tawna20081@gmail.com
+              </a>
+              <button
+                onClick={copyEmail}
+                className="p-3 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-neutral-300 hover:text-white shadow-md transition-all active:scale-95"
+                title="คัดลอกอีเมล"
+                aria-label="คัดลอกอีเมล"
+              >
+                <Copy size={16} />
+              </button>
+            </div>
           </div>
 
-          {/* Social / External Links (Rounded squircle cards with brand logos in dark theme) */}
-          <div className="mb-16">
+          {/* Social Links: GitHub, Facebook, Instagram */}
+          <div className="mb-12">
             <ButtonSocialIconDemo theme="dark" />
+          </div>
+
+          {/* Status Badge: OPEN TO COLLABORATION & ACADEMIC OPPORTUNITIES */}
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs sm:text-sm font-mono tracking-wider uppercase mb-14 shadow-[0_0_20px_rgba(16,185,129,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>OPEN TO COLLABORATION & ACADEMIC OPPORTUNITIES</span>
           </div>
 
           {/* Back To Top & Replay Intro Buttons */}
@@ -680,10 +711,10 @@ export default function App() {
             <span className="text-neutral-700">&bull;</span>
             <a
               href="#hero"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors uppercase tracking-wider"
+              className="group inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors tracking-wider"
             >
-              <ArrowUp size={13} />
-              <span>Back To Top</span>
+              <span>กลับไปด้านบน</span>
+              <span className="transition-transform group-hover:-translate-y-1">↑</span>
             </a>
           </div>
 

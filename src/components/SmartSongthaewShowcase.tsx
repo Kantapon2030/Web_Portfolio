@@ -239,14 +239,32 @@ export const SmartSongthaewShowcase: React.FC = () => {
     setCurrentIndex(idx);
   };
 
+  const [isSectionInView, setIsSectionInView] = useState(false);
+  const showcaseSectionRef = useRef<HTMLDivElement>(null);
+
+  // Detect when project showcase is actively in viewport before running auto-slide
+  useEffect(() => {
+    const el = showcaseSectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionInView(entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Sync mascot bubble text on project change
   useEffect(() => {
     setMascotBubbleText(currentProject.mascotTip);
   }, [currentProject]);
 
-  // High-performance 5-second automatic sliding ticker with pause on hover, modal open, or expanded
+  // High-performance 5-second automatic sliding ticker ONLY when section is visible in viewport
   useEffect(() => {
-    const shouldPause = isPaused || certModalOpen || isExpanded;
+    const shouldPause = isPaused || certModalOpen || isExpanded || !isSectionInView;
     if (shouldPause) return;
 
     const timer = setTimeout(() => {
@@ -254,7 +272,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [currentIndex, isPaused, certModalOpen, isExpanded, goToNext]);
+  }, [currentIndex, isPaused, certModalOpen, isExpanded, isSectionInView, goToNext]);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -342,8 +360,10 @@ export const SmartSongthaewShowcase: React.FC = () => {
                 x: projectTextX,
                 opacity: projectTextOpacity,
                 scale: projectScale,
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)',
               }}
-              className="font-black text-6xl sm:text-8xl md:text-9xl lg:text-[13rem] tracking-tighter uppercase leading-none text-neutral-900"
+              className="font-black text-6xl sm:text-8xl md:text-9xl lg:text-[13rem] tracking-tighter uppercase leading-none text-neutral-900 select-none"
             >
               <span className="text-red-600">P</span>ROJECT
             </motion.h2>
@@ -369,7 +389,9 @@ export const SmartSongthaewShowcase: React.FC = () => {
           MAIN SHOWCASE SECTION WITH AUTO-SLIDING CAROUSEL & RED CORNER BRACKETS
           ========================================================================= */}
       <section
+        ref={showcaseSectionRef}
         id="projects"
+        style={{ overflowAnchor: 'none' }}
         className="w-full bg-white text-neutral-900 pb-20 sm:pb-32 px-6 sm:px-12 lg:px-16"
       >
         <div className="max-w-6xl mx-auto">
@@ -828,8 +850,6 @@ export const SmartSongthaewShowcase: React.FC = () => {
         </div>
       </section>
 
-      {/* Seamless Transition Runway from Pure White into Section 6 Dark Contact */}
-      <div className="w-full h-24 sm:h-36 bg-gradient-to-b from-white via-[#16161b] to-[#08080a]" />
 
       {/* Full-Screen Zoom Lightbox Modal for Certificate */}
       {certModalOpen && (
