@@ -8,6 +8,7 @@ import arduinoBoard from './assets/arduino_board.png';
 import minimalWhiteBg from './assets/minimal_white_bg.jpg';
 import { motion, useScroll } from 'framer-motion';
 import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
+import { WelcomeScreen } from './components/ui/welcome-screen';
 const SplineScene = lazy(() => import('./components/ui/splite'));
 import { Spotlight } from './components/ui/spotlight';
 import { Typewriter } from './components/ui/typewriter-text';
@@ -122,7 +123,43 @@ function HeroPortraitSvg({
 // Real birthdate: 2008-12-01 (17 years old)
 const BIRTH_DATE = '2008-12-01';
 
+// Session key: ensures welcome screen shows ONLY ONCE on the very first entry
+const WELCOME_SEEN_KEY = 'portfolio_welcome_completed_session';
+
 export default function App() {
+  // Only show welcome screen on the very first entry in this browser session
+  const [showWelcome, setShowWelcome] = useState<boolean>(() => {
+    try {
+      if (typeof window === 'undefined') return false;
+      return !sessionStorage.getItem(WELCOME_SEEN_KEY);
+    } catch {
+      return false;
+    }
+  });
+
+  const handleWelcomeComplete = () => {
+    try {
+      sessionStorage.setItem(WELCOME_SEEN_KEY, 'true');
+    } catch {
+      // ignore
+    }
+    setShowWelcome(false);
+  };
+
+  // Lock body overflow when welcome modal is open, and persist seen state immediately
+  useEffect(() => {
+    if (showWelcome) {
+      document.body.style.overflow = 'hidden';
+      try {
+        sessionStorage.setItem(WELCOME_SEEN_KEY, 'true');
+      } catch {
+        // ignore
+      }
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [showWelcome]);
+
   // Global scroll progress (Framer Motion value — updates DOM directly with zero component re-renders)
   const { scrollYProgress: globalScrollProgress } = useScroll();
 
@@ -164,8 +201,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#faf9f6] text-[#181818] selection:bg-neutral-900 selection:text-white">
-
-
+      {/* 2-Step Welcome Loading Screen — Displays ONLY on the very first entry */}
+      {showWelcome && (
+        <WelcomeScreen onComplete={handleWelcomeComplete} />
+      )}
       {/* Precision Scroll Progress Bar (GPU Transform ScaleX — Zero Re-renders) */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[2.5px] bg-emerald-500 z-50 origin-left shadow-[0_0_8px_rgba(16,185,129,0.7)]"
