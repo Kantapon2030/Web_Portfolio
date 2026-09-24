@@ -2,6 +2,8 @@ import { Suspense, lazy, useRef, useState, useEffect } from 'react';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
+import type { Application } from '@splinetool/runtime';
+
 interface SplineSceneProps {
   scene: string;
   className?: string;
@@ -10,6 +12,8 @@ interface SplineSceneProps {
 
 export function SplineScene({ scene, className = '', onLoad }: SplineSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const splineAppRef = useRef<Application | null>(null);
+  const isInViewRef = useRef<boolean>(true);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -18,14 +22,56 @@ export function SplineScene({ scene, className = '', onLoad }: SplineSceneProps)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        const inView = entry.isIntersecting;
+        isInViewRef.current = inView;
+        setIsVisible(inView);
+
+        if (splineAppRef.current) {
+          try {
+            if (inView) {
+              if (splineAppRef.current.isStopped) {
+                splineAppRef.current.play();
+              }
+            } else {
+              if (!splineAppRef.current.isStopped) {
+                splineAppRef.current.stop();
+              }
+            }
+          } catch {
+            // Safety guard
+          }
+        }
       },
-      { rootMargin: '300px' }
+      { rootMargin: '200px' }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (splineAppRef.current) {
+        try {
+          if (!splineAppRef.current.isStopped) {
+            splineAppRef.current.stop();
+          }
+        } catch {
+          // Safety guard
+        }
+      }
+    };
   }, []);
+
+  const handleSplineLoad = (app: Application) => {
+    splineAppRef.current = app;
+    // If scene loaded while user has already scrolled past, pause immediately
+    if (!isInViewRef.current) {
+      try {
+        app.stop();
+      } catch {
+        // Safety guard
+      }
+    }
+    if (onLoad) onLoad();
+  };
 
   return (
     <div
@@ -49,7 +95,7 @@ export function SplineScene({ scene, className = '', onLoad }: SplineSceneProps)
         <Spline
           scene={scene}
           className="w-full h-full"
-          onLoad={onLoad}
+          onLoad={handleSplineLoad}
         />
       </Suspense>
     </div>
