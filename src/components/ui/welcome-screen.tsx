@@ -61,19 +61,23 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onComplete }) => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className={`fixed inset-0 z-[100] flex items-center justify-center select-none overflow-hidden transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          onClick={handleFinish}
+          className={`fixed inset-0 z-[100] flex items-center justify-center select-none overflow-hidden cursor-pointer transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             step === 2 ? 'bg-white text-black' : 'bg-[#09090b] text-white'
           }`}
           style={{ willChange: 'opacity' }}
         >
-          {/* Subtle Minimal Skip Button — intentional tap only, no accidental full-screen skip */}
+          {/* Subtle Minimal Skip Button */}
           <button
             type="button"
-            onClick={handleFinish}
-            className={`absolute top-6 right-8 z-30 px-3 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase transition-all duration-300 ${
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFinish();
+            }}
+            className={`absolute top-5 right-5 sm:top-6 sm:right-8 z-30 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase transition-all duration-300 border ${
               step === 2
-                ? 'text-neutral-500 hover:text-black hover:bg-neutral-100'
-                : 'text-neutral-500 hover:text-white hover:bg-white/10'
+                ? 'text-neutral-600 border-neutral-300 hover:text-black hover:bg-neutral-100'
+                : 'text-neutral-400 border-white/15 hover:text-white hover:bg-white/10'
             }`}
             aria-label="Skip introduction"
           >

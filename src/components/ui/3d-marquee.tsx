@@ -19,29 +19,7 @@ export interface ThreeDMarqueeProps {
   onImageClick?: (image: string, index: number) => void;
 }
 
-// Systematic Coprime Latin-stride dispersion algorithm:
-// Mathematically guarantees:
-// 1. Every column contains all N unique certificates with ZERO internal duplicates.
-// 2. Horizontally across any row, all 7 columns display completely distinct certificates.
-// 3. Across adjacent columns, identical certificates are separated by at least 7 cards (over 1,200px),
-//    ensuring identical certificates are NEVER visible side-by-side or simultaneously on screen.
-function generateDispersedColumn(
-  allImages: MarqueeImageObject[],
-  colIndex: number,
-  targetCount: number = 26
-): MarqueeImageObject[] {
-  if (allImages.length === 0) return [];
-  const N = allImages.length;
-  // Coprime stride (3) and column shift (5) relative to N (26)
-  const STRIDE = 3;
-  const SHIFT = 5;
-  const result: MarqueeImageObject[] = [];
-  for (let r = 0; r < targetCount; r++) {
-    const certIndex = (r * STRIDE + colIndex * SHIFT) % N;
-    result.push(allImages[certIndex]);
-  }
-  return result;
-}
+
 
 export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   images,
@@ -52,18 +30,6 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   const [hoveredColIndex, setHoveredColIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);
-
-  // Detect mobile for reduced rendering (fewer columns + groups = dramatically fewer DOM nodes)
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
-  );
-
-  useEffect(() => {
-    const mql = window.matchMedia('(max-width: 767px)');
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
 
   // On touch devices, skip column hover tracking entirely (no mouse events)
   const isTouchDevice = useMemo(() =>
@@ -98,18 +64,22 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     );
   }, [images]);
 
-  // Number of columns: 4 on mobile (saves ~350 DOM nodes), 7 on desktop
-  const columnCount = isMobile ? 4 : 7;
 
-  // Distribute all certificates across columns using coprime dispersion
+  // Distribute all 26 certificates evenly across 3 columns (9 items each, 100% unique certs represented)
   const columnsData: MarqueeImageObject[][] = useMemo(() => {
     if (normalizedImages.length === 0)
-      return Array.from({ length: columnCount }, () => [] as MarqueeImageObject[]);
-    const count = normalizedImages.length;
-    return Array.from({ length: columnCount }, (_, colIdx) =>
-      generateDispersedColumn(normalizedImages, colIdx, count)
-    );
-  }, [normalizedImages, columnCount]);
+      return [[], [], []];
+
+    const cols: MarqueeImageObject[][] = [[], [], []];
+    normalizedImages.forEach((img, idx) => {
+      cols[idx % 3].push(img);
+    });
+    // Ensure all 3 columns have equal length (9 items each)
+    if (cols[2].length < cols[0].length && cols[0].length > 0) {
+      cols[2].push(cols[0][0]);
+    }
+    return cols;
+  }, [normalizedImages]);
 
   // Close lightbox on Escape key
   useEffect(() => {
@@ -130,56 +100,29 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     }
   };
 
-  // Anti-Step Configuration for 7 Columns:
-  // Alternating directions (Up, Down, Up, Down, Up, Down, Up)
-  // Staggered coprime durations and negative delays naturally disperse the initial elevations
+  // Staggered smooth durations and alternating directions for 3 Columns:
+  // Col 0: Up (48s)
+  // Col 1: Down (62s)
+  // Col 2: Up (54s)
   const columnConfigs = [
     {
       name: "col-0",
-      duration: 52,
-      delay: -17.5,
+      duration: 48,
+      delay: -14,
       reverse: false, // Up
       offsetClass: "mt-0",
     },
     {
       name: "col-1",
       duration: 62,
-      delay: -34.2,
+      delay: -28,
       reverse: true, // Down
       offsetClass: "mt-0",
     },
     {
       name: "col-2",
-      duration: 46,
-      delay: -9.8,
-      reverse: false, // Up
-      offsetClass: "mt-0",
-    },
-    {
-      name: "col-3",
-      duration: 66,
-      delay: -43.1,
-      reverse: true, // Down
-      offsetClass: "mt-0",
-    },
-    {
-      name: "col-4",
-      duration: 50,
-      delay: -22.6,
-      reverse: false, // Up
-      offsetClass: "mt-0",
-    },
-    {
-      name: "col-5",
-      duration: 58,
-      delay: -31.4,
-      reverse: true, // Down
-      offsetClass: "mt-0",
-    },
-    {
-      name: "col-6",
-      duration: 48,
-      delay: -14.8,
+      duration: 54,
+      delay: -18,
       reverse: false, // Up
       offsetClass: "mt-0",
     },
@@ -196,14 +139,15 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         style={{
           backfaceVisibility: "hidden",
           transform: "translateZ(0)",
+          contain: "content",
         }}
-        className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-lg shadow-black/80 transition-transform duration-300 hover:scale-105 hover:border-amber-400/60 hover:z-30 aspect-[16/11]"
+        className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-xl shadow-black/80 transition-transform duration-300 hover:scale-105 hover:border-amber-400/60 hover:z-30 aspect-[16/11]"
       >
         {/* Certificate Image - Responsive Thumbnails */}
         <img
           src={thumb360}
           srcSet={`${thumb360} 360w, ${thumb720} 720w`}
-          sizes="(max-width: 640px) 160px, (max-width: 1024px) 210px, 240px"
+          sizes="(max-width: 640px) 280px, (max-width: 1024px) 380px, 460px"
           width={360}
           height={248}
           alt={item.alt || "Academic & Competition Certificate"}
@@ -244,34 +188,32 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         className="relative w-full h-[680px] sm:h-[780px] md:h-[860px] lg:h-[920px] flex items-center justify-center overflow-hidden"
         style={{ perspective: "1100px" }}
       >
-        {/* Tilted 3D Isometric Plane with generous bleed to eliminate any empty corners/gaps */}
+        {/* Tilted 3D Isometric Plane with generous card width and spacing for 3 Columns */}
         <div
-          className="relative w-[165%] sm:w-[155%] md:w-[145%] lg:w-[138%] -ml-[32%] sm:-ml-[27%] md:-ml-[22%] lg:-ml-[18%] -my-48 sm:-my-64 flex justify-center gap-3 sm:gap-4 md:gap-5 px-2"
+          className="relative w-[130%] sm:w-[124%] md:w-[118%] lg:w-[114%] -ml-[15%] sm:-ml-[12%] md:-ml-[9%] lg:-ml-[7%] -my-32 sm:-my-48 flex justify-center gap-4 sm:gap-6 md:gap-8 px-2"
           style={{
-            transform: "rotateX(20deg) rotateZ(-12deg) skewX(6deg) scale(1.12)",
+            transform: "rotateX(20deg) rotateZ(-12deg) skewX(6deg) scale(1.08)",
             transformStyle: "preserve-3d",
           }}
         >
           {columnsData.map((columnImages, colIndex) => {
             const config = columnConfigs[colIndex % columnConfigs.length];
-            // On mobile, use faster animation durations for smoother rendering
-            const duration = isMobile ? config.duration * 0.7 : config.duration;
 
             return (
               <div
                 key={`col-${colIndex}`}
                 onMouseEnter={isTouchDevice ? undefined : () => setHoveredColIndex(colIndex)}
                 onMouseLeave={isTouchDevice ? undefined : () => setHoveredColIndex(null)}
-                className={`flex-1 min-w-[130px] sm:min-w-[160px] md:min-w-[190px] lg:min-w-[210px] xl:min-w-[230px] overflow-visible ${config.offsetClass}`}
+                className={`flex-1 min-w-[220px] sm:min-w-[280px] md:min-w-[340px] lg:min-w-[390px] xl:min-w-[430px] max-w-[480px] overflow-visible ${config.offsetClass}`}
               >
-                {/* Continuous Hardware-Accelerated Infinite Track */}
+                {/* Continuous Hardware-Accelerated Infinite Track (2 groups of 9 cards = 18 total per col) */}
                 <div
                   className="w-full flex flex-col"
                   style={{
                     animationName: config.reverse
                       ? "marqueeScrollDown"
                       : "marqueeScrollUp",
-                    animationDuration: `${duration}s`,
+                    animationDuration: `${config.duration}s`,
                     animationTimingFunction: "linear",
                     animationIterationCount: "infinite",
                     animationDelay: `${config.delay}s`,
@@ -281,9 +223,10 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                         : "running",
                     backfaceVisibility: "hidden",
                     transform: "translateZ(0)",
+                    willChange: "transform",
                   }}
                 >
-                  {/* Group 1: Buffer Above */}
+                  {/* Group 1: Visible Track */}
                   <div
                     className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
                     aria-hidden="true"
@@ -293,24 +236,12 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                     )}
                   </div>
 
-                  {/* Group 2: Center Viewport Content */}
+                  {/* Group 2: Seamless Infinite Duplicate (-50% keyframe loop) */}
                   <div className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6">
                     {columnImages.map((item, imgIdx) =>
                       renderCard(item, `g2-${colIndex}-${imgIdx}`, imgIdx)
                     )}
                   </div>
-
-                  {/* Group 3: Buffer Below — skip on mobile for fewer DOM nodes */}
-                  {!isMobile && (
-                    <div
-                      className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
-                      aria-hidden="true"
-                    >
-                      {columnImages.map((item, imgIdx) =>
-                        renderCard(item, `g3-${colIndex}-${imgIdx}`, imgIdx)
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
             );

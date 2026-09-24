@@ -72,13 +72,13 @@
     transform: translate3d(0, 0%, 0);
   }
   100% {
-    transform: translate3d(0, calc(-100% / 3), 0);
+    transform: translate3d(0, -50%, 0);
   }
 }
 
 @keyframes marqueeScrollDown {
   0% {
-    transform: translate3d(0, calc(-100% / 3), 0);
+    transform: translate3d(0, -50%, 0);
   }
   100% {
     transform: translate3d(0, 0%, 0);

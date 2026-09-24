@@ -123,38 +123,18 @@ function HeroPortraitSvg({
 // Real birthdate: 2008-12-01 (17 years old)
 const BIRTH_DATE = '2008-12-01';
 
-// Session key: ensures welcome screen shows ONLY ONCE on the very first entry
-const WELCOME_SEEN_KEY = 'portfolio_welcome_completed_session';
-
 export default function App() {
-  // Only show welcome screen on the very first entry in this browser session
-  const [showWelcome, setShowWelcome] = useState<boolean>(() => {
-    try {
-      if (typeof window === 'undefined') return false;
-      return !sessionStorage.getItem(WELCOME_SEEN_KEY);
-    } catch {
-      return false;
-    }
-  });
+  // Welcome Loading Screen: greets visitors upon entering the site
+  const [showWelcome, setShowWelcome] = useState<boolean>(true);
 
   const handleWelcomeComplete = () => {
-    try {
-      sessionStorage.setItem(WELCOME_SEEN_KEY, 'true');
-    } catch {
-      // ignore
-    }
     setShowWelcome(false);
   };
 
-  // Lock body overflow when welcome modal is open, and persist seen state immediately
+  // Lock body overflow when welcome modal is open
   useEffect(() => {
     if (showWelcome) {
       document.body.style.overflow = 'hidden';
-      try {
-        sessionStorage.setItem(WELCOME_SEEN_KEY, 'true');
-      } catch {
-        // ignore
-      }
     } else {
       document.body.style.overflow = '';
     }
@@ -356,123 +336,80 @@ export default function App() {
         </div>
 
         {/* =========================================================================
-            MOBILE HERO (lg:hidden) — Compact, Balanced 2-Stage Story
-            Stage 1: Portrait first (full head, no cutoff, centered)
-            Stage 2: Kantapon Wongprot headline, tagline & bio immediately below
+            MOBILE HERO (lg:hidden) — 100svh Full-Screen Immersive Portrait (Like PC)
             ========================================================================= */}
-        <div className="lg:hidden flex flex-col w-full relative z-20">
-          {/* Mobile Stage 1: Kantapon Portrait with Full Head & Scroll Prompt */}
-          <div className="min-h-[78svh] flex flex-col justify-between items-center px-6 pt-14 pb-4 relative">
-            {/* Eyebrow badge */}
-            <div className="pt-2 flex justify-center w-full anim-fade-up">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 backdrop-blur-md shadow-lg">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-300 font-medium">
-                  HELLO, I’M KANTAPON
-                </span>
-              </div>
-            </div>
+        <div className="lg:hidden relative h-[100svh] min-h-[100svh] w-full flex flex-col justify-between overflow-hidden z-20">
+          {/* Full-Screen User Portrait with Levitating Arduino Board */}
+          <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+            <HeroPortraitSvg
+              className="anim-rise-in absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_16px_36px_rgba(0,0,0,0.85)]"
+              viewBox="515 60 640 1020"
+              preserveAspectRatio="xMidYMax slice"
+            />
+          </div>
 
-            {/* Centered User Portrait (Zero Cutoff: viewBox="590 60 740 1020" gives 60px breathing headroom) */}
-            <div className="flex-1 flex items-center justify-center relative w-full my-auto py-1">
-              {/* Soft Ambient Studio Lighting Glow */}
-              <div className="absolute inset-0 max-w-[280px] max-h-[280px] m-auto bg-gradient-to-b from-sky-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+          {/* Ambient Studio Lighting Glow centered on portrait */}
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[340px] h-[340px] bg-gradient-to-b from-sky-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
 
-              <div className="relative w-full max-w-[280px] sm:max-w-[320px] h-[48svh] max-h-[400px] flex items-center justify-center">
-                <HeroPortraitSvg
-                  className="anim-rise-in w-full h-full pointer-events-auto drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)]"
-                  viewBox="590 60 740 1020"
-                  preserveAspectRatio="xMidYMid meet"
-                />
-              </div>
-            </div>
-
-            {/* Scroll Indicator Prompt */}
-            <div className="pt-1 pb-2 flex justify-center w-full anim-fade-up">
-              <a
-                href="#mobile-hero-details"
-                className="inline-flex flex-col items-center gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer group py-2 px-4 rounded-full bg-white/[0.04] border border-white/5 backdrop-blur-sm"
-                aria-label="Scroll down to view profile and introduction"
-              >
-                <span className="text-[10px] font-mono tracking-[0.25em] text-neutral-400 group-hover:text-neutral-200 uppercase font-medium">
-                  SCROLL TO EXPLORE
-                </span>
-                <span className="text-emerald-400 text-xs animate-bounce leading-none">↓</span>
-              </a>
+          {/* Top Scrim & Eyebrow Badge */}
+          <div className="relative z-30 pt-16 px-6 flex flex-col items-start anim-fade-up">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/15 backdrop-blur-md shadow-lg">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-200 font-medium">
+                HELLO, I’M KANTAPON
+              </span>
             </div>
           </div>
 
-          {/* Mobile Stage 2: Revealed comfortably on scroll — Kantapon Wongprot headline, tagline, bio, and CTAs */}
-          <div
-            id="mobile-hero-details"
-            className="flex flex-col justify-start px-6 pt-4 pb-12 relative scroll-mt-6"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-5% 0px" }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-[480px] mx-auto w-full text-left"
-            >
-              {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 mb-3">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-400 font-medium">
-                  KANTAPON WONGPROT
-                </span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="font-inter font-semibold text-3xl sm:text-5xl text-neutral-100 tracking-tight leading-[1.08]">
+          {/* Bottom Scrim & Content: Headline, Tagline, Thai bio & CTAs */}
+          <div className="relative z-30 w-full px-6 pb-6 pt-24 bg-gradient-to-t from-[#09090b] via-[#09090b]/85 via-55% to-transparent flex flex-col text-left">
+            <div className="max-w-[440px] w-full anim-fade-up">
+              {/* Name Headline */}
+              <h1 className="font-inter font-semibold text-3xl sm:text-4xl text-neutral-100 tracking-tight leading-[1.08] drop-shadow-md">
                 Kantapon<br />
                 Wongprot
               </h1>
 
               {/* Secondary Tagline */}
-              <p className="font-inter font-medium text-lg sm:text-xl text-neutral-300 mt-2.5 leading-snug">
+              <p className="font-inter font-medium text-base sm:text-lg text-neutral-300 mt-2 leading-snug drop-shadow-sm">
                 Building ideas with<br />
                 <span className="text-white">AI &amp; Embedded Systems.</span>
               </p>
 
-              {/* Thai Introduction */}
-              <p className="mt-3.5 text-[15px] sm:text-base text-neutral-300/90 font-normal leading-[1.7] font-thai">
-                ผมชื่อกันตภณ นักเรียนชั้น ม.6 ที่สนใจ AI, Robotics<br />
-                และ Embedded Systems ชอบเปลี่ยนไอเดียให้กลายเป็น<br />
-                โปรเจกต์ที่ทดลองและใช้งานได้จริง
+              {/* Thai Intro */}
+              <p className="mt-2 text-[13.5px] text-neutral-300/90 font-normal leading-[1.6] font-thai max-w-[400px]">
+                ผมชื่อกันตภณ นักเรียนชั้น ม.6 ที่สนใจ AI, Robotics และ Embedded Systems ชอบเปลี่ยนไอเดียให้กลายเป็นโปรเจกต์ที่ใช้งานได้จริง
               </p>
 
               {/* CTAs */}
-              <div className="mt-5 flex flex-wrap items-center gap-3.5 text-xs sm:text-sm">
+              <div className="mt-3.5 flex flex-wrap items-center gap-2.5 text-xs">
                 <a
                   href="#projects"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-neutral-700 bg-neutral-900/80 backdrop-blur-sm text-neutral-100 hover:text-white hover:border-neutral-400 hover:bg-neutral-800 transition-all font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-600 bg-neutral-900/90 backdrop-blur-md text-neutral-100 hover:text-white hover:border-neutral-400 hover:bg-neutral-800 transition-all font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 shadow-md"
                 >
                   <span>View selected projects</span>
                   <span className="text-emerald-400">↗</span>
                 </a>
                 <a
                   href="#about"
-                  className="group inline-flex items-center gap-1.5 px-3 py-2 text-neutral-400 hover:text-white transition-colors font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-md"
+                  className="group inline-flex items-center gap-1.5 px-3 py-2 text-neutral-300 hover:text-white transition-colors font-mono font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-md"
                 >
                   <span>About me</span>
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
               </div>
-            </motion.div>
 
-            {/* Mobile Horizontal Accent Rule & Footer Meta */}
-            <div className="w-full max-w-[480px] mx-auto pt-8">
-              <div className="w-full h-[1px] bg-white/15 mb-4" />
-              <div className="flex items-center justify-between text-xs leading-relaxed text-neutral-300">
-                <div className="flex flex-col text-left">
-                  <span className="text-neutral-100 font-medium text-xs">M.6 Student</span>
-                  <span className="text-neutral-300 text-[11px]">AI, Robotics &amp; Embedded Systems</span>
-                  <span className="text-neutral-400 font-mono text-[10px] mt-0.5">Nakhon Si Thammarat, Thailand</span>
-                </div>
-                <div className="text-right flex flex-col">
-                  <span className="text-neutral-400 font-mono text-[11px]">Portfolio 2026</span>
-                  <span className="font-medium text-neutral-100 text-xs">Kantapon Wongprot</span>
-                </div>
+              {/* Bottom Scroll Indicator & Year */}
+              <div className="mt-3 flex items-center justify-between pt-2 border-t border-white/10 text-[10.5px] font-mono text-neutral-400">
+                <span className="uppercase tracking-widest text-neutral-400">Portfolio 2026</span>
+                <a
+                  href="#about"
+                  className="inline-flex items-center gap-1.5 text-neutral-300 hover:text-white uppercase tracking-wider"
+                  aria-label="Scroll to explore"
+                >
+                  <span>SCROLL</span>
+                  <span className="text-emerald-400 text-xs animate-bounce">↓</span>
+                </a>
               </div>
             </div>
           </div>
