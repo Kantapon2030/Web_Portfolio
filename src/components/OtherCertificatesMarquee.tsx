@@ -4,14 +4,58 @@ import { ArrowDown } from "lucide-react";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { CornerMascot } from "./CornerMascot";
 
-// Import all certificates strictly from src/assets/certificate only
+// Import original certificates for high-resolution Lightbox modal
 const certModules = import.meta.glob<{ default: string }>(
   "@/assets/certificate/*.{png,jpg,jpeg,webp}",
   { eager: true }
 );
 
-const certificateImages: string[] = Object.values(certModules)
-  .map((mod) => (typeof mod === "string" ? mod : mod.default))
+// Import generated lightweight WebP thumbnails (360w and 720w)
+const thumb360Modules = import.meta.glob<{ default: string }>(
+  "@/assets/certificate_thumbs/*_360w.webp",
+  { eager: true }
+);
+
+const thumb720Modules = import.meta.glob<{ default: string }>(
+  "@/assets/certificate_thumbs/*_720w.webp",
+  { eager: true }
+);
+
+const certificateImages = Object.entries(certModules)
+  .map(([pathKey, mod]) => {
+    const origSrc = typeof mod === "string" ? mod : mod.default;
+    const filename = pathKey.split("/").pop() || "";
+    const baseName = filename.substring(0, filename.lastIndexOf("."));
+
+    const thumb360Key = Object.keys(thumb360Modules).find((k) =>
+      k.includes(`${baseName}_360w`)
+    );
+    const thumb720Key = Object.keys(thumb720Modules).find((k) =>
+      k.includes(`${baseName}_720w`)
+    );
+
+    const thumb360Mod = thumb360Key ? thumb360Modules[thumb360Key] : null;
+    const thumb720Mod = thumb720Key ? thumb720Modules[thumb720Key] : null;
+
+    const thumb360 = thumb360Mod
+      ? typeof thumb360Mod === "string"
+        ? thumb360Mod
+        : thumb360Mod.default
+      : origSrc;
+
+    const thumb720 = thumb720Mod
+      ? typeof thumb720Mod === "string"
+        ? thumb720Mod
+        : thumb720Mod.default
+      : origSrc;
+
+    return {
+      src: origSrc,
+      thumb360,
+      thumb720,
+      alt: `Certificate ${baseName}`,
+    };
+  })
   .filter(Boolean);
 
 export const OtherCertificatesMarquee: React.FC = () => {

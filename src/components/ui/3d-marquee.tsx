@@ -4,6 +4,8 @@ import { X, ZoomIn, Award } from "lucide-react";
 
 export interface MarqueeImageObject {
   src: string;
+  thumb360?: string;
+  thumb720?: string;
   alt?: string;
   title?: string;
 }
@@ -24,16 +26,16 @@ export interface ThreeDMarqueeProps {
 // 3. Across adjacent columns, identical certificates are separated by at least 7 cards (over 1,200px),
 //    ensuring identical certificates are NEVER visible side-by-side or simultaneously on screen.
 function generateDispersedColumn(
-  allImages: string[],
+  allImages: MarqueeImageObject[],
   colIndex: number,
   targetCount: number = 26
-): string[] {
+): MarqueeImageObject[] {
   if (allImages.length === 0) return [];
   const N = allImages.length;
   // Coprime stride (3) and column shift (5) relative to N (26)
   const STRIDE = 3;
   const SHIFT = 5;
-  const result: string[] = [];
+  const result: MarqueeImageObject[] = [];
   for (let r = 0; r < targetCount; r++) {
     const certIndex = (r * STRIDE + colIndex * SHIFT) % N;
     result.push(allImages[certIndex]);
@@ -87,17 +89,22 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  // Normalize images to array of strings
-  const normalizedImages: string[] = useMemo(() => {
-    return images.map((item) => (typeof item === "string" ? item : item.src));
+  // Normalize images to array of MarqueeImageObject
+  const normalizedImages: MarqueeImageObject[] = useMemo(() => {
+    return images.map((item) =>
+      typeof item === "string"
+        ? { src: item, thumb360: item, thumb720: item }
+        : item
+    );
   }, [images]);
 
   // Number of columns: 4 on mobile (saves ~350 DOM nodes), 7 on desktop
   const columnCount = isMobile ? 4 : 7;
 
   // Distribute all certificates across columns using coprime dispersion
-  const columnsData: string[][] = useMemo(() => {
-    if (normalizedImages.length === 0) return Array.from({ length: columnCount }, () => [] as string[]);
+  const columnsData: MarqueeImageObject[][] = useMemo(() => {
+    if (normalizedImages.length === 0)
+      return Array.from({ length: columnCount }, () => [] as MarqueeImageObject[]);
     const count = normalizedImages.length;
     return Array.from({ length: columnCount }, (_, colIdx) =>
       generateDispersedColumn(normalizedImages, colIdx, count)
@@ -178,45 +185,54 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     },
   ];
 
-  const renderCard = useCallback((src: string, key: string, cardId: number) => (
-    <div
-      key={key}
-      onClick={() => handleCardClick(src, cardId)}
-      style={{
-        backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
-      }}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-lg shadow-black/80 transition-transform duration-300 hover:scale-105 hover:border-amber-400/60 hover:z-30 aspect-[16/11]"
-    >
-      {/* Certificate Image */}
-      <img
-        src={src}
-        alt="Academic & Competition Certificate"
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-        className="h-full w-full object-cover object-center"
-      />
+  const renderCard = useCallback((item: MarqueeImageObject, key: string, cardId: number) => {
+    const thumb360 = item.thumb360 || item.src;
+    const thumb720 = item.thumb720 || item.src;
 
-      {/* Glossy Gradient Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60" />
+    return (
+      <div
+        key={key}
+        onClick={() => handleCardClick(item.src, cardId)}
+        style={{
+          backfaceVisibility: "hidden",
+          transform: "translateZ(0)",
+        }}
+        className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-lg shadow-black/80 transition-transform duration-300 hover:scale-105 hover:border-amber-400/60 hover:z-30 aspect-[16/11]"
+      >
+        {/* Certificate Image - Responsive Thumbnails */}
+        <img
+          src={thumb360}
+          srcSet={`${thumb360} 360w, ${thumb720} 720w`}
+          sizes="(max-width: 640px) 160px, (max-width: 1024px) 210px, 240px"
+          width={360}
+          height={248}
+          alt={item.alt || "Academic & Competition Certificate"}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="h-full w-full object-cover object-center"
+        />
 
-      {/* Hover Sheen & Action Icon — hidden on mobile (touch) for perf */}
-      {!isTouchDevice && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-md">
-            <ZoomIn size={14} className="text-amber-400" />
-            <span>ดูขนาดเต็ม</span>
+        {/* Glossy Gradient Overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60" />
+
+        {/* Hover Sheen & Action Icon — hidden on mobile (touch) for perf */}
+        {!isTouchDevice && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-md">
+              <ZoomIn size={14} className="text-amber-400" />
+              <span>ดูขนาดเต็ม</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Subtle Badge Icon */}
-      <div className="absolute top-2.5 right-2.5 p-1 rounded-full bg-black/60 border border-white/10 text-amber-400/90 opacity-70">
-        <Award size={12} />
+        {/* Subtle Badge Icon */}
+        <div className="absolute top-2.5 right-2.5 p-1 rounded-full bg-black/60 border border-white/10 text-amber-400/90 opacity-70">
+          <Award size={12} />
+        </div>
       </div>
-    </div>
-  ), [isTouchDevice]);
+    );
+  }, [isTouchDevice]);
 
   return (
     <div
@@ -272,15 +288,15 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                     className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
                     aria-hidden="true"
                   >
-                    {columnImages.map((src, imgIdx) =>
-                      renderCard(src, `g1-${colIndex}-${imgIdx}`, imgIdx)
+                    {columnImages.map((item, imgIdx) =>
+                      renderCard(item, `g1-${colIndex}-${imgIdx}`, imgIdx)
                     )}
                   </div>
 
                   {/* Group 2: Center Viewport Content */}
                   <div className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6">
-                    {columnImages.map((src, imgIdx) =>
-                      renderCard(src, `g2-${colIndex}-${imgIdx}`, imgIdx)
+                    {columnImages.map((item, imgIdx) =>
+                      renderCard(item, `g2-${colIndex}-${imgIdx}`, imgIdx)
                     )}
                   </div>
 
@@ -290,8 +306,8 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                       className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
                       aria-hidden="true"
                     >
-                      {columnImages.map((src, imgIdx) =>
-                        renderCard(src, `g3-${colIndex}-${imgIdx}`, imgIdx)
+                      {columnImages.map((item, imgIdx) =>
+                        renderCard(item, `g3-${colIndex}-${imgIdx}`, imgIdx)
                       )}
                     </div>
                   )}
