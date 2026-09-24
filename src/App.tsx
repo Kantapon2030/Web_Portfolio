@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import {
   Copy,
   Check,
@@ -10,10 +10,11 @@ import minimalWhiteBg from './assets/minimal_white_bg.jpg';
 import { motion, useScroll } from 'framer-motion';
 import BreadcrumbIcon from '@/components/ui/uiable-breadcrumb-icon';
 import { WelcomeScreen } from './components/ui/welcome-screen';
-import { SplineScene } from './components/ui/splite';
+const SplineScene = lazy(() => import('./components/ui/splite'));
 import { Spotlight } from './components/ui/spotlight';
 import { Typewriter } from './components/ui/typewriter-text';
 import { MascotInteractive } from './components/MascotInteractive';
+import { CornerMascot } from './components/CornerMascot';
 import { calculateDetailedAge, DetailedAge } from './lib/age';
 import { SmartSongthaewShowcase } from './components/SmartSongthaewShowcase';
 import { CampShowcase } from './components/CampShowcase';
@@ -601,10 +602,21 @@ export default function App() {
 
         {/* CENTER / BOTTOM: 3D Spline Canvas situated comfortably below text with NO overlap */}
         <div className="w-full flex-1 -mt-2 sm:-mt-4 min-h-0 relative flex items-center justify-center">
-          <SplineScene 
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
-          />
+          <Suspense
+            fallback={
+              <div className="w-full h-full flex items-center justify-center bg-black/20">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-7 h-7 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                  <span className="text-[11px] font-mono text-neutral-400">Loading 3D Scene...</span>
+                </div>
+              </div>
+            }
+          >
+            <SplineScene 
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
+          </Suspense>
         </div>
       </section>
 
@@ -643,6 +655,16 @@ export default function App() {
           <p className="mt-8 sm:mt-12 text-sm sm:text-base md:text-xl font-light font-mono text-neutral-400 tracking-wider max-w-3xl leading-relaxed">
             “We are not incapable; we simply haven't been taught how to do it yet.”
           </p>
+
+          {/* Contemplative Mascot Sitting Quietly */}
+          <div className="mt-8 sm:mt-10 flex justify-center">
+            <CornerMascot
+              pose="center"
+              size="sm"
+              idleAnimation="nod"
+              alt="Tanwa Philosophy Mascot"
+            />
+          </div>
         </div>
       </section>
 
@@ -662,19 +684,27 @@ export default function App() {
       <OtherCertificatesMarquee />
 
       {/* =========================================================================
-          SECTION 5: GRAND FINALE CONTACT HUB (05 // CONTACT)
+          SECTION 6: GRAND FINALE CONTACT HUB (06 // CONTACT)
           ========================================================================= */}
       <section id="contact" className="py-28 sm:py-36 px-6 sm:px-12 bg-[#08080a] text-white text-center">
         <div className="max-w-4xl mx-auto">
-          {/* Eyebrow: 05 // CONTACT */}
+          {/* Eyebrow: 06 // CONTACT */}
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 font-mono tracking-widest uppercase">
-            <span>05 // CONTACT</span>
+            <span>06 // CONTACT</span>
           </div>
 
-          {/* Heading: มาคุยกันครับ */}
-          <h2 className="font-prompt text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white mb-6">
-            มาคุยกันครับ
-          </h2>
+          {/* Heading: ติดต่อ! with Waving Mascot */}
+          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6">
+            <h2 className="font-prompt text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white">
+              ติดต่อ!
+            </h2>
+            <CornerMascot
+              pose="guide"
+              size="md"
+              idleAnimation="wave"
+              alt="Tanwa Contact Mascot"
+            />
+          </div>
 
           {/* Description */}
           <p className="text-neutral-400 font-light text-base sm:text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-prompt">
@@ -693,16 +723,16 @@ export default function App() {
               <span className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
             </a>
 
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-1">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-1 max-w-full px-2">
               <a
                 href="mailto:tawna20081@gmail.com"
-                className="text-xl sm:text-3xl md:text-4xl font-light text-white hover:text-emerald-400 underline underline-offset-8 transition-colors font-mono"
+                className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-light text-white hover:text-emerald-400 underline underline-offset-8 transition-colors font-mono break-all sm:break-normal"
               >
                 tawna20081@gmail.com
               </a>
               <button
                 onClick={copyEmail}
-                className="p-3 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-neutral-300 hover:text-white shadow-md transition-all active:scale-95"
+                className="shrink-0 p-2.5 sm:p-3 rounded-full bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-neutral-300 hover:text-white shadow-md transition-all active:scale-95"
                 title="คัดลอกอีเมล"
                 aria-label="คัดลอกอีเมล"
               >
@@ -717,12 +747,12 @@ export default function App() {
           </div>
 
           {/* Status Badge: OPEN TO COLLABORATION & ACADEMIC OPPORTUNITIES */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs sm:text-sm font-mono tracking-wider uppercase mb-14 shadow-[0_0_20px_rgba(16,185,129,0.12)]">
-            <span className="relative flex h-2 w-2">
+          <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[10px] sm:text-xs md:text-sm font-mono tracking-normal sm:tracking-wider uppercase mb-14 shadow-[0_0_20px_rgba(16,185,129,0.12)] max-w-full text-center">
+            <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>OPEN TO COLLABORATION & ACADEMIC OPPORTUNITIES</span>
+            <span className="leading-tight">OPEN TO COLLABORATION &amp; ACADEMIC OPPORTUNITIES</span>
           </div>
 
           {/* Back To Top & Replay Intro Buttons */}

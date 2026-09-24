@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, Award } from "lucide-react";
 
@@ -17,40 +17,28 @@ export interface ThreeDMarqueeProps {
   onImageClick?: (image: string, index: number) => void;
 }
 
-// Pseudo-random deterministic seeded Fisher-Yates shuffle
-// Guarantees every column has a completely unique, non-repeating, mixed sequence of certificates
-function seededShuffle<T>(arr: T[], seed: number): T[] {
-  const result = [...arr];
-  let s = seed;
-  const nextRand = () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(nextRand() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
-// Build a mixed column of targetCount items
-function generateMixedColumn(
+// Systematic Coprime Latin-stride dispersion algorithm:
+// Mathematically guarantees:
+// 1. Every column contains all N unique certificates with ZERO internal duplicates.
+// 2. Horizontally across any row, all 7 columns display completely distinct certificates.
+// 3. Across adjacent columns, identical certificates are separated by at least 7 cards (over 1,200px),
+//    ensuring identical certificates are NEVER visible side-by-side or simultaneously on screen.
+function generateDispersedColumn(
   allImages: string[],
   colIndex: number,
-  targetCount: number = 16
+  targetCount: number = 26
 ): string[] {
   if (allImages.length === 0) return [];
-  // 5 distinct prime seeds for 5 independent columns
-  const seeds = [1337, 4242, 9876, 2026, 7777];
-  const seed = seeds[colIndex % seeds.length] + colIndex * 199;
-  const shuffled = seededShuffle(allImages, seed);
-
-  // Extend or slice to targetCount
+  const N = allImages.length;
+  // Coprime stride (3) and column shift (5) relative to N (26)
+  const STRIDE = 3;
+  const SHIFT = 5;
   const result: string[] = [];
-  while (result.length < targetCount) {
-    result.push(...shuffled);
+  for (let r = 0; r < targetCount; r++) {
+    const certIndex = (r * STRIDE + colIndex * SHIFT) % N;
+    result.push(allImages[certIndex]);
   }
-  return result.slice(0, targetCount);
+  return result;
 }
 
 export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
@@ -59,20 +47,42 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   onImageClick,
 }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
+  const [hoveredColIndex, setHoveredColIndex] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  // Pause marquee when offscreen to completely eliminate lag & save GPU/CPU cycles
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setIsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Normalize images to array of strings
   const normalizedImages: string[] = useMemo(() => {
     return images.map((item) => (typeof item === "string" ? item : item.src));
   }, [images]);
 
-  // Distribute and thoroughly mix images across 5 columns
-  // Each column contains 16 mixed items, repeated in 3 groups (Group 1: Top Buffer, Group 2: Center, Group 3: Bottom Buffer)
-  // This yields ~9,000px height per column and guarantees a 100% gapless continuous infinite loop with NO blank cuts
+  // Distribute all certificates across 7 columns using coprime dispersion
+  // Each group contains all unique certificates (26 items)
+  // Repeated across 3 groups (Group 1: Top Buffer, Group 2: Center, Group 3: Bottom Buffer)
+  // 3 * 26 = 78 cards per column (~13,500px track), ensuring 100% seamless, non-repeating loop
   const columnsData = useMemo(() => {
-    if (normalizedImages.length === 0) return [[], [], [], [], []];
-    return [0, 1, 2, 3, 4].map((colIdx) =>
-      generateMixedColumn(normalizedImages, colIdx, 16)
+    if (normalizedImages.length === 0) return [[], [], [], [], [], [], []];
+    const count = normalizedImages.length;
+    return [0, 1, 2, 3, 4, 5, 6].map((colIdx) =>
+      generateDispersedColumn(normalizedImages, colIdx, count)
     );
   }, [normalizedImages]);
 
@@ -95,46 +105,58 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     }
   };
 
-  // Anti-Step Configuration:
-  // 1. Alternating directions (Up, Down, Up, Down, Up)
-  // 2. Co-prime durations (46s, 54s, 40s, 58s, 45s) so they never sync
-  // 3. Staggered negative delays (-17.5s, -34.2s, -9.8s, -43.1s, -22.6s) so they start at different elevations at t=0
-  // 4. Non-monotonic physical offsets to break any diagonal/staircase alignment
+  // Anti-Step Configuration for 7 Columns:
+  // Alternating directions (Up, Down, Up, Down, Up, Down, Up)
+  // Staggered coprime durations and negative delays naturally disperse the initial elevations
   const columnConfigs = [
     {
       name: "col-0",
-      duration: 46,
+      duration: 52,
       delay: -17.5,
       reverse: false, // Up
       offsetClass: "mt-0",
     },
     {
       name: "col-1",
-      duration: 54,
+      duration: 62,
       delay: -34.2,
       reverse: true, // Down
-      offsetClass: "-mt-36 sm:-mt-52",
+      offsetClass: "mt-0",
     },
     {
       name: "col-2",
-      duration: 40,
+      duration: 46,
       delay: -9.8,
       reverse: false, // Up
-      offsetClass: "mt-24 sm:mt-32",
+      offsetClass: "mt-0",
     },
     {
       name: "col-3",
-      duration: 58,
+      duration: 66,
       delay: -43.1,
       reverse: true, // Down
-      offsetClass: "-mt-20 sm:-mt-28",
+      offsetClass: "mt-0",
     },
     {
       name: "col-4",
-      duration: 45,
+      duration: 50,
       delay: -22.6,
       reverse: false, // Up
-      offsetClass: "mt-40 sm:mt-56",
+      offsetClass: "mt-0",
+    },
+    {
+      name: "col-5",
+      duration: 58,
+      delay: -31.4,
+      reverse: true, // Down
+      offsetClass: "mt-0",
+    },
+    {
+      name: "col-6",
+      duration: 48,
+      delay: -14.8,
+      reverse: false, // Up
+      offsetClass: "mt-0",
     },
   ];
 
@@ -142,7 +164,11 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     <div
       key={key}
       onClick={() => handleCardClick(src, cardId)}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/90 shadow-[0_12px_32px_rgba(0,0,0,0.85)] transition-all duration-300 hover:scale-105 hover:border-amber-400/60 hover:shadow-[0_20px_45px_rgba(251,191,36,0.25)] hover:z-30 aspect-[16/11]"
+      style={{
+        backfaceVisibility: "hidden",
+        transform: "translateZ(0)",
+      }}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 shadow-lg shadow-black/80 transition-transform duration-300 hover:scale-105 hover:border-amber-400/60 hover:z-30 aspect-[16/11]"
     >
       {/* Certificate Image */}
       <img
@@ -150,17 +176,18 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         alt="Academic & Competition Certificate"
         loading="lazy"
         decoding="async"
-        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
+        draggable={false}
+        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
       />
 
-      {/* Glossy Reflection Gradient Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-white/10 opacity-60 transition-opacity duration-300 group-hover:opacity-20" />
+      {/* Glossy Gradient Overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-20" />
 
-      {/* Hover Sheen & Action Icon */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40 backdrop-blur-[2px]">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-lg">
+      {/* Hover Sheen & Action Icon (High-performance overlay without backdrop-filter) */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/20 text-white text-xs font-mono shadow-md">
           <ZoomIn size={14} className="text-amber-400" />
-          <span>ดูเกียรติบัตร</span>
+          <span>ดูขนาดเต็ม</span>
         </div>
       </div>
 
@@ -173,20 +200,19 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
 
   return (
     <div
+      ref={containerRef}
       className={`relative w-full overflow-hidden rounded-3xl bg-black ${className}`}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
     >
       {/* 3D Perspective Stage */}
       <div
-        className="relative w-full h-[660px] sm:h-[760px] md:h-[840px] lg:h-[900px] flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[680px] sm:h-[780px] md:h-[860px] lg:h-[920px] flex items-center justify-center overflow-hidden"
         style={{ perspective: "1100px" }}
       >
-        {/* Tilted 3D Isometric Plane with generous bleed to eliminate corner gaps */}
+        {/* Tilted 3D Isometric Plane with generous bleed to eliminate any empty corners/gaps */}
         <div
-          className="relative w-[136%] sm:w-[125%] -ml-[18%] sm:-ml-[12%] -my-44 sm:-my-60 flex justify-center gap-3 sm:gap-4 md:gap-6 px-4"
+          className="relative w-[165%] sm:w-[155%] md:w-[145%] lg:w-[138%] -ml-[32%] sm:-ml-[27%] md:-ml-[22%] lg:-ml-[18%] -my-48 sm:-my-64 flex justify-center gap-3 sm:gap-4 md:gap-5 px-2"
           style={{
-            transform: "rotateX(20deg) rotateZ(-12deg) skewX(6deg) scale(1.06)",
+            transform: "rotateX(20deg) rotateZ(-12deg) skewX(6deg) scale(1.12)",
             transformStyle: "preserve-3d",
           }}
         >
@@ -196,9 +222,9 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
             return (
               <div
                 key={`col-${colIndex}`}
-                className={`flex-1 min-w-[140px] sm:min-w-[180px] md:min-w-[210px] lg:min-w-[240px] overflow-visible ${config.offsetClass} ${
-                  colIndex === 4 ? "hidden xl:block" : ""
-                } ${colIndex === 3 ? "hidden md:block" : ""}`}
+                onMouseEnter={() => setHoveredColIndex(colIndex)}
+                onMouseLeave={() => setHoveredColIndex(null)}
+                className={`flex-1 min-w-[130px] sm:min-w-[160px] md:min-w-[190px] lg:min-w-[210px] xl:min-w-[230px] overflow-visible ${config.offsetClass}`}
               >
                 {/* Continuous 3-Group Hardware-Accelerated Infinite Track */}
                 <div
@@ -211,10 +237,14 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                     animationTimingFunction: "linear",
                     animationIterationCount: "infinite",
                     animationDelay: `${config.delay}s`,
-                    animationPlayState: isPaused ? "paused" : "running",
+                    animationPlayState:
+                      !isInView || selectedImage !== null || hoveredColIndex === colIndex
+                        ? "paused"
+                        : "running",
+                    backfaceVisibility: "hidden",
                   }}
                 >
-                  {/* Group 1: Buffer Above (Ensures 3,000px of cards are always above the viewport) */}
+                  {/* Group 1: Buffer Above */}
                   <div
                     className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
                     aria-hidden="true"
@@ -231,7 +261,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                     )}
                   </div>
 
-                  {/* Group 3: Buffer Below (Ensures 3,000px of cards are always below the viewport) */}
+                  {/* Group 3: Buffer Below */}
                   <div
                     className="flex flex-col gap-4 sm:gap-6 pb-4 sm:pb-6"
                     aria-hidden="true"

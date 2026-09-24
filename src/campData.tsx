@@ -1,9 +1,48 @@
 import React from 'react';
-import {
-  ChulaLogo,
-  KmitlLogo,
-  KuLogo,
-} from './competitionData';
+// University & Organizer Vector SVG Emblems / Logos
+export const ChulaLogo: React.FC<{ className?: string }> = ({ className = 'w-9 h-9' }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="46" fill="#FCE7F3" stroke="#DB2777" strokeWidth="3" />
+    <circle cx="50" cy="50" r="41" fill="#FFF1F2" stroke="#FDA4AF" strokeWidth="1.5" />
+    <path d="M50 16L55 30H45L50 16Z" fill="#BE185D" />
+    <path d="M36 28L44 38L32 38L36 28Z" fill="#DB2777" />
+    <path d="M64 28L68 38L56 38L64 28Z" fill="#DB2777" />
+    <path d="M26 40L38 46L24 50L26 40Z" fill="#BE185D" />
+    <path d="M74 40L76 50L62 46L74 40Z" fill="#BE185D" />
+    <rect x="28" y="52" width="44" height="6" rx="2" fill="#BE185D" />
+    <rect x="32" y="60" width="36" height="5" rx="1.5" fill="#DB2777" />
+    <rect x="36" y="67" width="28" height="4" rx="1" fill="#BE185D" />
+    <circle cx="50" cy="50" r="6" fill="#F43F5E" />
+    <circle cx="50" cy="50" r="3" fill="#FFE4E6" />
+    <text x="50" y="84" textAnchor="middle" fill="#9D174D" fontSize="8" fontWeight="bold" fontFamily="sans-serif">CHULA</text>
+  </svg>
+);
+
+export const KmitlLogo: React.FC<{ className?: string }> = ({ className = 'w-9 h-9' }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="46" fill="#FFF7ED" stroke="#EA580C" strokeWidth="3" />
+    <circle cx="50" cy="50" r="40" stroke="#FDBA74" strokeWidth="1.5" />
+    <path d="M50 15L53 26H47L50 15Z" fill="#C2410C" />
+    <path d="M38 27L50 42L62 27L58 48H42L38 27Z" fill="#EA580C" />
+    <circle cx="50" cy="27" r="4" fill="#F97316" />
+    <circle cx="38" cy="27" r="3" fill="#C2410C" />
+    <circle cx="62" cy="27" r="3" fill="#C2410C" />
+    <path d="M30 52H70L66 68H34L30 52Z" fill="#C2410C" />
+    <rect x="26" y="70" width="48" height="6" rx="2" fill="#EA580C" />
+    <text x="50" y="88" textAnchor="middle" fill="#9A3412" fontSize="9" fontWeight="800" fontFamily="sans-serif">KMITL</text>
+  </svg>
+);
+
+export const KuLogo: React.FC<{ className?: string }> = ({ className = 'w-9 h-9' }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="46" fill="#F0FDF4" stroke="#15803D" strokeWidth="3" />
+    <circle cx="50" cy="50" r="40" stroke="#86EFAC" strokeWidth="1.5" />
+    <path d="M50 16C50 16 65 32 65 48C65 60 55 72 50 78C45 72 35 60 35 48C35 32 50 16 50 16Z" fill="#16A34A" />
+    <path d="M50 24V74" stroke="#DCFCE7" strokeWidth="2" />
+    <circle cx="50" cy="46" r="6" fill="#FEF08A" />
+    <text x="50" y="88" textAnchor="middle" fill="#14532D" fontSize="9" fontWeight="800" fontFamily="sans-serif">KU · มก.</text>
+  </svg>
+);
 
 // Imported authentic CUEE Camp certificate and activity photos
 import cueeRealCert from './assets/camps/cuee_real_cert.jpg';
@@ -11,10 +50,8 @@ import cueeActivity1 from './assets/camps/cuee_activity_1.jpg';
 import cueeActivity2 from './assets/camps/cuee_activity_2.jpg';
 import cueeActivity3 from './assets/camps/cuee_activity_3.jpg';
 
-import ceNextGenImg1 from './assets/camps/ce_nextgen_img_1.jpg';
-import ceNextGenImg2 from './assets/camps/ce_nextgen_img_2.jpg';
-import ceNextGenImg3 from './assets/camps/ce_nextgen_img_3.jpg';
-import ceNextGenImg4 from './assets/camps/ce_nextgen_img_4.jpg';
+import ceNextGenHackathon from './assets/camps/ce_nextgen_hackathon.jpg';
+import cert04 from './assets/certificate/cert_04.png';
 
 import kuUpskillCert from './assets/camps/up skill ku certificate.jpg';
 import kuUpskillPhoto from './assets/camps/upskill ku.jpg';
@@ -24,15 +61,6 @@ import icsyouImg2 from './assets/camps/icsyou_camp_img_2.jpg';
 import icsyouImg3 from './assets/camps/icsyou_camp_img_3.jpg';
 import icsyouImg4 from './assets/camps/icsyou_camp_img_4.jpg';
 import icsyouRealCert from './assets/camps/icsyou_real_cert.jpg';
-
-import kmitlPreengImg1 from './assets/camps/kmitl_preeng_img_1.jpg';
-import kmitlPreengImg2 from './assets/camps/kmitl_preeng_img_2.jpg';
-import kmitlPreengImg3 from './assets/camps/kmitl_preeng_img_3.jpg';
-import kmitlPreengImg4 from './assets/camps/kmitl_preeng_img_4.jpg';
-
-// Authentic KU Emblem SVG removed as it is now imported from competitionData.tsx
-
-// Authentic PSU Emblem SVG removed as it is now imported from competitionData.tsx
 
 export interface CampPhoto {
   url: string;
@@ -66,7 +94,7 @@ export interface CampItem {
 export const CAMPS_DATA: CampItem[] = [
   {
     id: 'cuee-camp-2026',
-    indexTag: '01 / 05 · CHULALONGKORN UNIVERSITY',
+    indexTag: '01 / 04 · CHULALONGKORN UNIVERSITY',
     badge: 'CHULA · CUEE 2026',
     badgeType: 'chula',
     title: 'CUEE CAMP 2026 (ค่ายวิศวกรรมไฟฟ้า จุฬาฯ)',
@@ -118,7 +146,7 @@ export const CAMPS_DATA: CampItem[] = [
   },
   {
     id: 'ce-nextgen-camp',
-    indexTag: '02 / 05 · KMITL LADKRABANG',
+    indexTag: '02 / 04 · KMITL LADKRABANG',
     badge: 'KMITL · CE NEXT GEN #3',
     badgeType: 'kmitl',
     title: 'โครงการค่ายฝึกอบรมเชิงปฏิบัติการ CE NEXT GEN ครั้งที่ 3',
@@ -132,23 +160,13 @@ export const CAMPS_DATA: CampItem[] = [
     shortSummary:
       'ฝึกอบรมเข้มข้นด้าน Web Development (HTML/CSS/JS) ปูพื้นฐานการเขียนโค้ดและพัฒนาเว็บไซต์ Portfolio ด้วยตนเอง 100% โดยไม่พึ่งพา AI',
     mascotTip: 'ค่ายนี้ผมเขียนโค้ดทำเว็บพอร์ตด้วยตัวเอง 100% ลุยตั้งแต่ศูนย์เลยครับ!',
-    certificateImg: ceNextGenImg4,
-    certificateCaption: 'เกียรติบัตรผ่านการสำเร็จการอบรม ค่าย CE NEXT GEN ครั้งที่ 3 สจล. ลาดกระบัง',
+    certificateImg: cert04,
+    certificateCaption: 'เกียรติบัตรผ่านการสำเร็จการอบรม โครงการค่ายฝึกอบรมเชิงปฏิบัติการ CE NEXT GEN ครั้งที่ 3 ภาควิชาวิศวกรรมคอมพิวเตอร์ สจล. ลาดกระบัง',
     galleryPhotos: [
       {
-        url: ceNextGenImg1,
-        caption: 'การเรียนรู้โครงสร้าง DOM, Modern CSS Architecture และ JavaScript Engine',
-        tag: 'FRONTEND LAB',
-      },
-      {
-        url: ceNextGenImg2,
-        caption: 'ช่วงเวลาแห่งการลงมือเขียนโค้ดสด (Live Coding) เพื่อพัฒนาโครงงานเว็บจบของค่าย',
-        tag: 'LIVE CODING',
-      },
-      {
-        url: ceNextGenImg3,
-        caption: 'บรรยากาศการนำเสนอผลงาน Portfolio Website ต่อหน้าอาจารย์และรุ่นพี่วิศวะคอมฯ',
-        tag: 'FINAL SHOWCASE',
+        url: ceNextGenHackathon,
+        caption: 'ภาพขณะลงมือปฏิบัติการเขียนโค้ดสดและพัฒนา Web Application ในห้องแล็บคอมพิวเตอร์ ค่าย CE NEXT GEN #3 สจล. ลาดกระบัง',
+        tag: 'HANDS-ON CODING',
       },
     ],
     role: 'ผู้เข้าร่วมค่าย & Full-Stack Web Developer (Solo Coder)',
@@ -170,7 +188,7 @@ export const CAMPS_DATA: CampItem[] = [
   },
   {
     id: 'icsyou-camp',
-    indexTag: '03 / 05 · KASETSART UNIVERSITY',
+    indexTag: '03 / 04 · KASETSART UNIVERSITY',
     badge: 'KU CS · 2ND RUNNER-UP',
     badgeType: 'ku',
     title: 'กิจกรรม I CS YOU CAMP 2026 และการแข่งขัน Pitching Project',
@@ -227,7 +245,7 @@ export const CAMPS_DATA: CampItem[] = [
   },
   {
     id: 'ku-upskill-camp',
-    indexTag: '04 / 05 · KASETSART UNIVERSITY',
+    indexTag: '04 / 04 · KASETSART UNIVERSITY',
     badge: 'KU · รศ.ยืน ภู่วรวรรณ',
     badgeType: 'ku',
     title: 'การฝึกอบรม Engineering Up Skill: Hands-on AI & Smart Systems',
@@ -249,11 +267,6 @@ export const CAMPS_DATA: CampItem[] = [
         caption: 'ภาพถ่ายร่วมกับ รศ.ยืน ภู่วรวรรณ อาจารย์อาวุโส ภาควิชาวิศวกรรมคอมพิวเตอร์ ม.เกษตรศาสตร์ ปรมาจารย์แห่งวงการคอมพิวเตอร์ไทย',
         tag: 'WITH MASTER YUEN',
       },
-      {
-        url: kuUpskillCert,
-        caption: 'เกียรติบัตรผ่านการฝึกอบรม Engineering Up Skill: Hands-on AI & Smart Systems มหาวิทยาลัยเกษตรศาสตร์',
-        tag: 'CERTIFICATE',
-      },
     ],
     role: 'ผู้เข้ารับการอบรม (Engineering Logic & AI Trainee)',
     technologies: [
@@ -271,56 +284,5 @@ export const CAMPS_DATA: CampItem[] = [
       'ฝึกคิดวิเคราะห์ปัญหาอย่างเป็นเหตุเป็นผล และปฏิบัติการระบบ AI & Smart Systems จริงในห้องแล็บ',
     ],
     accentColor: '#7C3AED', // Deep Violet
-  },
-  {
-    id: 'kmitl-preeng-program',
-    indexTag: '05 / 05 · K-ENGINEERING EXTENSION',
-    badge: 'KMITL · PRE-ENGINEERING',
-    badgeType: 'kmitl',
-    title: 'โครงการเตรียมวิศวกรรม KMITL Pre-Engineering School Program 2025',
-    thaiSubtitle: 'หลักสูตรเรียนล่วงหน้าระดับมหาวิทยาลัย รายวิชา Computer Programming',
-    organizer: 'สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง (KMITL)',
-    faculty: 'K-Engineering Extension School, Faculty of Engineering',
-    organizerLogo: KmitlLogo,
-    date: '2568 (ระดับชาติ)',
-    description:
-      'เข้าร่วมโครงการเรียนล่วงหน้าระดับมหาวิทยาลัย (Pre-Engineering) ในรายวิชาการเขียนโปรแกรมคอมพิวเตอร์พื้นฐาน (Computer Programming) ของคณะวิศวกรรมศาสตร์ สจล. เพื่อเตรียมความพร้อมสู่การเป็นวิศวกร โดยได้ศึกษาโครงสร้างภาษาคอมพิวเตอร์ การแก้ปัญหาเชิงตรรกะ และการเขียนโค้ดอย่างเป็นระบบ ซึ่งเป็นการปูพื้นฐานทางวิศวกรรมที่สำคัญในการนำไปต่อยอดพัฒนานวัตกรรมและระบบอัจฉริยะต่อไป',
-    shortSummary:
-      'สำเร็จหลักสูตรเรียนล่วงหน้า Computer Programming คณะวิศวะ สจล. ปูพื้นฐานภาษาคอมพิวเตอร์และอัลกอริทึมตามมาตรฐานวิศวกรรมศาสตร์',
-    mascotTip: 'เรียนวิชาการเขียนโปรแกรมของมหาวิทยาลัยล่วงหน้า และสอบผ่านเกณฑ์วิศวะ สจล. ครับ!',
-    certificateImg: kmitlPreengImg1,
-    certificateCaption: 'เกียรติบัตร "ผ่าน" การอบรมหลักสูตร Computer Programming คณะวิศวกรรมศาสตร์ สจล.',
-    galleryPhotos: [
-      {
-        url: kmitlPreengImg2,
-        caption: 'การศึกษาโครงสร้างภาษาและอัลกอริทึมการคำนวณขั้นสูงตามเกณฑ์มาตรฐานวิศวกรรมศาสตร์',
-        tag: 'ACADEMIC COURSE',
-      },
-      {
-        url: kmitlPreengImg3,
-        caption: 'การฝึกเขียนโค้ดแก้โจทย์ปัญหาแบบอัตโนมัติและการทดสอบประสิทธิภาพความเร็วโค้ด',
-        tag: 'SYSTEMATIC CODING',
-      },
-      {
-        url: kmitlPreengImg4,
-        caption: 'บทเรียนการเชื่อมต่อโปรแกรมเข้ากับระบบสมองกลและโครงสร้างข้อมูลระดับปริญญาตรี',
-        tag: 'PRE-ENGINEERING',
-      },
-    ],
-    role: 'Pre-Engineering Student (เกรดการประเมิน: ผ่านตามมาตรฐานวิศวกรรมศาสตร์)',
-    technologies: [
-      'University-level C/C++',
-      'Structured Programming',
-      'Algorithmic Problem Solving',
-      'Memory Management Basics',
-      'Modular Code Architecture',
-      'Time & Space Complexity',
-    ],
-    highlights: [
-      'สำเร็จหลักสูตรวิศวกรรมศาสตร์ระดับปริญญาตรีล่วงหน้าตั้งแต่ชั้นมัธยมศึกษา',
-      'ผ่านการประเมินผลการสอบปฏิบัติการเขียนโปรแกรมอย่างเป็นระบบ',
-      'มีความพร้อมเต็มเปี่ยมสำหรับการศึกษาต่อในระดับวิศวกรรมคอมพิวเตอร์',
-    ],
-    accentColor: '#8B5CF6', // Electric Purple
   },
 ];

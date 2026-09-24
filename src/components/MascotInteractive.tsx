@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 
 import mascotCenter from '../assets/mascot_center.png';
 import mascotUp from '../assets/mascot_up.png';
@@ -39,7 +38,6 @@ export const MascotInteractive: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [direction, setDirection] = useState<Direction>('center');
   const [isHovered, setIsHovered] = useState(false);
-  const [clickMessage, setClickMessage] = useState<string | null>(null);
 
   // Springs for subtle tilt & micro-motion
   const mouseX = useMotionValue(0);
@@ -132,57 +130,50 @@ export const MascotInteractive: React.FC = () => {
     };
   }, [mouseX, mouseY]);
 
-  const greetings = [
-    'สวัสดีครับ! ผมกันตภณ 🚀',
-    'ยินดีต้อนรับสู่ Portfolio ครับ ✨',
-    'มุ่งมั่นศึกษาต่อ วิศวะคอมฯ 💻',
-    'สนใจด้าน Robotics & Deep Learning 🤖',
-    '“EVERYTHING IS POSSIBLE.” ทุกสิ่งเป็นไปได้! 💡'
-  ];
+  const [isBouncing, setIsBouncing] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
 
   const handleMascotClick = () => {
-    const random = greetings[Math.floor(Math.random() * greetings.length)];
-    setClickMessage(random);
-    setTimeout(() => setClickMessage(null), 3500);
+    setClickCount((prev) => prev + 1);
+    setIsBouncing(true);
+    setTimeout(() => setIsBouncing(false), 550);
   };
 
   return (
     <div
       ref={containerRef}
-      className="relative flex flex-col items-center select-none"
+      className="relative flex flex-col items-center select-none cursor-pointer group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleMascotClick}
+      title="คลิกเพื่อทักทายมาสคอต"
     >
-      {/* Speech Bubble / Greeting Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.9 }}
-        animate={{
-          opacity: isHovered || clickMessage ? 1 : 0.85,
-          y: isHovered || clickMessage ? -6 : 0,
-          scale: 1,
-        }}
-        transition={{ duration: 0.2 }}
-        className="mb-4 px-4 py-2 rounded-2xl bg-neutral-900 text-white border border-neutral-700/80 shadow-2xl flex items-center gap-2 cursor-pointer text-xs font-mono tracking-wide z-10"
-      >
-        <Sparkles size={13} className="text-emerald-400 shrink-0 animate-pulse" />
-        <span>{clickMessage || 'มาสคอตมองตามเมาส์ได้ 8 ทิศ! (คลิกคุยได้ครับ)'}</span>
-      </motion.div>
-
       {/* Mascot Organic Container — Scaled down by ~12-15% for cleaner minimal proportion */}
-      <div className="relative w-[210px] sm:w-[245px] h-[400px] sm:h-[435px] flex items-center justify-center">
+      <div className="relative w-[210px] sm:w-[245px] h-[390px] sm:h-[420px] flex items-center justify-center">
         {/* Soft Ambient Backdrop Aura & Ground Shadow */}
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-sky-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-3 w-3/4 h-5 bg-black/10 dark:bg-black/40 rounded-full blur-md pointer-events-none" />
 
-        {/* Dynamic Sprite Container with Micro-Tilt */}
+        {/* Dynamic Sprite Container with Micro-Tilt & Click Reaction */}
         <motion.div
           style={{
             rotateZ,
             x: translateX,
             y: translateY,
           }}
-          className="relative w-full h-full flex items-center justify-center cursor-pointer"
+          animate={
+            isBouncing
+              ? {
+                  scale: [1, 1.15, 0.95, 1.04, 1],
+                  y: [0, -12, 2, -4, 0],
+                  rotate: clickCount % 2 === 0 ? [0, -4, 4, 0] : [0, 4, -4, 0],
+                  transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] },
+                }
+              : isHovered
+              ? { scale: 1.04, transition: { duration: 0.2 } }
+              : { scale: 1 }
+          }
+          className="relative w-full h-full flex items-center justify-center"
         >
           <img
             src={SPRITES[direction]}
@@ -193,10 +184,10 @@ export const MascotInteractive: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Signature & Interactive Hint */}
-      <div className="mt-3 flex items-center gap-2 text-xs text-neutral-500 font-mono">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-        <span>Kantapon — Anime Mascot Signature ({direction.replace('_', ' ')})</span>
+      {/* Minimal Signature Tag (No Speech Text) */}
+      <div className="mt-2 flex items-center gap-2 text-xs text-neutral-400 font-mono">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        <span className="tracking-wide">Kantapon Signature Mascot</span>
       </div>
     </div>
   );

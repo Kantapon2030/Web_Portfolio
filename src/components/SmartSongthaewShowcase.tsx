@@ -20,22 +20,20 @@ import {
   ArrowDown,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Bot,
   Eye,
   Activity,
   Gauge,
-  Compass,
   type LucideIcon,
 } from 'lucide-react';
 
 import presentationImg from '../assets/smart-songthaew-presentation.jpg';
 import certificateImg from '../assets/smart-songthaew-certificate.png';
-import robotPresentationImg from '../assets/comp_robot_rescue.jpg';
-import robotCertImg from '../assets/cert_robotics_award.jpg';
-import aiPresentationImg from '../assets/comp_ai_presentation.jpg';
-import aiCertImg from '../assets/cert_ai_gold_award.jpg';
-import mascotGuide from '../assets/guide_mascot_tight.png';
+import antiCorruptionPresentationImg from '../assets/ผลงาน/2. พลิกเกมกลโกง/1770044714582.jpg';
+import antiCorruptionCertImg from '../assets/ผลงาน/2. พลิกเกมกลโกง/cert_25.png';
+import kruSuanPresentationImg from '../assets/ผลงาน/3.Kru Suan AI/Screenshot 2026-09-24 181310.png';
+import kruSuanCertImg from '../assets/ผลงาน/3.Kru Suan AI/cert_26.png';
+import { CornerMascot } from './CornerMascot';
 
 interface ProjectItem {
   id: string;
@@ -111,88 +109,90 @@ const PROJECTS: ProjectItem[] = [
     mascotTip: 'โปรเจกต์นี้ได้รับทุนสนับสนุนจาก สวทช. และ วช. ครับ!',
   },
   {
-    id: 'rescue-robot',
-    indexTag: '02 / 03 · ROBOTICS CONTEST',
-    badge: 'ROBOTICS · RUNNER-UP',
-    badgeType: 'robot',
-    title: 'Autonomous Rescue Robot',
-    thaiSubtitle: 'หุ่นยนต์ค้นหาและกู้ภัยอัตโนมัติด้วยระบบขับเคลื่อน 4WD และเซนเซอร์รอบทิศทาง',
+    id: 'anti-corruption-ai',
+    indexTag: '02 / 03 · สพฐ. & ป.ป.ช.',
+    badge: 'ป.ป.ช. & สพฐ. · TOP 10 ระดับประเทศ',
+    badgeType: 'ai',
+    title: 'Anti-Corruption AI (พลิกเกมกลโกง)',
+    thaiSubtitle: 'นวัตกรรมตรวจจับคำตอบที่สร้างโดยปัญญาประดิษฐ์ (Anti-Corruption Hackathon Innovation)',
     description:
-      'หุ่นยนต์อัตโนมัติสำหรับสำรวจพื้นที่ภัยพิบัติ ออกแบบโครงสร้างขับเคลื่อน 4WD ผสานระบบประมวลผลเซนเซอร์หลายชนิดเพื่อการตรวจจับผู้ประสบภัยและหลบหลีกสิ่งกีดขวางแบบเรียลไทม์บนสนามจำลอง',
-    presentationImg: robotPresentationImg,
-    presentationCaption: 'การแข่งขันหุ่นยนต์กู้ภัยภาคสนาม · การแข่งขันระดับภาค 2567',
-    certificateImg: robotCertImg,
-    certificateCaption: 'รางวัลรองชนะเลิศอันดับ 1 · การแข่งขันหุ่นยนต์กู้ภัย ระดับภาค',
-    role: 'Hardware & Control Lead (ผู้ออกแบบและเขียนโปรแกรมควบคุม)',
-    year: '2024 (พ.ศ. 2567)',
-    type: 'การแข่งขันหุ่นยนต์ ระดับมัธยมศึกษา',
-    recognition: 'รองชนะเลิศ อันดับ 1 การแข่งขันหุ่นยนต์กู้ภัย ระดับภาค 2567',
-    organizer: 'สำนักงานเขตพื้นที่การศึกษามัธยมศึกษา (สพม.)',
+      'ผลงาน "พลิกเกมกลโกง AI" ผ่านการคัดเลือกเป็น 10 ทีมสุดท้ายระดับประเทศ ในฐานะระบบช่วยคุณครูตรวจจับงานเขียนของนักเรียนว่าใช้ AI หรือไม่ ซึ่งจากการทดสอบมีผลความแม่นยำสูงกว่า AI Detector อื่นๆ ในตลาด โดยรับบทบาทเป็นหัวหน้าทีม และเป็นผู้พัฒนาเว็บแอปพลิเคชันแบบ Full-Stack ทั้งหมด ได้นำกระบวนการ Design Thinking มาใช้ทำความเข้าใจ Pain Point ของครู เพื่อเปลี่ยนปัญหาให้กลายเป็นนวัตกรรมที่ใช้งานได้จริง พร้อมพัฒนาทักษะการสื่อสารและการทำงานเป็นทีม',
+    presentationImg: antiCorruptionPresentationImg,
+    presentationCaption: 'การจัดบูธนิทรรศการและนำเสนอผลงาน "พลิกเกมกลโกง AI" ร่วมกับทีมและอาจารย์ที่ปรึกษา ณ โรงแรมเอวาน่า กรุงเทพฯ',
+    certificateImg: antiCorruptionCertImg,
+    certificateCaption: 'เกียรติบัตรระดับคุณภาพ "ดี" กิจกรรมนวัตกรรมต่อต้านการทุจริต ระดับประเทศ · สพฐ. & ป.ป.ช.',
+    role: 'Team Lead & Full-Stack Developer (หัวหน้าทีมและผู้พัฒนาเว็บแอป)',
+    year: '2026 (พ.ศ. 2569)',
+    type: 'นวัตกรรมต่อต้านการทุจริต ระดับประเทศ',
+    recognition: 'ผ่านการคัดเลือกเข้าสู่รอบ 10 ทีมสุดท้ายระดับประเทศ และได้รับผลการประเมิน "ระดับคุณภาพ ดี"',
+    organizer: 'สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.) ร่วมกับ สำนักงาน ป.ป.ช.',
     technologies: [
-      'Autonomous Robotics',
-      'PID Motor Control',
-      'Sensor Fusion (IMU + Ultrasonic)',
-      'Obstacle Avoidance',
-      'C++ / Arduino & ESP32',
-      'Custom Chassis Design',
+      'Google Gemini API',
+      'OCR (Handwriting to Text)',
+      'Linguistic Footprint Analysis',
+      'Full-Stack Web App',
+      'Prompt Engineering (Temp 0.1)',
+      'Design Thinking & UI/UX',
     ],
     responsibilities: [
-      'ออกแบบกลไกโครงสร้างแชสซีขับเคลื่อน 4WD สำหรับเคลื่อนที่บนพื้นผิวขรุขระ',
-      'คำนวณและปรับจูนอัลกอริทึม PID Control ให้หุ่นยนต์รักษาสมดุลและทิศทางได้แม่นยำ',
-      'ผสานสัญญาณเซนเซอร์อัลตราโซนิกและไจโรสโคปเพื่อการตัดสินใจเลี้ยวหลบหลีกสิ่งกีดขวาง',
-      'ทดสอบภาคสนามจำลองสถานการณ์ภัยพิบัติและการค้นหาผู้ประสบภัย',
-      'คุมระบบขับเคลื่อนและร่วมแข่งขันจนคว้ารางวัลรองชนะเลิศอันดับ 1',
+      'ทำหน้าที่เป็นหัวหน้าทีม (Team Lead) และผู้นำการพัฒนาระบบซอฟต์แวร์ทั้งหมด',
+      'สัมภาษณ์คุณครูและใช้กระบวนการ Design Thinking เพื่อศึกษา Pain Point ปัญหาการใช้ AI ทำการบ้าน',
+      'ออกแบบและพัฒนาเว็บแอปพลิเคชันแบบ Full-Stack ที่ใช้งานง่าย รองรับทุกขนาดหน้าจอ',
+      'พัฒนาระบบ OCR สแกนรูปถ่ายลายมือนักเรียนจากกระดาษคำตอบแปลงเป็นข้อความดิจิทัลโดยอัตโนมัติ',
+      'ออกแบบ Prompt Engineering เชิงลึก ตั้งค่า Temperature 0.1 ตรวจจับความสมบูรณ์แบบเกินจริงและร่องรอยภาษา AI',
+      'นำทีมขึ้น Pitching นำเสนอผลงานสดต่อหน้าคณะกรรมการผู้ทรงคุณวุฒิระดับประเทศ ณ โรงแรมเอวาน่า กรุงเทพมหานคร',
     ],
     stations: [
-      { step: '01', name: 'Environment Sensing', sub: 'ตรวจจับอุณหภูมิ ก๊าซ และสิ่งกีดขวาง', icon: Activity },
-      { step: '02', name: 'Microcontroller Logic', sub: 'ประมวลผล PID และตัดสินใจอัตโนมัติ', icon: Cpu },
-      { step: '03', name: '4WD Mobility System', sub: 'ขับเคลื่อนข้ามสิ่งกีดขวางและทางลาด', icon: Bot },
-      { step: '04', name: 'Telemetry Link', sub: 'ส่งข้อมูลสถานะตัวเครื่องกลับศูนย์สั่งการ', icon: Radio },
-      { step: '05', name: 'Search & Rescue', sub: 'ระบุตำแหน่งเป้าหมายได้อย่างแม่นยำ', icon: Compass },
+      { step: '01', name: 'OCR Scanner', sub: 'ถ่ายภาพลายมือนักเรียนจากกระดาษคำตอบ', icon: Eye },
+      { step: '02', name: 'Gemini Engine', sub: 'ส่งต่อข้อมูลเข้าประมวลผลผ่าน Gemini API', icon: Cpu },
+      { step: '03', name: 'Linguistic Scan', sub: 'ตรวจจับร่องรอยการเขียนและคำสุภาพที่ผิดสังเกต', icon: Activity },
+      { step: '04', name: 'AI/Human Score', sub: 'คำนวณคะแนนความเป็นมนุษย์ vs AI แม่นยำสูง', icon: Gauge },
+      { step: '05', name: 'Teacher Portal', sub: 'สรุปรายงานเชิงลึกให้คุณครูนำไปประกอบการประเมิน', icon: Users },
     ],
-    mascotTip: 'หุ่นยนต์ตัวนี้ลงแข่งในสนามจำลองภัยพิบัติและคว้าอันดับ 1 ระดับภาคมาได้ครับ!',
+    mascotTip: 'นวัตกรรมนี้ผ่านเข้ารอบ 10 ทีมสุดท้ายระดับประเทศของ สพฐ. และ ป.ป.ช. ครับ!',
   },
   {
-    id: 'edge-ai',
-    indexTag: '03 / 03 · NATIONAL EXHIBITION',
-    badge: 'AI EXHIBITION · GOLD MEDAL',
+    id: 'kru-suan-ai',
+    indexTag: '03 / 03 · AI FOR THAI 2026',
+    badge: 'PSU · AI FOR THAI FINALIST',
     badgeType: 'ai',
-    title: 'Edge AI Vision Telemetry',
-    thaiSubtitle: 'ระบบปัญญาประดิษฐ์ตรวจจับวัตถุและวิเคราะห์ภาพบนอุปกรณ์ประมวลผลขนาดเล็ก',
+    title: 'KRU SUAN AI (ครูสวน AI)',
+    thaiSubtitle: 'เพื่อนคู่คิดเกษตรกรรุ่นใหม่ — Knowledge Acquisition & Farmer Advisory Platform',
     description:
-      'โครงงานพัฒนาโมเดล Deep Learning และระบบ Computer Vision สำหรับประมวลผลภาพบนบอร์ด Edge Computing โดยตรง เพื่อการตรวจจับวัตถุและส่งพิกัดแบบเรียลไทม์โดยไม่ต้องพึ่งพาระบบคลาวด์ความเร็วสูง',
-    presentationImg: aiPresentationImg,
-    presentationCaption: 'การนำเสนอโครงงานคอมพิวเตอร์และปัญญาประดิษฐ์ · งานศิลปหัตถกรรมระดับชาติ',
-    certificateImg: aiCertImg,
-    certificateCaption: 'เหรียญทอง โครงงานคอมพิวเตอร์ · งานศิลปหัตถกรรมนักเรียน ระดับชาติ',
-    role: 'AI & Algorithm Developer (ผู้พัฒนาโมเดล AI และระบบประมวลผล)',
-    year: '2023 (พ.ศ. 2566)',
-    type: 'โครงงานคอมพิวเตอร์และปัญญาประดิษฐ์',
-    recognition: 'เหรียญทอง โครงงานคอมพิวเตอร์ งานศิลปหัตถกรรมนักเรียน ระดับชาติ ครั้งที่ 70',
-    organizer: 'สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.)',
+      'เข้าร่วมแข่งขัน Hackathon รอบชิงชนะเลิศแบบ 24 ชั่วโมง ณ มหาวิทยาลัยสงขลานครินทร์ เพื่อพัฒนา Service บนแพลตฟอร์ม AI For Thai โดยได้พัฒนา "KRU SUAN AI" แพลตฟอร์มผู้ช่วยเกษตรกรอัจฉริยะ ให้คำปรึกษาผ่านแชทบอท AI ภาษาไทย โดยผสานภูมิปัญญาจริงของเกษตรกรรุ่นเก่าที่ระบบเสียง AI สัมภาษณ์และเก็บบันทึกไว้ เข้ากับโมเดล LLM ไทยและระบบจัดการแปลงเกษตรอัจฉริยะ รองรับพืชเศรษฐกิจไทยกว่า 20 ชนิด (ทุเรียน ยางพารา ปาล์มน้ำมัน มังคุด ข้าว ฯลฯ) ประสบการณ์นี้นอกจากทำให้ได้สร้าง Full-Stack Web Application และ API Service ภายใต้เวลาจำกัด ยังช่วยหล่อหลอมทักษะ System Thinking และการแก้ปัญหาเฉพาะหน้าภายใต้แรงกดดันสูงอย่างแท้จริง',
+    presentationImg: kruSuanPresentationImg,
+    presentationCaption: 'โปสเตอร์และสถาปัตยกรรมระบบแพลตฟอร์ม KRU SUAN AI ในการแข่งขัน AI For Thai Hackathon',
+    certificateImg: kruSuanCertImg,
+    certificateCaption: 'ประกาศนียบัตรผ่านเข้ารอบชิงชนะเลิศ (Finalist) AI For Thai Hackathon 2026 · ม.สงขลานครินทร์',
+    role: 'Lead AI & Full-Stack Web Developer (ผู้พัฒนาปัญญาประดิษฐ์และเว็บแอป)',
+    year: '2026 (พ.ศ. 2569)',
+    type: 'การแข่งขัน AI Hackathon รอบชิงชนะเลิศ 24 ชั่วโมง',
+    recognition: 'ผ่านเข้ารอบชิงชนะเลิศ (Finalist) การแข่งขัน "AI For Thai Hackathon 2026"',
+    organizer: 'สาขาวิทยาศาสตร์การคำนวณ คณะวิทยาศาสตร์ มหาวิทยาลัยสงขลานครินทร์ (PSU)',
     technologies: [
-      'Deep Learning & CNN',
-      'Computer Vision (OpenCV)',
-      'Edge Computing (Raspberry Pi / Jetson)',
-      'YOLO Object Detection',
-      'Python & PyTorch',
-      'Real-time Video Pipeline',
+      'AI For Thai Open API',
+      'Large Language Model (Thai LLM)',
+      'Voice Knowledge Acquisition',
+      'Full-Stack Web (FastAPI / React)',
+      'Smart Agriculture Analytics',
+      'Prompt Engineering & Retrieval',
     ],
     responsibilities: [
-      'ออกแบบสถาปัตยกรรมโมเดล Deep Learning และจัดเตรียมชุดข้อมูลสำหรับฝึกสอน',
-      'ปรับจูนโมเดลให้มีขนาดกะทัดรัด (Model Quantization) เพื่อรันบนบอร์ด Edge ได้รวดเร็ว',
-      'พัฒนาระบบประมวลผลวิดีโอแบบสด (Real-time Video Pipeline) ความหน่วงต่ำ',
-      'ทดสอบประสิทธิภาพความแม่นยำ (mAP) และ Frame Rate ในสภาวะแสงที่หลากหลาย',
-      'จัดทำเล่มรายงานเชิงวิชาการและนำเสนอผลงานจนได้รับรางวัลเหรียญทองระดับชาติ',
+      'ร่วมแข่งขันรอบชิงชนะเลิศ Hackathon แบบ 24 ชั่วโมงต่อเนื่อง ณ มหาวิทยาลัยสงขลานครินทร์',
+      'ออกแบบและวางสถาปัตยกรรมระบบ KRU SUAN AI บูรณาการ API ของ AI For Thai เข้ากับ Thai LLM',
+      'พัฒนาระบบ Voice Knowledge Acquisition สัมภาษณ์และจัดเก็บภูมิปัญญาเกษตรกรรุ่นเก่าลงฐานข้อมูล',
+      'สร้างระบบแชทบอท AI ภาษาไทย ให้คำปรึกษาและวินิจฉัยโรคพืชเศรษฐกิจไทยกว่า 20 ชนิด',
+      'พัฒนา Full-Stack Web Application และเชื่อมต่อ API ภายใต้เวลาจำกัดอย่างมีประสิทธิภาพ',
+      'วิเคราะห์โจทย์และฝึกฝนการจัดการระบบความคิด (System Thinking) ในการสร้างนวัตกรรมที่ใช้งานได้จริง',
     ],
     stations: [
-      { step: '01', name: 'Camera Stream', sub: 'รับสัญญาณภาพความละเอียดสูงจากเลนส์กล้อง', icon: Eye },
-      { step: '02', name: 'Edge AI Model', sub: 'รันโมเดล Object Detection บนชิปประมวลผล', icon: Cpu },
-      { step: '03', name: 'Spatial Tracking', sub: 'คำนวณเวกเตอร์พิกัดและความเร็ววัตถุ', icon: Gauge },
-      { step: '04', name: 'Telemetry Stream', sub: 'ส่งผลการวิเคราะห์ผ่านเครือข่ายความหน่วงต่ำ', icon: Radio },
-      { step: '05', name: 'Action Decision', sub: 'สั่งการแจ้งเตือนและบันทึกสถิติแบบสด', icon: Activity },
+      { step: '01', name: 'Voice Interview', sub: 'บันทึกเสียงสัมภาษณ์ปราชญ์ชาวบ้านและเกษตรกร', icon: Radio },
+      { step: '02', name: 'AI For Thai API', sub: 'ถอดเสียงเป็นข้อความและวิเคราะห์ด้วย AI For Thai', icon: Cpu },
+      { step: '03', name: 'Knowledge Base', sub: 'จัดระเบียบภูมิปัญญาการดูแลพืชผลไทยกว่า 20 ชนิด', icon: Layers },
+      { step: '04', name: 'Thai LLM Chatbot', sub: 'ให้คำปรึกษาตอบคำถามเกษตรกรอย่างชาญฉลาด', icon: Bot },
+      { step: '05', name: 'Smart Farm Hub', sub: 'แจ้งเตือนสภาพอากาศและวางแผนแปลงเกษตร', icon: Globe },
     ],
-    mascotTip: 'โครงงานนี้ได้เหรียญทองระดับชาติในงานศิลปหัตถกรรมนักเรียนครับ!',
+    mascotTip: 'โปรเจกต์นี้ผ่านเข้ารอบชิงชนะเลิศ AI For Thai Hackathon 24 ชม. ของ ม.อ. ครับ!',
   },
 ];
 
@@ -202,7 +202,6 @@ export const SmartSongthaewShowcase: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [mascotBubbleText, setMascotBubbleText] = useState(PROJECTS[0].mascotTip);
 
   const runwayRef = useRef<HTMLDivElement>(null);
 
@@ -257,10 +256,6 @@ export const SmartSongthaewShowcase: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Sync mascot bubble text on project change
-  useEffect(() => {
-    setMascotBubbleText(currentProject.mascotTip);
-  }, [currentProject]);
 
   // High-performance 5-second automatic sliding ticker ONLY when section is visible in viewport
   useEffect(() => {
@@ -294,16 +289,6 @@ export const SmartSongthaewShowcase: React.FC = () => {
     }
   }, [certModalOpen]);
 
-  const handleMascotClick = () => {
-    const messages = [
-      'ผมเป็นคนลงมือพัฒนาเองทั้งหมดเลยครับ!',
-      'ลองกดขยายดูเกียรติบัตรฉบับเต็มได้เลยนะครับ',
-      'กดปุ่ม "ดูเพิ่มเติม" เพื่อดูสถาปัตยกรรมระบบได้เลย!',
-      currentProject.mascotTip,
-    ];
-    const nextMsg = messages[Math.floor(Math.random() * messages.length)];
-    setMascotBubbleText(nextMsg);
-  };
 
   // Variants for brisk, sleek right-to-left slide transition ("เลื่อนปู้ดๆ ไปเลย")
   const slideVariants = {
@@ -631,38 +616,17 @@ export const SmartSongthaewShowcase: React.FC = () => {
                     MASCOT GUIDE & "VIEW MORE / COLLAPSE" BUTTON INTERACTION AREA
                     ========================================================================= */}
                 <div className="pt-4 pb-2 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                  {/* Mascot Guide Pointing & Speech Bubble */}
-                  <div
-                    onClick={handleMascotClick}
-                    className="flex items-center gap-3 cursor-pointer group select-none"
-                    title="คลิกที่มาสคอตเพื่อฟังคำแนะนำ!"
-                  >
-                    {/* Mascot Figure with Breathing Motion */}
-                    <motion.div
-                      animate={{ y: [0, -5, 0] }}
-                      transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                      className="relative shrink-0"
-                    >
-                      <img
-                        src={mascotGuide}
-                        alt="Tanwa Mascot Guide"
-                        decoding="async"
-                        className="w-14 sm:w-16 h-auto drop-shadow-md transition-transform group-hover:scale-105"
-                      />
-                      <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-red-500 border-2 border-white flex items-center justify-center text-[9px] text-white">
-                        <Sparkles size={8} />
-                      </span>
-                    </motion.div>
-
-                    {/* Speech Bubble */}
-                    <div className="relative px-3.5 py-2 rounded-2xl bg-neutral-50 border border-red-200/80 shadow-xs text-xs font-mono text-neutral-700 max-w-xs">
-                      <div className="flex items-center gap-1 text-red-600 font-bold text-[11px] mb-0.5">
-                        <span>Tanwa</span>
-                        <span className="text-neutral-400 font-normal">· ไกด์ประจำโปรเจกต์</span>
-                      </div>
-                      <p className="leading-snug">{mascotBubbleText}</p>
-                      {/* Speech bubble beak */}
-                      <div className="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 bg-neutral-50 border-b border-l border-red-200/80 rotate-45 pointer-events-none" />
+                  {/* Subtle Mascot Companion with Pose Micro-Interactions (No Speech Bubble) */}
+                  <div className="flex items-center gap-3">
+                    <CornerMascot
+                      pose="guide"
+                      size="sm"
+                      idleAnimation="wave"
+                      alt="Tanwa Mascot Guide"
+                    />
+                    <div className="text-xs font-mono text-neutral-400">
+                      <span className="font-semibold text-neutral-600">Tanwa Guide</span>
+                      <span className="hidden sm:inline text-neutral-400"> · คลิกที่มาสคอตเพื่อทักทาย</span>
                     </div>
                   </div>
 
