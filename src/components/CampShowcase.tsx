@@ -446,7 +446,7 @@ export const CampShowcase: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-neutral-500 font-mono">
+                  <div className="mt-2 text-xs text-neutral-500 font-mono pl-14 sm:pl-16">
                     <span>ภาพถ่ายกิจกรรมจริง ณ ค่าย</span>
                   </div>
                 </div>

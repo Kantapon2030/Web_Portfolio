@@ -561,7 +561,7 @@ export const SmartSongthaewShowcase: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-neutral-500 font-mono">
+                  <div className="mt-2 text-xs text-neutral-500 font-mono pl-14 sm:pl-16">
                     <span>{currentProject.presentationCaption} · ภาพถ่ายจริงในการแข่งขัน</span>
                   </div>
                 </div>
