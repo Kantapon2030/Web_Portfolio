@@ -599,7 +599,6 @@ export default function App() {
               text={[
                 "เราไม่ได้ทำไม่ได้",
                 "เราแค่ยังไม่เคยถูกสอนให้ทำ",
-                "We are not incapable; we simply haven't been taught how to do it yet."
               ]}
               speed={75}
               deleteSpeed={35}
@@ -610,8 +609,8 @@ export default function App() {
             />
           </div>
 
-          <p className="mt-8 sm:mt-12 text-sm sm:text-base md:text-xl font-light font-mono text-neutral-400 tracking-wider max-w-3xl leading-relaxed">
-            “We are not incapable; we simply haven't been taught how to do it yet.”
+          <p className="mt-8 sm:mt-12 text-sm sm:text-base md:text-xl font-light font-thai text-neutral-400 tracking-wider max-w-3xl leading-relaxed">
+            “เราไม่ได้ทำไม่ได้ เราแค่ยังไม่เคยถูกสอนให้ทำ”
           </p>
 
           {/* Contemplative Mascot Sitting Quietly */}
