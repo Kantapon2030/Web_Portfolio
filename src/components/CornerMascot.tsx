@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
@@ -73,8 +73,21 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
   const [clickCount, setClickCount] = useState(0);
   const [isBouncing, setIsBouncing] = useState(false);
   const [showSparkles, setShowSparkles] = useState(false);
+  const [isInView, setIsInView] = useState(true);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // On touch devices, skip Framer Motion infinite animation loops entirely
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // On touch devices, skip hover tracking entirely (no mouse events)
   const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
   const imgSrc = POSE_IMAGES[pose] || POSE_IMAGES.center;
@@ -123,14 +136,14 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
 
   return (
     <div
+      ref={containerRef}
       className={`relative inline-flex items-center justify-center select-none ${
         interactive ? 'cursor-pointer' : 'pointer-events-none'
       } ${className}`}
       onClick={interactive ? handleClick : undefined}
     >
-      {/* Tap Sparkle Particles Effect — Skip on touch for performance */}
-      {!isTouchDevice && (
-        <AnimatePresence>
+      {/* Tap Sparkle Particles Effect */}
+      <AnimatePresence>
         {showSparkles && (
           <div className="absolute inset-0 pointer-events-none z-30 flex items-center justify-center">
             {/* Top sparkle */}
@@ -166,7 +179,6 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
           </div>
         )}
       </AnimatePresence>
-      )}
 
       {/* Mascot Animated Body */}
       <motion.div
@@ -178,8 +190,8 @@ export const CornerMascot: React.FC<CornerMascotProps> = ({
                 rotate: clickCount % 2 === 0 ? [0, -8, 6, -3, 0] : [0, 8, -6, 3, 0],
                 transition: { duration: 0.55, ease: [0.34, 1.56, 0.64, 1] },
               }
-            : isTouchDevice
-            ? {} // No idle animation on touch devices — saves per-frame JS work
+            : !isInView
+            ? {} // Pause idle animation when offscreen to save resources
             : getIdleAnimation()
         }
         whileHover={
