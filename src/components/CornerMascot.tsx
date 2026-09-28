@@ -12,7 +12,6 @@ import mascotUpRight from '../assets/mascot_up_right.png';
 import mascotDownLeft from '../assets/mascot_down_left.png';
 import mascotDownRight from '../assets/mascot_down_right.png';
 import guideMascot from '../assets/guide_mascot_tight.png';
-import miniMascot from '../assets/mini_mascot.png';
 
 export type MascotPose =
   | 'center'
@@ -38,7 +37,7 @@ const POSE_IMAGES: Record<MascotPose, string> = {
   down_left: mascotDownLeft,
   down_right: mascotDownRight,
   guide: guideMascot,
-  mini: miniMascot,
+  mini: mascotCenter,
 };
 
 interface CornerMascotProps {
